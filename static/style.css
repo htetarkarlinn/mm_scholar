@@ -1,0 +1,94 @@
+/* mm_scholar — style.css */
+
+:root {
+  --primary:   #1F4E79;
+  --secondary: #2E75B6;
+  --accent:    #1D9E75;
+}
+
+body {
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+/* navbar */
+.navbar {
+  background-color: var(--primary);
+  padding: 14px 0;
+}
+
+.navbar-brand {
+  font-size: 20px;
+  letter-spacing: 0.5px;
+  color: white !important;
+}
+
+.navbar .nav-link {
+  color: rgba(255, 255, 255, 0.85) !important;
+  margin-left: 16px;
+}
+
+.navbar .nav-link:hover {
+  color: white !important;
+}
+
+/* cards */
+.card {
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+}
+
+.card-header {
+  background-color: #f1f5f9;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 12px 16px;
+}
+
+/* buttons */
+.btn-primary {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+.btn-primary:hover {
+  background-color: var(--secondary);
+  border-color: var(--secondary);
+}
+
+/* form */
+.form-select:focus,
+.form-control:focus {
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 0.2rem rgba(46, 117, 182, 0.2);
+}
+
+/* table */
+.table th {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6c757d;
+}
+
+.table-success {
+  background-color: #e8f5e9 !important;
+}
+
+/* results info grid */
+.col-6 p.text-muted {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+/* progress bar */
+.progress {
+  background-color: #e9ecef;
+  border-radius: 4px;
+}
+
+/* responsive tweaks */
+@media (max-width: 576px) {
+  h1 { font-size: 24px; }
+  .card-body { padding: 16px; }
+  .navbar .nav-link { margin-left: 8px; font-size: 14px; }
+}

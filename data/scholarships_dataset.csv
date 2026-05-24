@@ -1,0 +1,422 @@
+scholarship_id,scholarship_name,provider,country_of_study,level,field_of_study,funding_type,min_gpa,min_ielts,deadline_month,duration_years,link
+1,MEXT Scholarship,Japanese Government,Japan,postgraduate,Engineering,fully_funded,0.0,0.0,5.0,3.0,https://www.studyinjapan.go.jp/en/smap-stopj-applications-research.html
+2,MEXT Scholarship,Japanese Government,Japan,postgraduate,Information Technology,fully_funded,0.0,0.0,5.0,3.0,https://www.studyinjapan.go.jp/en/smap-stopj-applications-research.html
+3,MEXT Scholarship,Japanese Government,Japan,postgraduate,Human Medicine and Health,fully_funded,0.0,0.0,5.0,3.0,https://www.studyinjapan.go.jp/en/smap-stopj-applications-research.html
+4,MEXT Scholarship,Japanese Government,Japan,postgraduate,Business and Economics,fully_funded,0.0,0.0,5.0,3.0,https://www.studyinjapan.go.jp/en/smap-stopj-applications-research.html
+5,MEXT Scholarship,Japanese Government,Japan,postgraduate,Agriculture and Life Sciences,fully_funded,0.0,0.0,5.0,3.0,https://www.studyinjapan.go.jp/en/smap-stopj-applications-research.html
+6,MEXT Scholarship,Japanese Government,Japan,postgraduate,Education,fully_funded,0.0,0.0,5.0,3.0,https://www.studyinjapan.go.jp/en/smap-stopj-applications-research.html
+7,MEXT Scholarship,Japanese Government,Japan,postgraduate,Environmental and Earth Sciences,fully_funded,0.0,0.0,5.0,3.0,https://www.studyinjapan.go.jp/en/smap-stopj-applications-research.html
+8,MEXT Scholarship,Japanese Government,Japan,undergraduate,Engineering,fully_funded,0.0,0.0,5.0,5.0,https://www.studyinjapan.go.jp/en/smap-stopj-applications-undergraduate.html
+9,MEXT Scholarship,Japanese Government,Japan,undergraduate,Information Technology,fully_funded,0.0,0.0,5.0,5.0,https://www.studyinjapan.go.jp/en/smap-stopj-applications-undergraduate.html
+10,MEXT Scholarship,Japanese Government,Japan,undergraduate,Human Medicine and Health,fully_funded,0.0,0.0,5.0,5.0,https://www.studyinjapan.go.jp/en/smap-stopj-applications-undergraduate.html
+11,MEXT Scholarship,Japanese Government,Japan,undergraduate,Business and Economics,fully_funded,0.0,0.0,5.0,5.0,https://www.studyinjapan.go.jp/en/smap-stopj-applications-undergraduate.html
+12,MEXT Scholarship,Japanese Government,Japan,undergraduate,Agriculture and Life Sciences,fully_funded,0.0,0.0,5.0,5.0,https://www.studyinjapan.go.jp/en/smap-stopj-applications-undergraduate.html
+13,MEXT Scholarship,Japanese Government,Japan,undergraduate,Education,fully_funded,0.0,0.0,5.0,5.0,https://www.studyinjapan.go.jp/en/smap-stopj-applications-undergraduate.html
+14,MEXT Scholarship,Japanese Government,Japan,undergraduate,Environmental and Earth Sciences,fully_funded,0.0,0.0,5.0,5.0,https://www.studyinjapan.go.jp/en/smap-stopj-applications-undergraduate.html
+15,MEXT Scholarship,Japanese Government,Japan,phd,Engineering,fully_funded,0.0,0.0,5.0,4.0,https://www.studyinjapan.go.jp/en/smap-stopj-applications-research.html
+16,MEXT Scholarship,Japanese Government,Japan,phd,Information Technology,fully_funded,0.0,0.0,5.0,4.0,https://www.studyinjapan.go.jp/en/smap-stopj-applications-research.html
+17,MEXT Scholarship,Japanese Government,Japan,phd,Human Medicine and Health,fully_funded,0.0,0.0,5.0,4.0,https://www.studyinjapan.go.jp/en/smap-stopj-applications-research.html
+18,MEXT Scholarship,Japanese Government,Japan,phd,Business and Economics,fully_funded,0.0,0.0,5.0,4.0,https://www.studyinjapan.go.jp/en/smap-stopj-applications-research.html
+19,MEXT Scholarship,Japanese Government,Japan,phd,Agriculture and Life Sciences,fully_funded,0.0,0.0,5.0,4.0,https://www.studyinjapan.go.jp/en/smap-stopj-applications-research.html
+20,MEXT Scholarship,Japanese Government,Japan,phd,Education,fully_funded,0.0,0.0,5.0,4.0,https://www.studyinjapan.go.jp/en/smap-stopj-applications-research.html
+21,MEXT Scholarship,Japanese Government,Japan,phd,Environmental and Earth Sciences,fully_funded,0.0,0.0,5.0,4.0,https://www.studyinjapan.go.jp/en/smap-stopj-applications-research.html
+22,MEXT Scholarship,Japanese Government,Japan,diploma,Information Technology,fully_funded,0.0,0.0,5.0,3.0,https://www.studyinjapan.go.jp/en/smap-stopj-applications-specialized.html
+23,MEXT Scholarship,Japanese Government,Japan,diploma,Human Medicine and Health,fully_funded,0.0,0.0,5.0,3.0,https://www.studyinjapan.go.jp/en/smap-stopj-applications-specialized.html
+24,MEXT Scholarship,Japanese Government,Japan,diploma,Education,fully_funded,0.0,0.0,5.0,3.0,https://www.studyinjapan.go.jp/en/smap-stopj-applications-specialized.html
+25,MEXT Scholarship,Japanese Government,Japan,diploma,Business and Economics,fully_funded,0.0,0.0,5.0,3.0,https://www.studyinjapan.go.jp/en/smap-stopj-applications-specialized.html
+26,MEXT Scholarship,Japanese Government,Japan,diploma,Social Sciences,fully_funded,0.0,0.0,5.0,3.0,https://www.studyinjapan.go.jp/en/smap-stopj-applications-specialized.html
+27,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,diploma,Engineering,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+28,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,diploma,Information Technology,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+29,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,diploma,Mathematics and Natural Sciences,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+30,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,diploma,Human Medicine and Health,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+31,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,diploma,Agriculture and Life Sciences,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+32,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,diploma,Business and Economics,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+33,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,diploma,Education,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+34,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,undergraduate,Engineering,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+35,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,undergraduate,Information Technology,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+36,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,undergraduate,Mathematics and Natural Sciences,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+37,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,undergraduate,Human Medicine and Health,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+38,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,undergraduate,Agriculture and Life Sciences,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+39,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,undergraduate,Business and Economics,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+40,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,undergraduate,Education,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+41,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,postgraduate,Engineering,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+42,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,postgraduate,Information Technology,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+43,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,postgraduate,Mathematics and Natural Sciences,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+44,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,postgraduate,Human Medicine and Health,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+45,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,postgraduate,Agriculture and Life Sciences,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+46,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,postgraduate,Business and Economics,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+47,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,postgraduate,Education,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+48,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,phd,Engineering,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+49,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,phd,Information Technology,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+50,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,phd,Mathematics and Natural Sciences,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+51,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,phd,Human Medicine and Health,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+52,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,phd,Agriculture and Life Sciences,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+53,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,phd,Business and Economics,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+54,Japan Student Services Organization (JASSO) Scholarships,JASSO,Japan,phd,Education,partial,2.3,6.0,4.0,1.0,https://www.studyinjapan.go.jp/en/planning/scholarships/jasso-scholarships/
+55,Rotary Yoneyama Memorial Foundation,Rotary Japan,Japan,undergraduate,Engineering,partial,0.0,0.0,10.0,1.0,https://www.rotary-yoneyama.or.jp/english/overseas
+56,Rotary Yoneyama Memorial Foundation,Rotary Japan,Japan,undergraduate,Information Technology,partial,0.0,0.0,10.0,1.0,https://www.rotary-yoneyama.or.jp/english/overseas
+57,Rotary Yoneyama Memorial Foundation,Rotary Japan,Japan,undergraduate,Mathematics and Natural Sciences,partial,0.0,0.0,10.0,1.0,https://www.rotary-yoneyama.or.jp/english/overseas
+58,Rotary Yoneyama Memorial Foundation,Rotary Japan,Japan,undergraduate,Human Medicine and Health,partial,0.0,0.0,10.0,1.0,https://www.rotary-yoneyama.or.jp/english/overseas
+59,Rotary Yoneyama Memorial Foundation,Rotary Japan,Japan,undergraduate,Agriculture and Life Sciences,partial,0.0,0.0,10.0,1.0,https://www.rotary-yoneyama.or.jp/english/overseas
+60,Rotary Yoneyama Memorial Foundation,Rotary Japan,Japan,undergraduate,Business and Economics,partial,0.0,0.0,10.0,1.0,https://www.rotary-yoneyama.or.jp/english/overseas
+61,Rotary Yoneyama Memorial Foundation,Rotary Japan,Japan,undergraduate,Education,partial,0.0,0.0,10.0,1.0,https://www.rotary-yoneyama.or.jp/english/overseas
+62,Rotary Yoneyama Memorial Foundation,Rotary Japan,Japan,postgraduate,Engineering,partial,0.0,0.0,10.0,1.0,https://www.rotary-yoneyama.or.jp/english/overseas
+63,Rotary Yoneyama Memorial Foundation,Rotary Japan,Japan,postgraduate,Information Technology,partial,0.0,0.0,10.0,1.0,https://www.rotary-yoneyama.or.jp/english/overseas
+64,Rotary Yoneyama Memorial Foundation,Rotary Japan,Japan,postgraduate,Mathematics and Natural Sciences,partial,0.0,0.0,10.0,1.0,https://www.rotary-yoneyama.or.jp/english/overseas
+65,Rotary Yoneyama Memorial Foundation,Rotary Japan,Japan,postgraduate,Human Medicine and Health,partial,0.0,0.0,10.0,1.0,https://www.rotary-yoneyama.or.jp/english/overseas
+66,Rotary Yoneyama Memorial Foundation,Rotary Japan,Japan,postgraduate,Agriculture and Life Sciences,partial,0.0,0.0,10.0,1.0,https://www.rotary-yoneyama.or.jp/english/overseas
+67,Rotary Yoneyama Memorial Foundation,Rotary Japan,Japan,postgraduate,Business and Economics,partial,0.0,0.0,10.0,1.0,https://www.rotary-yoneyama.or.jp/english/overseas
+68,Rotary Yoneyama Memorial Foundation,Rotary Japan,Japan,postgraduate,Education,partial,0.0,0.0,10.0,1.0,https://www.rotary-yoneyama.or.jp/english/overseas
+69,Rotary Yoneyama Memorial Foundation,Rotary Japan,Japan,phd,Engineering,partial,0.0,0.0,10.0,1.0,https://www.rotary-yoneyama.or.jp/english/overseas
+70,Rotary Yoneyama Memorial Foundation,Rotary Japan,Japan,phd,Information Technology,partial,0.0,0.0,10.0,1.0,https://www.rotary-yoneyama.or.jp/english/overseas
+71,Rotary Yoneyama Memorial Foundation,Rotary Japan,Japan,phd,Mathematics and Natural Sciences,partial,0.0,0.0,10.0,1.0,https://www.rotary-yoneyama.or.jp/english/overseas
+72,Rotary Yoneyama Memorial Foundation,Rotary Japan,Japan,phd,Human Medicine and Health,partial,0.0,0.0,10.0,1.0,https://www.rotary-yoneyama.or.jp/english/overseas
+73,Rotary Yoneyama Memorial Foundation,Rotary Japan,Japan,phd,Agriculture and Life Sciences,partial,0.0,0.0,10.0,1.0,https://www.rotary-yoneyama.or.jp/english/overseas
+74,Rotary Yoneyama Memorial Foundation,Rotary Japan,Japan,phd,Business and Economics,partial,0.0,0.0,10.0,1.0,https://www.rotary-yoneyama.or.jp/english/overseas
+75,Rotary Yoneyama Memorial Foundation,Rotary Japan,Japan,phd,Education,partial,0.0,0.0,10.0,1.0,https://www.rotary-yoneyama.or.jp/english/overseas
+76,ADB-Japan Scholarship Program,ADB,Japan,postgraduate,Engineering,fully_funded,0.0,6.0,6.0,2.0,https://www.adb.org/work-with-us/careers/japan-scholarship-program
+77,ADB-Japan Scholarship Program,ADB,Japan,postgraduate,Information Technology,fully_funded,0.0,6.0,6.0,2.0,https://www.adb.org/work-with-us/careers/japan-scholarship-program
+78,ADB-Japan Scholarship Program,ADB,Japan,postgraduate,Environmental and Earth Sciences,fully_funded,0.0,6.0,6.0,2.0,https://www.adb.org/work-with-us/careers/japan-scholarship-program
+79,ADB-Japan Scholarship Program,ADB,Japan,postgraduate,Human Medicine and Health,fully_funded,0.0,6.0,6.0,2.0,https://www.adb.org/work-with-us/careers/japan-scholarship-program
+80,ADB-Japan Scholarship Program,ADB,Japan,postgraduate,Agriculture and Life Sciences,fully_funded,0.0,6.0,6.0,2.0,https://www.adb.org/work-with-us/careers/japan-scholarship-program
+81,ADB-Japan Scholarship Program,ADB,Japan,postgraduate,Business and Economics,fully_funded,0.0,6.0,6.0,2.0,https://www.adb.org/work-with-us/careers/japan-scholarship-program
+82,ADB-Japan Scholarship Program,ADB,Japan,postgraduate,Law and Governance,fully_funded,0.0,6.0,6.0,2.0,https://www.adb.org/work-with-us/careers/japan-scholarship-program
+83,ADB-Japan Scholarship Program,ADB,Japan,postgraduate,Social Sciences,fully_funded,0.0,6.0,6.0,2.0,https://www.adb.org/work-with-us/careers/japan-scholarship-program
+84,Global Korea Scholarship (GKS),South Korean Government,South Korea,undergraduate,Engineering,fully_funded,2.7,0.0,9.0,5.0,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+85,Global Korea Scholarship (GKS),South Korean Government,South Korea,undergraduate,Information Technology,fully_funded,2.7,0.0,9.0,5.0,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+86,Global Korea Scholarship (GKS),South Korean Government,South Korea,undergraduate,Human Medicine and Health,fully_funded,2.7,0.0,9.0,5.0,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+87,Global Korea Scholarship (GKS),South Korean Government,South Korea,undergraduate,Business and Economics,fully_funded,2.7,0.0,9.0,5.0,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+88,Global Korea Scholarship (GKS),South Korean Government,South Korea,undergraduate,Agriculture and Life Sciences,fully_funded,2.7,0.0,9.0,5.0,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+89,Global Korea Scholarship (GKS),South Korean Government,South Korea,undergraduate,Education,fully_funded,2.7,0.0,9.0,5.0,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+90,Global Korea Scholarship (GKS),South Korean Government,South Korea,undergraduate,Environmental and Earth Sciences,fully_funded,2.7,0.0,9.0,5.0,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+91,Global Korea Scholarship (GKS),South Korean Government,South Korea,postgraduate,Engineering,fully_funded,2.7,0.0,2.0,3.0,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+92,Global Korea Scholarship (GKS),South Korean Government,South Korea,postgraduate,Information Technology,fully_funded,2.7,0.0,2.0,3.0,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+93,Global Korea Scholarship (GKS),South Korean Government,South Korea,postgraduate,Human Medicine and Health,fully_funded,2.7,0.0,2.0,3.0,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+94,Global Korea Scholarship (GKS),South Korean Government,South Korea,postgraduate,Business and Economics,fully_funded,2.7,0.0,2.0,3.0,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+95,Global Korea Scholarship (GKS),South Korean Government,South Korea,postgraduate,Agriculture and Life Sciences,fully_funded,2.7,0.0,2.0,3.0,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+96,Global Korea Scholarship (GKS),South Korean Government,South Korea,postgraduate,Education,fully_funded,2.7,0.0,2.0,3.0,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+97,Global Korea Scholarship (GKS),South Korean Government,South Korea,postgraduate,Environmental and Earth Sciences,fully_funded,2.7,0.0,2.0,3.0,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+98,Global Korea Scholarship (GKS),South Korean Government,South Korea,phd,Engineering,fully_funded,2.7,0.0,2.0,3.0,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+99,Global Korea Scholarship (GKS),South Korean Government,South Korea,phd,Information Technology,fully_funded,2.7,0.0,2.0,3.0,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+100,Global Korea Scholarship (GKS),South Korean Government,South Korea,phd,Human Medicine and Health,fully_funded,2.7,0.0,2.0,3.0,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+101,Global Korea Scholarship (GKS),South Korean Government,South Korea,phd,Business and Economics,fully_funded,2.7,0.0,2.0,3.0,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+102,Global Korea Scholarship (GKS),South Korean Government,South Korea,phd,Agriculture and Life Sciences,fully_funded,2.7,0.0,2.0,3.0,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+103,Global Korea Scholarship (GKS),South Korean Government,South Korea,phd,Education,fully_funded,2.7,0.0,2.0,3.0,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+104,Global Korea Scholarship (GKS),South Korean Government,South Korea,phd,Environmental and Earth Sciences,fully_funded,2.7,0.0,2.0,3.0,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+105,GKS Exchange Students Program,South Korean Government,South Korea,short_course,Engineering,fully_funded,2.7,0.0,9.0,0.5,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+106,GKS Exchange Students Program,South Korean Government,South Korea,short_course,Information Technology,fully_funded,2.7,0.0,9.0,0.5,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+107,GKS Exchange Students Program,South Korean Government,South Korea,short_course,Human Medicine and Health,fully_funded,2.7,0.0,9.0,0.5,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+108,GKS Exchange Students Program,South Korean Government,South Korea,short_course,Business and Economics,fully_funded,2.7,0.0,9.0,0.5,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+109,GKS Exchange Students Program,South Korean Government,South Korea,short_course,Mathematics and Natural Sciences,fully_funded,2.7,0.0,9.0,0.5,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+110,GKS Exchange Students Program,South Korean Government,South Korea,short_course,Education,fully_funded,2.7,0.0,9.0,0.5,https://www.studyinkorea.go.kr/in/plan/scholarship.do
+111,Chinese Government Scholarship - Bilateral Program (CSC),Chinese Government,China,undergraduate,Engineering,fully_funded,0.0,6.0,3.0,4.0,https://campuschina.org/content/details3_74776.html
+112,Chinese Government Scholarship - Bilateral Program (CSC),Chinese Government,China,undergraduate,Information Technology,fully_funded,0.0,6.0,3.0,4.0,https://campuschina.org/content/details3_74776.html
+113,Chinese Government Scholarship - Bilateral Program (CSC),Chinese Government,China,undergraduate,Mathematics and Natural Sciences,fully_funded,0.0,6.0,3.0,4.0,https://campuschina.org/content/details3_74776.html
+114,Chinese Government Scholarship - Bilateral Program (CSC),Chinese Government,China,undergraduate,Human Medicine and Health,fully_funded,0.0,6.0,3.0,4.0,https://campuschina.org/content/details3_74776.html
+115,Chinese Government Scholarship - Bilateral Program (CSC),Chinese Government,China,undergraduate,Agriculture and Life Sciences,fully_funded,0.0,6.0,3.0,4.0,https://campuschina.org/content/details3_74776.html
+116,Chinese Government Scholarship - Bilateral Program (CSC),Chinese Government,China,undergraduate,Business and Economics,fully_funded,0.0,6.0,3.0,4.0,https://campuschina.org/content/details3_74776.html
+117,Chinese Government Scholarship - Bilateral Program (CSC),Chinese Government,China,undergraduate,Law and Governance,fully_funded,0.0,6.0,3.0,4.0,https://campuschina.org/content/details3_74776.html
+118,Chinese Government Scholarship - Bilateral Program (CSC),Chinese Government,China,undergraduate,Education,fully_funded,0.0,6.0,3.0,4.0,https://campuschina.org/content/details3_74776.html
+119,Chinese Government Scholarship - Bilateral Program (CSC),Chinese Government,China,postgraduate,Engineering,fully_funded,0.0,6.0,3.0,2.0,https://campuschina.org/content/details3_74776.html
+120,Chinese Government Scholarship - Bilateral Program (CSC),Chinese Government,China,postgraduate,Information Technology,fully_funded,0.0,6.0,3.0,2.0,https://campuschina.org/content/details3_74776.html
+121,Chinese Government Scholarship - Bilateral Program (CSC),Chinese Government,China,postgraduate,Mathematics and Natural Sciences,fully_funded,0.0,6.0,3.0,2.0,https://campuschina.org/content/details3_74776.html
+122,Chinese Government Scholarship - Bilateral Program (CSC),Chinese Government,China,postgraduate,Human Medicine and Health,fully_funded,0.0,6.0,3.0,2.0,https://campuschina.org/content/details3_74776.html
+123,Chinese Government Scholarship - Bilateral Program (CSC),Chinese Government,China,postgraduate,Agriculture and Life Sciences,fully_funded,0.0,6.0,3.0,2.0,https://campuschina.org/content/details3_74776.html
+124,Chinese Government Scholarship - Bilateral Program (CSC),Chinese Government,China,postgraduate,Business and Economics,fully_funded,0.0,6.0,3.0,2.0,https://campuschina.org/content/details3_74776.html
+125,Chinese Government Scholarship - Bilateral Program (CSC),Chinese Government,China,postgraduate,Law and Governance,fully_funded,0.0,6.0,3.0,2.0,https://campuschina.org/content/details3_74776.html
+126,Chinese Government Scholarship - Bilateral Program (CSC),Chinese Government,China,postgraduate,Education,fully_funded,0.0,6.0,3.0,2.0,https://campuschina.org/content/details3_74776.html
+127,Chinese Government Scholarship - Bilateral Program (CSC),Chinese Government,China,phd,Engineering,fully_funded,0.0,6.0,3.0,3.0,https://campuschina.org/content/details3_74776.html
+128,Chinese Government Scholarship - Bilateral Program (CSC),Chinese Government,China,phd,Information Technology,fully_funded,0.0,6.0,3.0,3.0,https://campuschina.org/content/details3_74776.html
+129,Chinese Government Scholarship - Bilateral Program (CSC),Chinese Government,China,phd,Mathematics and Natural Sciences,fully_funded,0.0,6.0,3.0,3.0,https://campuschina.org/content/details3_74776.html
+130,Chinese Government Scholarship - Bilateral Program (CSC),Chinese Government,China,phd,Human Medicine and Health,fully_funded,0.0,6.0,3.0,3.0,https://campuschina.org/content/details3_74776.html
+131,Chinese Government Scholarship - Bilateral Program (CSC),Chinese Government,China,phd,Agriculture and Life Sciences,fully_funded,0.0,6.0,3.0,3.0,https://campuschina.org/content/details3_74776.html
+132,Chinese Government Scholarship - Bilateral Program (CSC),Chinese Government,China,phd,Business and Economics,fully_funded,0.0,6.0,3.0,3.0,https://campuschina.org/content/details3_74776.html
+133,Chinese Government Scholarship - Bilateral Program (CSC),Chinese Government,China,phd,Law and Governance,fully_funded,0.0,6.0,3.0,3.0,https://campuschina.org/content/details3_74776.html
+134,Chinese Government Scholarship - Bilateral Program (CSC),Chinese Government,China,phd,Education,fully_funded,0.0,6.0,3.0,3.0,https://campuschina.org/content/details3_74776.html
+135,TaiwanICDF Scholarship,Taiwan Government,Taiwan,postgraduate,Agriculture and Life Sciences,fully_funded,0.0,6.0,3.0,2.0,https://www.icdf.org.tw/wSite/ct?ctNode=31562&mp=2&xItem=12505
+136,TaiwanICDF Scholarship,Taiwan Government,Taiwan,postgraduate,Business and Economics,fully_funded,0.0,6.0,3.0,2.0,https://www.icdf.org.tw/wSite/ct?ctNode=31562&mp=2&xItem=12506
+137,TaiwanICDF Scholarship,Taiwan Government,Taiwan,postgraduate,Human Medicine and Health,fully_funded,0.0,6.0,3.0,2.0,https://www.icdf.org.tw/wSite/ct?ctNode=31562&mp=2&xItem=12507
+138,TaiwanICDF Scholarship,Taiwan Government,Taiwan,postgraduate,Engineering,fully_funded,0.0,6.0,3.0,2.0,https://www.icdf.org.tw/wSite/ct?ctNode=31562&mp=2&xItem=12508
+139,TaiwanICDF Scholarship,Taiwan Government,Taiwan,postgraduate,Education,fully_funded,0.0,6.0,3.0,2.0,https://www.icdf.org.tw/wSite/ct?ctNode=31562&mp=2&xItem=12509
+140,TaiwanICDF Scholarship,Taiwan Government,Taiwan,postgraduate,Information Technology,fully_funded,0.0,6.0,3.0,2.0,https://www.icdf.org.tw/wSite/ct?ctNode=31562&mp=2&xItem=12510
+141,TaiwanICDF Scholarship,Taiwan Government,Taiwan,phd,Agriculture and Life Sciences,fully_funded,0.0,6.0,3.0,3.0,https://www.icdf.org.tw/wSite/ct?ctNode=31562&mp=2&xItem=12511
+142,TaiwanICDF Scholarship,Taiwan Government,Taiwan,phd,Human Medicine and Health,fully_funded,0.0,6.0,3.0,3.0,https://www.icdf.org.tw/wSite/ct?ctNode=31562&mp=2&xItem=12512
+143,Singapore MOE - ASEAN Scholarship,Singapore Government,Singapore,diploma,Engineering,fully_funded,0.0,6.0,5.0,4.0,https://www.moe.gov.sg/financial-matters/awards-scholarships/asean-scholarship/myanmar
+144,Singapore MOE - ASEAN Scholarship,Singapore Government,Singapore,diploma,Information Technology,fully_funded,0.0,6.0,5.0,4.0,https://www.moe.gov.sg/financial-matters/awards-scholarships/asean-scholarship/myanmar
+145,Singapore MOE - ASEAN Scholarship,Singapore Government,Singapore,diploma,Human Medicine and Health,fully_funded,0.0,6.0,5.0,4.0,https://www.moe.gov.sg/financial-matters/awards-scholarships/asean-scholarship/myanmar
+146,Singapore MOE - ASEAN Scholarship,Singapore Government,Singapore,diploma,Agriculture and Life Sciences,fully_funded,0.0,6.0,5.0,4.0,https://www.moe.gov.sg/financial-matters/awards-scholarships/asean-scholarship/myanmar
+147,Singapore MOE - ASEAN Scholarship,Singapore Government,Singapore,diploma,Business and Economics,fully_funded,0.0,6.0,5.0,4.0,https://www.moe.gov.sg/financial-matters/awards-scholarships/asean-scholarship/myanmar
+148,Singapore MOE - ASEAN Scholarship,Singapore Government,Singapore,diploma,Mathematics and Natural Sciences,fully_funded,0.0,6.0,5.0,4.0,https://www.moe.gov.sg/financial-matters/awards-scholarships/asean-scholarship/myanmar
+149,Singapore MOE - ASEAN Scholarship,Singapore Government,Singapore,diploma,Environmental and Earth Sciences,fully_funded,0.0,6.0,5.0,4.0,https://www.moe.gov.sg/financial-matters/awards-scholarships/asean-scholarship/myanmar
+150,Singapore MOE - ASEAN Scholarship,Singapore Government,Singapore,diploma,Education,fully_funded,0.0,6.0,5.0,4.0,https://www.moe.gov.sg/financial-matters/awards-scholarships/asean-scholarship/myanmar
+151,Thailand International Postgraduate Programme (TIPP),Thailand International Cooperation Agency,Thailand,postgraduate,Engineering,fully_funded,0.0,6.0,3.0,2.0,https://tica-scholarships.com/long-term/
+152,Thailand International Postgraduate Programme (TIPP),Thailand International Cooperation Agency,Thailand,postgraduate,Information Technology,fully_funded,0.0,6.0,3.0,2.0,https://tica-scholarships.com/long-term/
+153,Thailand International Postgraduate Programme (TIPP),Thailand International Cooperation Agency,Thailand,postgraduate,Environmental and Earth Sciences,fully_funded,0.0,6.0,3.0,2.0,https://tica-scholarships.com/long-term/
+154,Thailand International Postgraduate Programme (TIPP),Thailand International Cooperation Agency,Thailand,postgraduate,Agriculture and Life Sciences,fully_funded,0.0,6.0,3.0,2.0,https://tica-scholarships.com/long-term/
+155,Thailand International Postgraduate Programme (TIPP),Thailand International Cooperation Agency,Thailand,postgraduate,Business and Economics,fully_funded,0.0,6.0,3.0,2.0,https://tica-scholarships.com/long-term/
+156,Thailand International Postgraduate Programme (TIPP),Thailand International Cooperation Agency,Thailand,postgraduate,Human Medicine and Health,fully_funded,0.0,6.0,3.0,2.0,https://tica-scholarships.com/long-term/
+157,Thailand International Postgraduate Programme (TIPP),Thailand International Cooperation Agency,Thailand,postgraduate,Social Sciences,fully_funded,0.0,6.0,3.0,2.0,https://tica-scholarships.com/long-term/
+158,AIT - Loom Nam Khong Pijai Scholarship,Royal Thai Government via AIT,Thailand,postgraduate,Engineering,fully_funded,3.5,6.0,3.0,2.0,https://ait.ac.th/financial/royal-thai-government-scholarships/
+159,AIT - Loom Nam Khong Pijai Scholarship,Royal Thai Government via AIT,Thailand,postgraduate,Information Technology,fully_funded,3.5,6.0,3.0,2.0,https://ait.ac.th/financial/royal-thai-government-scholarships/
+160,AIT - Loom Nam Khong Pijai Scholarship,Royal Thai Government via AIT,Thailand,postgraduate,Agriculture and Life Sciences,fully_funded,3.5,6.0,3.0,2.0,https://ait.ac.th/financial/royal-thai-government-scholarships/
+161,AIT - Loom Nam Khong Pijai Scholarship,Royal Thai Government via AIT,Thailand,postgraduate,Environmental and Earth Sciences,fully_funded,3.5,6.0,3.0,2.0,https://ait.ac.th/financial/royal-thai-government-scholarships/
+162,AIT - Loom Nam Khong Pijai Scholarship,Royal Thai Government via AIT,Thailand,postgraduate,Law and Governance,fully_funded,3.5,6.0,3.0,2.0,https://ait.ac.th/financial/royal-thai-government-scholarships/
+163,Indian Council for Cultural Relations Scholarship,ICCR,India,undergraduate,Engineering,fully_funded,0.0,0.0,5.0,4.0,https://a2ascholarships.iccr.gov.in/home/getAllSchemeList
+164,Indian Council for Cultural Relations Scholarship,ICCR,India,undergraduate,Information Technology,fully_funded,0.0,0.0,5.0,4.0,https://a2ascholarships.iccr.gov.in/home/getAllSchemeList
+165,Indian Council for Cultural Relations Scholarship,ICCR,India,undergraduate,Mathematics and Natural Sciences,fully_funded,0.0,0.0,5.0,4.0,https://a2ascholarships.iccr.gov.in/home/getAllSchemeList
+166,Indian Council for Cultural Relations Scholarship,ICCR,India,undergraduate,Agriculture and Life Sciences,fully_funded,0.0,0.0,5.0,4.0,https://a2ascholarships.iccr.gov.in/home/getAllSchemeList
+167,Indian Council for Cultural Relations Scholarship,ICCR,India,undergraduate,Human Medicine and Health,fully_funded,0.0,0.0,5.0,4.0,https://a2ascholarships.iccr.gov.in/home/getAllSchemeList
+168,Indian Council for Cultural Relations Scholarship,ICCR,India,undergraduate,Business and Economics,fully_funded,0.0,0.0,5.0,4.0,https://a2ascholarships.iccr.gov.in/home/getAllSchemeList
+169,Indian Council for Cultural Relations Scholarship,ICCR,India,undergraduate,Education,fully_funded,0.0,0.0,5.0,4.0,https://a2ascholarships.iccr.gov.in/home/getAllSchemeList
+170,Indian Council for Cultural Relations Scholarship,ICCR,India,postgraduate,Engineering,fully_funded,0.0,0.0,5.0,2.0,https://a2ascholarships.iccr.gov.in/home/getAllSchemeList
+171,Indian Council for Cultural Relations Scholarship,ICCR,India,postgraduate,Information Technology,fully_funded,0.0,0.0,5.0,2.0,https://a2ascholarships.iccr.gov.in/home/getAllSchemeList
+172,Indian Council for Cultural Relations Scholarship,ICCR,India,postgraduate,Mathematics and Natural Sciences,fully_funded,0.0,0.0,5.0,2.0,https://a2ascholarships.iccr.gov.in/home/getAllSchemeList
+173,Indian Council for Cultural Relations Scholarship,ICCR,India,postgraduate,Agriculture and Life Sciences,fully_funded,0.0,0.0,5.0,2.0,https://a2ascholarships.iccr.gov.in/home/getAllSchemeList
+174,Indian Council for Cultural Relations Scholarship,ICCR,India,postgraduate,Human Medicine and Health,fully_funded,0.0,0.0,5.0,2.0,https://a2ascholarships.iccr.gov.in/home/getAllSchemeList
+175,Indian Council for Cultural Relations Scholarship,ICCR,India,postgraduate,Business and Economics,fully_funded,0.0,0.0,5.0,2.0,https://a2ascholarships.iccr.gov.in/home/getAllSchemeList
+176,Indian Council for Cultural Relations Scholarship,ICCR,India,postgraduate,Education,fully_funded,0.0,0.0,5.0,2.0,https://a2ascholarships.iccr.gov.in/home/getAllSchemeList
+177,Indian Council for Cultural Relations Scholarship,ICCR,India,phd,Engineering,fully_funded,0.0,0.0,5.0,3.0,https://a2ascholarships.iccr.gov.in/home/getAllSchemeList
+178,Indian Council for Cultural Relations Scholarship,ICCR,India,phd,Information Technology,fully_funded,0.0,0.0,5.0,3.0,https://a2ascholarships.iccr.gov.in/home/getAllSchemeList
+179,Indian Council for Cultural Relations Scholarship,ICCR,India,phd,Mathematics and Natural Sciences,fully_funded,0.0,0.0,5.0,3.0,https://a2ascholarships.iccr.gov.in/home/getAllSchemeList
+180,Indian Council for Cultural Relations Scholarship,ICCR,India,phd,Agriculture and Life Sciences,fully_funded,0.0,0.0,5.0,3.0,https://a2ascholarships.iccr.gov.in/home/getAllSchemeList
+181,Indian Council for Cultural Relations Scholarship,ICCR,India,phd,Human Medicine and Health,fully_funded,0.0,0.0,5.0,3.0,https://a2ascholarships.iccr.gov.in/home/getAllSchemeList
+182,Indian Council for Cultural Relations Scholarship,ICCR,India,phd,Business and Economics,fully_funded,0.0,0.0,5.0,3.0,https://a2ascholarships.iccr.gov.in/home/getAllSchemeList
+183,Indian Council for Cultural Relations Scholarship,ICCR,India,phd,Education,fully_funded,0.0,0.0,5.0,3.0,https://a2ascholarships.iccr.gov.in/home/getAllSchemeList
+184,KNB Scholarship,Indonesian Government,Indonesia,undergraduate,Engineering,fully_funded,0.0,5.5,2.0,4.0,https://knb.kemdiktisaintek.go.id/
+185,KNB Scholarship,Indonesian Government,Indonesia,undergraduate,Information Technology,fully_funded,0.0,5.5,2.0,4.0,https://knb.kemdiktisaintek.go.id/
+186,KNB Scholarship,Indonesian Government,Indonesia,undergraduate,Environmental and Earth Sciences,fully_funded,0.0,5.5,2.0,4.0,https://knb.kemdiktisaintek.go.id/
+187,KNB Scholarship,Indonesian Government,Indonesia,undergraduate,Human Medicine and Health,fully_funded,0.0,5.5,2.0,4.0,https://knb.kemdiktisaintek.go.id/
+188,KNB Scholarship,Indonesian Government,Indonesia,undergraduate,Agriculture and Life Sciences,fully_funded,0.0,5.5,2.0,4.0,https://knb.kemdiktisaintek.go.id/
+189,KNB Scholarship,Indonesian Government,Indonesia,undergraduate,Business and Economics,fully_funded,0.0,5.5,2.0,4.0,https://knb.kemdiktisaintek.go.id/
+190,KNB Scholarship,Indonesian Government,Indonesia,undergraduate,Education,fully_funded,0.0,5.5,2.0,4.0,https://knb.kemdiktisaintek.go.id/
+191,KNB Scholarship,Indonesian Government,Indonesia,postgraduate,Engineering,fully_funded,0.0,5.5,2.0,2.0,https://knb.kemdiktisaintek.go.id/
+192,KNB Scholarship,Indonesian Government,Indonesia,postgraduate,Information Technology,fully_funded,0.0,5.5,2.0,2.0,https://knb.kemdiktisaintek.go.id/
+193,KNB Scholarship,Indonesian Government,Indonesia,postgraduate,Environmental and Earth Sciences,fully_funded,0.0,5.5,2.0,2.0,https://knb.kemdiktisaintek.go.id/
+194,KNB Scholarship,Indonesian Government,Indonesia,postgraduate,Human Medicine and Health,fully_funded,0.0,5.5,2.0,2.0,https://knb.kemdiktisaintek.go.id/
+195,KNB Scholarship,Indonesian Government,Indonesia,postgraduate,Agriculture and Life Sciences,fully_funded,0.0,5.5,2.0,2.0,https://knb.kemdiktisaintek.go.id/
+196,KNB Scholarship,Indonesian Government,Indonesia,postgraduate,Business and Economics,fully_funded,0.0,5.5,2.0,2.0,https://knb.kemdiktisaintek.go.id/
+197,KNB Scholarship,Indonesian Government,Indonesia,postgraduate,Education,fully_funded,0.0,5.5,2.0,2.0,https://knb.kemdiktisaintek.go.id/
+198,KNB Scholarship,Indonesian Government,Indonesia,phd,Engineering,fully_funded,0.0,5.5,2.0,3.0,https://knb.kemdiktisaintek.go.id/
+199,KNB Scholarship,Indonesian Government,Indonesia,phd,Information Technology,fully_funded,0.0,5.5,2.0,3.0,https://knb.kemdiktisaintek.go.id/
+200,KNB Scholarship,Indonesian Government,Indonesia,phd,Environmental and Earth Sciences,fully_funded,0.0,5.5,2.0,3.0,https://knb.kemdiktisaintek.go.id/
+201,KNB Scholarship,Indonesian Government,Indonesia,phd,Human Medicine and Health,fully_funded,0.0,5.5,2.0,3.0,https://knb.kemdiktisaintek.go.id/
+202,KNB Scholarship,Indonesian Government,Indonesia,phd,Agriculture and Life Sciences,fully_funded,0.0,5.5,2.0,3.0,https://knb.kemdiktisaintek.go.id/
+203,KNB Scholarship,Indonesian Government,Indonesia,phd,Business and Economics,fully_funded,0.0,5.5,2.0,3.0,https://knb.kemdiktisaintek.go.id/
+204,KNB Scholarship,Indonesian Government,Indonesia,phd,Education,fully_funded,0.0,5.5,2.0,3.0,https://knb.kemdiktisaintek.go.id/
+205,Malaysia International Scholarship,Malaysian Government,Malaysia,postgraduate,Engineering,fully_funded,3.0,0.0,6.0,2.0,https://biasiswa.mohe.gov.my/INTER/index.php
+206,Malaysia International Scholarship,Malaysian Government,Malaysia,postgraduate,Information Technology,fully_funded,3.0,0.0,6.0,2.0,https://biasiswa.mohe.gov.my/INTER/index.php
+207,Malaysia International Scholarship,Malaysian Government,Malaysia,postgraduate,Environmental and Earth Sciences,fully_funded,3.0,0.0,6.0,2.0,https://biasiswa.mohe.gov.my/INTER/index.php
+208,Malaysia International Scholarship,Malaysian Government,Malaysia,postgraduate,Agriculture and Life Sciences,fully_funded,3.0,0.0,6.0,2.0,https://biasiswa.mohe.gov.my/INTER/index.php
+209,Malaysia International Scholarship,Malaysian Government,Malaysia,postgraduate,Business and Economics,fully_funded,3.0,0.0,6.0,2.0,https://biasiswa.mohe.gov.my/INTER/index.php
+210,Malaysia International Scholarship,Malaysian Government,Malaysia,postgraduate,Education,fully_funded,3.0,0.0,6.0,2.0,https://biasiswa.mohe.gov.my/INTER/index.php
+211,Malaysia International Scholarship,Malaysian Government,Malaysia,postgraduate,Social Sciences,fully_funded,3.0,0.0,6.0,2.0,https://biasiswa.mohe.gov.my/INTER/index.php
+212,Malaysia International Scholarship,Malaysian Government,Malaysia,phd,Engineering,fully_funded,3.0,0.0,6.0,3.0,https://biasiswa.mohe.gov.my/INTER/index.php
+213,Malaysia International Scholarship,Malaysian Government,Malaysia,phd,Information Technology,fully_funded,3.0,0.0,6.0,3.0,https://biasiswa.mohe.gov.my/INTER/index.php
+214,Malaysia International Scholarship,Malaysian Government,Malaysia,phd,Environmental and Earth Sciences,fully_funded,3.0,0.0,6.0,3.0,https://biasiswa.mohe.gov.my/INTER/index.php
+215,Malaysia International Scholarship,Malaysian Government,Malaysia,phd,Agriculture and Life Sciences,fully_funded,3.0,0.0,6.0,3.0,https://biasiswa.mohe.gov.my/INTER/index.php
+216,Malaysia International Scholarship,Malaysian Government,Malaysia,phd,Business and Economics,fully_funded,3.0,0.0,6.0,3.0,https://biasiswa.mohe.gov.my/INTER/index.php
+217,Malaysia International Scholarship,Malaysian Government,Malaysia,phd,Education,fully_funded,3.0,0.0,6.0,3.0,https://biasiswa.mohe.gov.my/INTER/index.php
+218,Malaysia International Scholarship,Malaysian Government,Malaysia,phd,Social Sciences,fully_funded,3.0,0.0,6.0,3.0,https://biasiswa.mohe.gov.my/INTER/index.php
+219,Malaysian Technical Cooperation Programme,MTCP,Malaysia,postgraduate,Engineering,fully_funded,3.0,6.0,6.0,2.0,https://mtcp.kln.gov.my/index#home
+220,Malaysian Technical Cooperation Programme,MTCP,Malaysia,postgraduate,Information Technology,fully_funded,3.0,6.0,6.0,2.0,https://mtcp.kln.gov.my/index#home
+221,Malaysian Technical Cooperation Programme,MTCP,Malaysia,postgraduate,Environmental and Earth Sciences,fully_funded,3.0,6.0,6.0,2.0,https://mtcp.kln.gov.my/index#home
+222,Malaysian Technical Cooperation Programme,MTCP,Malaysia,postgraduate,Law and Governance,fully_funded,3.0,6.0,6.0,2.0,https://mtcp.kln.gov.my/index#home
+223,Malaysian Technical Cooperation Programme,MTCP,Malaysia,postgraduate,Social Sciences,fully_funded,3.0,6.0,6.0,2.0,https://mtcp.kln.gov.my/index#home
+224,Malaysian Technical Cooperation Programme,MTCP,Malaysia,postgraduate,Education,fully_funded,3.0,6.0,6.0,2.0,https://mtcp.kln.gov.my/index#home
+225,Government of Brunei Darussalam Scholarship,Brunei Darussalam Government,Brunei,undergraduate,Engineering,fully_funded,0.0,6.0,2.0,4.0,https://www.mfa.gov.bn/pages/scholarship.aspx
+226,Government of Brunei Darussalam Scholarship,Brunei Darussalam Government,Brunei,undergraduate,Information Technology,fully_funded,0.0,6.0,2.0,4.0,https://www.mfa.gov.bn/pages/scholarship.aspx
+227,Government of Brunei Darussalam Scholarship,Brunei Darussalam Government,Brunei,undergraduate,Environmental and Earth Sciences,fully_funded,0.0,6.0,2.0,4.0,https://www.mfa.gov.bn/pages/scholarship.aspx
+228,Government of Brunei Darussalam Scholarship,Brunei Darussalam Government,Brunei,undergraduate,Human Medicine and Health,fully_funded,0.0,6.0,2.0,4.0,https://www.mfa.gov.bn/pages/scholarship.aspx
+229,Government of Brunei Darussalam Scholarship,Brunei Darussalam Government,Brunei,undergraduate,Business and Economics,fully_funded,0.0,6.0,2.0,4.0,https://www.mfa.gov.bn/pages/scholarship.aspx
+230,Government of Brunei Darussalam Scholarship,Brunei Darussalam Government,Brunei,undergraduate,Mathematics and Natural Sciences,fully_funded,0.0,6.0,2.0,4.0,https://www.mfa.gov.bn/pages/scholarship.aspx
+231,Government of Brunei Darussalam Scholarship,Brunei Darussalam Government,Brunei,undergraduate,Education,fully_funded,0.0,6.0,2.0,4.0,https://www.mfa.gov.bn/pages/scholarship.aspx
+232,Government of Brunei Darussalam Scholarship,Brunei Darussalam Government,Brunei,postgraduate,Engineering,fully_funded,0.0,6.0,2.0,2.0,https://www.mfa.gov.bn/pages/scholarship.aspx
+233,Government of Brunei Darussalam Scholarship,Brunei Darussalam Government,Brunei,postgraduate,Information Technology,fully_funded,0.0,6.0,2.0,2.0,https://www.mfa.gov.bn/pages/scholarship.aspx
+234,Government of Brunei Darussalam Scholarship,Brunei Darussalam Government,Brunei,postgraduate,Environmental and Earth Sciences,fully_funded,0.0,6.0,2.0,2.0,https://www.mfa.gov.bn/pages/scholarship.aspx
+235,Government of Brunei Darussalam Scholarship,Brunei Darussalam Government,Brunei,postgraduate,Human Medicine and Health,fully_funded,0.0,6.0,2.0,2.0,https://www.mfa.gov.bn/pages/scholarship.aspx
+236,Government of Brunei Darussalam Scholarship,Brunei Darussalam Government,Brunei,postgraduate,Business and Economics,fully_funded,0.0,6.0,2.0,2.0,https://www.mfa.gov.bn/pages/scholarship.aspx
+237,Government of Brunei Darussalam Scholarship,Brunei Darussalam Government,Brunei,postgraduate,Mathematics and Natural Sciences,fully_funded,0.0,6.0,2.0,2.0,https://www.mfa.gov.bn/pages/scholarship.aspx
+238,Government of Brunei Darussalam Scholarship,Brunei Darussalam Government,Brunei,postgraduate,Education,fully_funded,0.0,6.0,2.0,2.0,https://www.mfa.gov.bn/pages/scholarship.aspx
+239,Belt and Road Scholarship,Hong Kong Government,Hong Kong,undergraduate,Engineering,partial,0.0,6.5,1.0,4.0,https://admissions.hku.hk/fees-and-scholarships/scholarships/belt-and-road-scholarship
+240,Belt and Road Scholarship,Hong Kong Government,Hong Kong,undergraduate,Information Technology,partial,0.0,6.5,1.0,4.0,https://admissions.hku.hk/fees-and-scholarships/scholarships/belt-and-road-scholarship
+241,Belt and Road Scholarship,Hong Kong Government,Hong Kong,undergraduate,Environmental and Earth Sciences,partial,0.0,6.5,1.0,4.0,https://admissions.hku.hk/fees-and-scholarships/scholarships/belt-and-road-scholarship
+242,Belt and Road Scholarship,Hong Kong Government,Hong Kong,undergraduate,Human Medicine and Health,partial,0.0,6.5,1.0,4.0,https://admissions.hku.hk/fees-and-scholarships/scholarships/belt-and-road-scholarship
+243,Belt and Road Scholarship,Hong Kong Government,Hong Kong,undergraduate,Business and Economics,partial,0.0,6.5,1.0,4.0,https://admissions.hku.hk/fees-and-scholarships/scholarships/belt-and-road-scholarship
+244,Belt and Road Scholarship,Hong Kong Government,Hong Kong,undergraduate,Law and Governance,partial,0.0,6.5,1.0,4.0,https://admissions.hku.hk/fees-and-scholarships/scholarships/belt-and-road-scholarship
+245,Belt and Road Scholarship,Hong Kong Government,Hong Kong,undergraduate,Education,partial,0.0,6.5,1.0,4.0,https://admissions.hku.hk/fees-and-scholarships/scholarships/belt-and-road-scholarship
+246,Hong Kong PhD Fellowship Scheme,Research Grants Council Hong Kong,Hong Kong,phd,Engineering,fully_funded,0.0,6.5,12.0,3.0,https://cerg1.ugc.edu.hk/hkpfs/index.html
+247,Hong Kong PhD Fellowship Scheme,Research Grants Council Hong Kong,Hong Kong,phd,Information Technology,fully_funded,0.0,6.5,12.0,3.0,https://cerg1.ugc.edu.hk/hkpfs/index.html
+248,Hong Kong PhD Fellowship Scheme,Research Grants Council Hong Kong,Hong Kong,phd,Environmental and Earth Sciences,fully_funded,0.0,6.5,12.0,3.0,https://cerg1.ugc.edu.hk/hkpfs/index.html
+249,Hong Kong PhD Fellowship Scheme,Research Grants Council Hong Kong,Hong Kong,phd,Agriculture and Life Sciences,fully_funded,0.0,6.5,12.0,3.0,https://cerg1.ugc.edu.hk/hkpfs/index.html
+250,Hong Kong PhD Fellowship Scheme,Research Grants Council Hong Kong,Hong Kong,phd,Human Medicine and Health,fully_funded,0.0,6.5,12.0,3.0,https://cerg1.ugc.edu.hk/hkpfs/index.html
+251,Hong Kong PhD Fellowship Scheme,Research Grants Council Hong Kong,Hong Kong,phd,Business and Economics,fully_funded,0.0,6.5,12.0,3.0,https://cerg1.ugc.edu.hk/hkpfs/index.html
+252,Hong Kong PhD Fellowship Scheme,Research Grants Council Hong Kong,Hong Kong,phd,Education,fully_funded,0.0,6.5,12.0,3.0,https://cerg1.ugc.edu.hk/hkpfs/index.html
+253,Australia Awards Scholarships,Australian Government,Australia,postgraduate,Education,fully_funded,0.0,6.5,4.0,2.0,https://australiaawardsmyanmar.org/
+254,Australia Awards Scholarships,Australian Government,Australia,postgraduate,Human Medicine and Health,fully_funded,0.0,6.5,4.0,2.0,https://australiaawardsmyanmar.org/
+255,Australia Awards Scholarships,Australian Government,Australia,postgraduate,Social Sciences,fully_funded,0.0,6.5,4.0,2.0,https://australiaawardsmyanmar.org/
+256,Australia Awards Scholarships,Australian Government,Australia,postgraduate,Environmental and Earth Sciences,fully_funded,0.0,6.5,4.0,2.0,https://australiaawardsmyanmar.org/
+257,Australia Awards Scholarships,Australian Government,Australia,postgraduate,Business and Economics,fully_funded,0.0,6.5,4.0,2.0,https://australiaawardsmyanmar.org/
+258,Australia Awards Scholarships,Australian Government,Australia,postgraduate,Law and Governance,fully_funded,0.0,6.5,4.0,2.0,https://australiaawardsmyanmar.org/
+259,Australia Awards Scholarships,Australian Government,Australia,postgraduate,Agriculture and Life Sciences,fully_funded,0.0,6.5,4.0,2.0,https://australiaawardsmyanmar.org/
+260,Australia for ASEAN Scholarships,Australian Government,Australia,postgraduate,Education,fully_funded,0.0,6.5,4.0,2.0,https://australiaawardsmyanmar.org/
+261,Australia for ASEAN Scholarships,Australian Government,Australia,postgraduate,Human Medicine and Health,fully_funded,0.0,6.5,4.0,2.0,https://australiaawardsmyanmar.org/
+262,Australia for ASEAN Scholarships,Australian Government,Australia,postgraduate,Agriculture and Life Sciences,fully_funded,0.0,6.5,4.0,2.0,https://australiaawardsmyanmar.org/
+263,Australia for ASEAN Scholarships,Australian Government,Australia,postgraduate,Environmental and Earth Sciences,fully_funded,0.0,6.5,4.0,2.0,https://australiaawardsmyanmar.org/
+265,Thematic Short Term Cohort Training Scholarships,New Zealand Government,New Zealand,short_course,Law and Governance,fully_funded,0.0,6.0,5.0,0.5,https://www.nzscholarships.govt.nz/thematic-short-term-training-scholarships/
+266,Thematic Short Term Cohort Training Scholarships,New Zealand Government,New Zealand,short_course,Environmental and Earth Sciences,fully_funded,0.0,6.0,5.0,0.5,https://www.nzscholarships.govt.nz/thematic-short-term-training-scholarships/
+267,Thematic Short Term Cohort Training Scholarships,New Zealand Government,New Zealand,short_course,Agriculture and Life Sciences,fully_funded,0.0,6.0,5.0,0.5,https://www.nzscholarships.govt.nz/thematic-short-term-training-scholarships/
+268,Thematic Short Term Cohort Training Scholarships,New Zealand Government,New Zealand,short_course,Human Medicine and Health,fully_funded,0.0,6.0,5.0,0.5,https://www.nzscholarships.govt.nz/thematic-short-term-training-scholarships/
+269,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,diploma,Engineering,fully_funded,2.0,0.0,2.0,2.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+270,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,diploma,Information Technology,fully_funded,2.0,0.0,2.0,2.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+271,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,diploma,Environmental and Earth Sciences,fully_funded,2.0,0.0,2.0,2.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+272,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,diploma,Agriculture and Life Sciences,fully_funded,2.0,0.0,2.0,2.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+273,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,diploma,Business and Economics,fully_funded,2.0,0.0,2.0,2.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+274,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,diploma,Law and Governance,fully_funded,2.0,0.0,2.0,2.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+275,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,diploma,Education,fully_funded,2.0,0.0,2.0,2.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+276,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,undergraduate,Engineering,fully_funded,2.0,0.0,2.0,4.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+277,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,undergraduate,Information Technology,fully_funded,2.0,0.0,2.0,4.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+278,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,undergraduate,Environmental and Earth Sciences,fully_funded,2.0,0.0,2.0,4.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+279,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,undergraduate,Agriculture and Life Sciences,fully_funded,2.0,0.0,2.0,4.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+280,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,undergraduate,Business and Economics,fully_funded,2.0,0.0,2.0,4.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+281,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,undergraduate,Law and Governance,fully_funded,2.0,0.0,2.0,4.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+282,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,undergraduate,Education,fully_funded,2.0,0.0,2.0,4.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+283,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,postgraduate,Engineering,fully_funded,3.0,0.0,2.0,2.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+284,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,postgraduate,Information Technology,fully_funded,3.0,0.0,2.0,2.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+285,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,postgraduate,Environmental and Earth Sciences,fully_funded,3.0,0.0,2.0,2.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+286,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,postgraduate,Agriculture and Life Sciences,fully_funded,3.0,0.0,2.0,2.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+287,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,postgraduate,Business and Economics,fully_funded,3.0,0.0,2.0,2.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+288,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,postgraduate,Law and Governance,fully_funded,3.0,0.0,2.0,2.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+289,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,postgraduate,Education,fully_funded,3.0,0.0,2.0,2.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+290,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,phd,Engineering,fully_funded,3.0,0.0,2.0,3.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+291,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,phd,Information Technology,fully_funded,3.0,0.0,2.0,3.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+292,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,phd,Environmental and Earth Sciences,fully_funded,3.0,0.0,2.0,3.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+293,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,phd,Agriculture and Life Sciences,fully_funded,3.0,0.0,2.0,3.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+294,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,phd,Business and Economics,fully_funded,3.0,0.0,2.0,3.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+295,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,phd,Law and Governance,fully_funded,3.0,0.0,2.0,3.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+296,Turkiye Burslari - General Government Scholarship,Turkish Government,Turkey,phd,Education,fully_funded,3.0,0.0,2.0,3.0,https://www.turkiyeburslari.gov.tr/whyturkiyescholarships
+297,Turkiye - ASEAN Joint Scholarship,Turkish Government,Turkey,postgraduate,Engineering,fully_funded,3.0,0.0,3.0,2.0,https://www.turkiyeburslari.gov.tr/announcements/turkiye-scholarships-asean-joint-scholarship-programme-56
+298,Turkiye - ASEAN Joint Scholarship,Turkish Government,Turkey,postgraduate,Information Technology,fully_funded,3.0,0.0,3.0,2.0,https://www.turkiyeburslari.gov.tr/announcements/turkiye-scholarships-asean-joint-scholarship-programme-57
+299,Turkiye - ASEAN Joint Scholarship,Turkish Government,Turkey,postgraduate,Environmental and Earth Sciences,fully_funded,3.0,0.0,3.0,2.0,https://www.turkiyeburslari.gov.tr/announcements/turkiye-scholarships-asean-joint-scholarship-programme-58
+300,Turkiye - ASEAN Joint Scholarship,Turkish Government,Turkey,postgraduate,Human Medicine and Health,fully_funded,3.0,0.0,3.0,2.0,https://www.turkiyeburslari.gov.tr/announcements/turkiye-scholarships-asean-joint-scholarship-programme-59
+301,Turkiye - ASEAN Joint Scholarship,Turkish Government,Turkey,postgraduate,Agriculture and Life Sciences,fully_funded,3.0,0.0,3.0,2.0,https://www.turkiyeburslari.gov.tr/announcements/turkiye-scholarships-asean-joint-scholarship-programme-60
+302,Turkiye - ASEAN Joint Scholarship,Turkish Government,Turkey,postgraduate,Business and Economics,fully_funded,3.0,0.0,3.0,2.0,https://www.turkiyeburslari.gov.tr/announcements/turkiye-scholarships-asean-joint-scholarship-programme-61
+303,Turkiye - ASEAN Joint Scholarship,Turkish Government,Turkey,postgraduate,Education,fully_funded,3.0,0.0,3.0,2.0,https://www.turkiyeburslari.gov.tr/announcements/turkiye-scholarships-asean-joint-scholarship-programme-62
+304,Turkiye - ASEAN Joint Scholarship,Turkish Government,Turkey,short_course,Social Sciences,fully_funded,3.0,0.0,3.0,0.5,https://www.turkiyeburslari.gov.tr/announcements/turkiye-scholarships-asean-joint-scholarship-programme-63
+305,MBZUAI Scholarship - Mohamed bin Zayed University of AI,Mohamed bin Zayed University of AI,UAE,postgraduate,Information Technology,fully_funded,3.0,6.5,1.0,2.0,https://mbzuai.ac.ae/
+306,MBZUAI Scholarship - Mohamed bin Zayed University of AI,Mohamed bin Zayed University of AI,UAE,phd,Information Technology,fully_funded,3.0,6.5,1.0,3.0,https://mbzuai.ac.ae/
+307,UAE University - International Scholarship,UAE University,UAE,undergraduate,Engineering,fully_funded,3.0,6.0,3.0,4.0,https://www.uaeu.ac.ae/en/cgs/scholarship.shtml
+308,UAE University - International Scholarship,UAE University,UAE,undergraduate,Information Technology,fully_funded,3.0,6.0,3.0,4.0,https://www.uaeu.ac.ae/en/cgs/scholarship.shtml
+309,UAE University - International Scholarship,UAE University,UAE,undergraduate,Business and Economics,fully_funded,3.0,6.0,3.0,4.0,https://www.uaeu.ac.ae/en/cgs/scholarship.shtml
+310,UAE University - International Scholarship,UAE University,UAE,undergraduate,Environmental and Earth Sciences,fully_funded,3.0,6.0,3.0,4.0,https://www.uaeu.ac.ae/en/cgs/scholarship.shtml
+311,UAE University - International Scholarship,UAE University,UAE,postgraduate,Engineering,fully_funded,3.0,6.0,3.0,2.0,https://www.uaeu.ac.ae/en/cgs/scholarship.shtml
+312,UAE University - International Scholarship,UAE University,UAE,undergraduate,Information Technology,fully_funded,3.0,6.0,3.0,2.0,https://www.uaeu.ac.ae/en/cgs/scholarship.shtml
+313,UAE University - International Scholarship,UAE University,UAE,undergraduate,Business and Economics,fully_funded,3.0,6.0,3.0,2.0,https://www.uaeu.ac.ae/en/cgs/scholarship.shtml
+314,UAE University - International Scholarship,UAE University,UAE,undergraduate,Environmental and Earth Sciences,fully_funded,3.0,6.0,3.0,2.0,https://www.uaeu.ac.ae/en/cgs/scholarship.shtml
+315,KAUST- King Abdullah University of Science and Technology,KAUST,Saudi Arabia,postgraduate,Engineering,fully_funded,3.0,6.5,1.0,2.0,https://www.kaust.edu.sa/en/study/applying-to-kaust
+316,KAUST- King Abdullah University of Science and Technology,KAUST,Saudi Arabia,postgraduate,Information Technology,fully_funded,3.0,6.5,1.0,2.0,https://www.kaust.edu.sa/en/study/applying-to-kaust
+317,KAUST- King Abdullah University of Science and Technology,KAUST,Saudi Arabia,postgraduate,Environmental and Earth Sciences,fully_funded,3.0,6.5,1.0,2.0,https://www.kaust.edu.sa/en/study/applying-to-kaust
+318,KAUST- King Abdullah University of Science and Technology,KAUST,Saudi Arabia,postgraduate,Agriculture and Life Sciences,fully_funded,3.0,6.5,1.0,2.0,https://www.kaust.edu.sa/en/study/applying-to-kaust
+319,KAUST- King Abdullah University of Science and Technology,KAUST,Saudi Arabia,phd,Engineering,fully_funded,3.0,6.5,1.0,3.0,https://www.kaust.edu.sa/en/study/applying-to-kaust
+320,KAUST- King Abdullah University of Science and Technology,KAUST,Saudi Arabia,phd,Information Technology,fully_funded,3.0,6.5,1.0,3.0,https://www.kaust.edu.sa/en/study/applying-to-kaust
+321,KAUST- King Abdullah University of Science and Technology,KAUST,Saudi Arabia,phd,Environmental and Earth Sciences,fully_funded,3.0,6.5,1.0,3.0,https://www.kaust.edu.sa/en/study/applying-to-kaust
+322,KAUST- King Abdullah University of Science and Technology,KAUST,Saudi Arabia,phd,Agriculture and Life Sciences,fully_funded,3.0,6.5,1.0,3.0,https://www.kaust.edu.sa/en/study/applying-to-kaust
+323,Fulbright Foreign Student Scholarship,US Government,USA,postgraduate,Information Technology,fully_funded,3.0,6.5,5.0,2.0,https://mm.usembassy.gov/fulbright-foreign-student-scholarship/
+324,Fulbright Foreign Student Scholarship,US Government,USA,postgraduate,Law and Governance,fully_funded,3.0,6.5,5.0,2.0,https://mm.usembassy.gov/fulbright-foreign-student-scholarship/
+325,Fulbright Foreign Student Scholarship,US Government,USA,postgraduate,Business and Economics,fully_funded,3.0,6.5,5.0,2.0,https://mm.usembassy.gov/fulbright-foreign-student-scholarship/
+326,Fulbright Foreign Student Scholarship,US Government,USA,postgraduate,Human Medicine and Health,fully_funded,3.0,6.5,5.0,2.0,https://mm.usembassy.gov/fulbright-foreign-student-scholarship/
+327,Fulbright Foreign Student Scholarship,US Government,USA,postgraduate,Agriculture and Life Sciences,fully_funded,3.0,6.5,5.0,2.0,https://mm.usembassy.gov/fulbright-foreign-student-scholarship/
+328,Fulbright Foreign Student Scholarship,US Government,USA,postgraduate,Education,fully_funded,3.0,6.5,5.0,2.0,https://mm.usembassy.gov/fulbright-foreign-student-scholarship/
+329,Hubert H.Humphrey Fellowship,US Government,USA,short_course,Human Medicine and Health,fully_funded,0.0,6.5,10.0,1.0,https://mm.usembassy.gov/hubert-h-humphrey-fellowship/
+330,Hubert H.Humphrey Fellowship,US Government,USA,short_course,Social Sciences,fully_funded,0.0,6.5,10.0,1.0,https://mm.usembassy.gov/hubert-h-humphrey-fellowship/
+331,Hubert H.Humphrey Fellowship,US Government,USA,short_course,Business and Economics,fully_funded,0.0,6.5,10.0,1.0,https://mm.usembassy.gov/hubert-h-humphrey-fellowship/
+332,Hubert H.Humphrey Fellowship,US Government,USA,short_course,Agriculture and Life Sciences,fully_funded,0.0,6.5,10.0,1.0,https://mm.usembassy.gov/hubert-h-humphrey-fellowship/
+333,Hubert H.Humphrey Fellowship,US Government,USA,short_course,Education,fully_funded,0.0,6.5,10.0,1.0,https://mm.usembassy.gov/hubert-h-humphrey-fellowship/
+334,East-West Center Graduate Degree Fellowship,East-West Center,USA,postgraduate,Engineering,fully_funded,3.0,6.0,12.0,2.0,https://www.eastwestcenter.org/apply/east-west-center-graduate-degree-fellowship-apply-now
+335,East-West Center Graduate Degree Fellowship,East-West Center,USA,postgraduate,Information Technology,fully_funded,3.0,6.0,12.0,2.0,https://www.eastwestcenter.org/apply/east-west-center-graduate-degree-fellowship-apply-now
+336,East-West Center Graduate Degree Fellowship,East-West Center,USA,postgraduate,Human Medicine and Health,fully_funded,3.0,6.0,12.0,2.0,https://www.eastwestcenter.org/apply/east-west-center-graduate-degree-fellowship-apply-now
+337,East-West Center Graduate Degree Fellowship,East-West Center,USA,postgraduate,Agriculture and Life Sciences,fully_funded,3.0,6.0,12.0,2.0,https://www.eastwestcenter.org/apply/east-west-center-graduate-degree-fellowship-apply-now
+338,East-West Center Graduate Degree Fellowship,East-West Center,USA,postgraduate,Law and Governance,fully_funded,3.0,6.0,12.0,2.0,https://www.eastwestcenter.org/apply/east-west-center-graduate-degree-fellowship-apply-now
+339,East-West Center Graduate Degree Fellowship,East-West Center,USA,postgraduate,Education,fully_funded,3.0,6.0,12.0,2.0,https://www.eastwestcenter.org/apply/east-west-center-graduate-degree-fellowship-apply-now
+340,East-West Center Graduate Degree Fellowship,East-West Center,USA,postgraduate,Social Sciences,fully_funded,3.0,6.0,12.0,2.0,https://www.eastwestcenter.org/apply/east-west-center-graduate-degree-fellowship-apply-now
+341,East-West Center Graduate Degree Fellowship,East-West Center,USA,postgraduate,Environmental and Earth Sciences,fully_funded,3.0,6.0,12.0,2.0,https://www.eastwestcenter.org/apply/east-west-center-graduate-degree-fellowship-apply-now
+342,Vanier Canada Graduate Scholarship,Government of Canada,Canada,phd,Human Medicine and Health,fully_funded,3.5,6.5,10.0,3.0,https://vanier.gc.ca/en/home-accueil.html
+343,Vanier Canada Graduate Scholarship,Government of Canada,Canada,phd,Engineering,fully_funded,3.5,6.5,10.0,3.0,https://vanier.gc.ca/en/home-accueil.html
+344,Vanier Canada Graduate Scholarship,Government of Canada,Canada,phd,Social Sciences,fully_funded,3.5,6.5,10.0,3.0,https://vanier.gc.ca/en/home-accueil.html
+345,Pierre Elliott Trudeau Foundation Scholarship,Trudeau Foundation,Canada,phd,Social Sciences,fully_funded,3.5,6.5,12.0,3.0,https://www.trudeaufoundation.ca/scholarship/
+346,Pierre Elliott Trudeau Foundation Scholarship,Trudeau Foundation,Canada,phd,Environmental and Earth Sciences,fully_funded,3.5,6.5,12.0,3.0,https://www.trudeaufoundation.ca/scholarship/
+347,Pierre Elliott Trudeau Foundation Scholarship,Trudeau Foundation,Canada,phd,Law and Governance,fully_funded,3.5,6.5,12.0,3.0,https://www.trudeaufoundation.ca/scholarship/
+348,Pierre Elliott Trudeau Foundation Scholarship,Trudeau Foundation,Canada,phd,Education,fully_funded,3.5,6.5,12.0,3.0,https://www.trudeaufoundation.ca/scholarship/
+349,Erasmus Mundus Joint Masters (EMJM),European Commision,European Union,postgraduate,Engineering,fully_funded,3.5,6.5,3.0,2.0,https://www.eacea.ec.europa.eu/scholarships/erasmus-mundus-catalogue_en
+350,Erasmus Mundus Joint Masters (EMJM),European Commision,European Union,postgraduate,Information Technology,fully_funded,3.5,6.5,3.0,2.0,https://www.eacea.ec.europa.eu/scholarships/erasmus-mundus-catalogue_en
+351,Erasmus Mundus Joint Masters (EMJM),European Commision,European Union,postgraduate,Mathematics and Natural Sciences,fully_funded,3.5,6.5,3.0,2.0,https://www.eacea.ec.europa.eu/scholarships/erasmus-mundus-catalogue_en
+352,Erasmus Mundus Joint Masters (EMJM),European Commision,European Union,postgraduate,Environmental and Earth Sciences,fully_funded,3.5,6.5,3.0,2.0,https://www.eacea.ec.europa.eu/scholarships/erasmus-mundus-catalogue_en
+353,Erasmus Mundus Joint Masters (EMJM),European Commision,European Union,postgraduate,Human Medicine and Health,fully_funded,3.5,6.5,3.0,2.0,https://www.eacea.ec.europa.eu/scholarships/erasmus-mundus-catalogue_en
+354,Erasmus Mundus Joint Masters (EMJM),European Commision,European Union,postgraduate,Agriculture and Life Sciences,fully_funded,3.5,6.5,3.0,2.0,https://www.eacea.ec.europa.eu/scholarships/erasmus-mundus-catalogue_en
+355,Erasmus Mundus Joint Masters (EMJM),European Commision,European Union,postgraduate,Business and Economics,fully_funded,3.5,6.5,3.0,2.0,https://www.eacea.ec.europa.eu/scholarships/erasmus-mundus-catalogue_en
+356,Erasmus Mundus Joint Masters (EMJM),European Commision,European Union,postgraduate,Law and Governance,fully_funded,3.5,6.5,3.0,2.0,https://www.eacea.ec.europa.eu/scholarships/erasmus-mundus-catalogue_en
+357,Erasmus Mundus Joint Masters (EMJM),European Commision,European Union,postgraduate,Social Sciences,fully_funded,3.5,6.5,3.0,2.0,https://www.eacea.ec.europa.eu/scholarships/erasmus-mundus-catalogue_en
+358,Erasmus Mundus Joint Masters (EMJM),European Commision,European Union,postgraduate,Social Sciences,fully_funded,3.5,6.5,3.0,2.0,https://www.eacea.ec.europa.eu/scholarships/erasmus-mundus-catalogue_en
+359,Erasmus Mundus Joint Masters (EMJM),European Commision,European Union,postgraduate,Social Sciences,fully_funded,3.5,6.5,3.0,2.0,https://www.eacea.ec.europa.eu/scholarships/erasmus-mundus-catalogue_en
+360,Erasmus Mundus Joint Masters (EMJM),European Commision,European Union,postgraduate,Education,fully_funded,3.5,6.5,3.0,2.0,https://www.eacea.ec.europa.eu/scholarships/erasmus-mundus-catalogue_en
+361,Chevening Scholarship,UK Government,UK,postgraduate,Engineering,fully_funded,3.0,6.5,11.0,1.0,https://www.chevening.org/scholarship/myanmar/
+362,Chevening Scholarship,UK Government,UK,postgraduate,Information Technology,fully_funded,3.0,6.5,11.0,1.0,https://www.chevening.org/scholarship/myanmar/
+363,Chevening Scholarship,UK Government,UK,postgraduate,Mathematics and Natural Sciences,fully_funded,3.0,6.5,11.0,1.0,https://www.chevening.org/scholarship/myanmar/
+364,Chevening Scholarship,UK Government,UK,postgraduate,Environmental and Earth Sciences,fully_funded,3.0,6.5,11.0,1.0,https://www.chevening.org/scholarship/myanmar/
+365,Chevening Scholarship,UK Government,UK,postgraduate,Human Medicine and Health,fully_funded,3.0,6.5,11.0,1.0,https://www.chevening.org/scholarship/myanmar/
+366,Chevening Scholarship,UK Government,UK,postgraduate,Business and Economics,fully_funded,3.0,6.5,11.0,1.0,https://www.chevening.org/scholarship/myanmar/
+367,Chevening Scholarship,UK Government,UK,postgraduate,Law and Governance,fully_funded,3.0,6.5,11.0,1.0,https://www.chevening.org/scholarship/myanmar/
+368,Chevening Scholarship,UK Government,UK,postgraduate,Social Sciences,fully_funded,3.0,6.5,11.0,1.0,https://www.chevening.org/scholarship/myanmar/
+369,Chevening Scholarship,UK Government,UK,postgraduate,Social Sciences,fully_funded,3.0,6.5,11.0,1.0,https://www.chevening.org/scholarship/myanmar/
+370,Chevening Scholarship,UK Government,UK,postgraduate,Social Sciences,fully_funded,3.0,6.5,11.0,1.0,https://www.chevening.org/scholarship/myanmar/
+371,Chevening Scholarship,UK Government,UK,postgraduate,Education,fully_funded,3.0,6.5,11.0,1.0,https://www.chevening.org/scholarship/myanmar/
+372,DAAD- In-Country via SEARCA,German Academic Exchange Service,ASEAN,postgraduate,Agriculture and Life Sciences,fully_funded,3.0,6.0,1.0,2.0,https://www.searca.org/daad-scholarship
+373,DAAD- In-Country via SEARCA,German Academic Exchange Service,ASEAN,postgraduate,Environmental and Earth Sciences,fully_funded,3.0,6.0,1.0,2.0,https://www.searca.org/daad-scholarship
+374,DAAD- In-Country via SEARCA,German Academic Exchange Service,ASEAN,phd,Agriculture and Life Sciences,fully_funded,3.0,6.0,1.0,2.0,https://www.searca.org/daad-scholarship
+375,DAAD- In-Country via SEARCA,German Academic Exchange Service,ASEAN,phd,Environmental and Earth Sciences,fully_funded,3.0,6.0,1.0,2.0,https://www.searca.org/daad-scholarship
+376,DAAD at AIT,DAAD + AIT,Thailand,postgraduate,Environmental and Earth Sciences,fully_funded,0.0,6.0,2.0,2.0,https://ait.ac.th/financial/daad-scholarship/
+377,DAAD at AIT,DAAD + AIT,Thailand,postgraduate,Social Sciences,fully_funded,0.0,6.0,2.0,2.0,https://ait.ac.th/financial/daad-scholarship/
+378,DAAD STEM Scholarships,German Academic Exchange Service,Germany,postgraduate,Engineering,fully_funded,0.0,6.0,10.0,2.0,https://www2.daad.de/deutschland/stipendium/datenbank/en/21148-scholarship-database/?detail=57742130
+379,DAAD STEM Scholarships,German Academic Exchange Service,Germany,postgraduate,Information Technology,fully_funded,0.0,6.0,10.0,2.0,https://www2.daad.de/deutschland/stipendium/datenbank/en/21148-scholarship-database/?detail=57742131
+380,DAAD STEM Scholarships,German Academic Exchange Service,Germany,postgraduate,Mathematics and Natural Sciences,fully_funded,0.0,6.0,10.0,2.0,https://www2.daad.de/deutschland/stipendium/datenbank/en/21148-scholarship-database/?detail=57742132
+381,DAAD STEM Scholarships,German Academic Exchange Service,Germany,postgraduate,Environmental and Earth Sciences,fully_funded,0.0,6.0,10.0,2.0,https://www2.daad.de/deutschland/stipendium/datenbank/en/21148-scholarship-database/?detail=57742133
+382,Stipendium Hungaricum - Hungary,Hungarian Government,Hungary,undergraduate,Engineering,fully_funded,0.0,5.5,1.0,4.0,https://stipendiumhungaricum.hu/
+383,Stipendium Hungaricum - Hungary,Hungarian Government,Hungary,undergraduate,Information Technology,fully_funded,0.0,5.5,1.0,4.0,https://stipendiumhungaricum.hu/
+384,Stipendium Hungaricum - Hungary,Hungarian Government,Hungary,undergraduate,Agriculture and Life Sciences,fully_funded,0.0,5.5,1.0,4.0,https://stipendiumhungaricum.hu/
+385,Stipendium Hungaricum - Hungary,Hungarian Government,Hungary,undergraduate,Mathematics and Natural Sciences,fully_funded,0.0,5.5,1.0,4.0,https://stipendiumhungaricum.hu/
+386,Stipendium Hungaricum - Hungary,Hungarian Government,Hungary,undergraduate,Environmental and Earth Sciences,fully_funded,0.0,5.5,1.0,4.0,https://stipendiumhungaricum.hu/
+387,Stipendium Hungaricum - Hungary,Hungarian Government,Hungary,undergraduate,Business and Economics,fully_funded,0.0,5.5,1.0,4.0,https://stipendiumhungaricum.hu/
+388,Stipendium Hungaricum - Hungary,Hungarian Government,Hungary,postgraduate,Engineering,fully_funded,0.0,5.5,1.0,2.0,https://stipendiumhungaricum.hu/
+389,Stipendium Hungaricum - Hungary,Hungarian Government,Hungary,postgraduate,Information Technology,fully_funded,0.0,5.5,1.0,2.0,https://stipendiumhungaricum.hu/
+390,Stipendium Hungaricum - Hungary,Hungarian Government,Hungary,postgraduate,Agriculture and Life Sciences,fully_funded,0.0,5.5,1.0,2.0,https://stipendiumhungaricum.hu/
+391,Stipendium Hungaricum - Hungary,Hungarian Government,Hungary,postgraduate,Mathematics and Natural Sciences,fully_funded,0.0,5.5,1.0,2.0,https://stipendiumhungaricum.hu/
+392,Stipendium Hungaricum - Hungary,Hungarian Government,Hungary,postgraduate,Environmental and Earth Sciences,fully_funded,0.0,5.5,1.0,2.0,https://stipendiumhungaricum.hu/
+393,Stipendium Hungaricum - Hungary,Hungarian Government,Hungary,postgraduate,Business and Economics,fully_funded,0.0,5.5,1.0,2.0,https://stipendiumhungaricum.hu/
+394,Stipendium Hungaricum - Hungary,Hungarian Government,Hungary,phd,Engineering,fully_funded,0.0,5.5,1.0,3.0,https://stipendiumhungaricum.hu/
+395,Stipendium Hungaricum - Hungary,Hungarian Government,Hungary,phd,Information Technology,fully_funded,0.0,5.5,1.0,3.0,https://stipendiumhungaricum.hu/
+396,Stipendium Hungaricum - Hungary,Hungarian Government,Hungary,phd,Agriculture and Life Sciences,fully_funded,0.0,5.5,1.0,3.0,https://stipendiumhungaricum.hu/
+397,Stipendium Hungaricum - Hungary,Hungarian Government,Hungary,phd,Mathematics and Natural Sciences,fully_funded,0.0,5.5,1.0,3.0,https://stipendiumhungaricum.hu/
+398,Stipendium Hungaricum - Hungary,Hungarian Government,Hungary,phd,Environmental and Earth Sciences,fully_funded,0.0,5.5,1.0,3.0,https://stipendiumhungaricum.hu/
+399,Stipendium Hungaricum - Hungary,Hungarian Government,Hungary,phd,Business and Economics,fully_funded,0.0,5.5,1.0,3.0,https://stipendiumhungaricum.hu/
+400,NL Scholarship,Netherland Government,Netherlands,undergraduate,Engineering,partial,0.0,0.0,11.0,4.0,https://www.studyinnl.org/finances/nl-scholarship#how-to-apply
+401,NL Scholarship,Netherland Government,Netherlands,undergraduate,Information Technology,partial,0.0,0.0,11.0,4.0,https://www.studyinnl.org/finances/nl-scholarship#how-to-apply
+402,NL Scholarship,Netherland Government,Netherlands,undergraduate,Environmental and Earth Sciences,partial,0.0,0.0,11.0,4.0,https://www.studyinnl.org/finances/nl-scholarship#how-to-apply
+403,NL Scholarship,Netherland Government,Netherlands,undergraduate,Agriculture and Life Sciences,partial,0.0,0.0,11.0,4.0,https://www.studyinnl.org/finances/nl-scholarship#how-to-apply
+404,NL Scholarship,Netherland Government,Netherlands,undergraduate,Business and Economics,partial,0.0,0.0,11.0,4.0,https://www.studyinnl.org/finances/nl-scholarship#how-to-apply
+405,NL Scholarship,Netherland Government,Netherlands,undergraduate,Education,partial,0.0,0.0,11.0,4.0,https://www.studyinnl.org/finances/nl-scholarship#how-to-apply
+406,NL Scholarship,Netherland Government,Netherlands,postgraduate,Engineering,partial,0.0,0.0,11.0,4.0,https://www.studyinnl.org/finances/nl-scholarship#how-to-apply
+407,NL Scholarship,Netherland Government,Netherlands,postgraduate,Information Technology,partial,0.0,0.0,11.0,4.0,https://www.studyinnl.org/finances/nl-scholarship#how-to-apply
+408,NL Scholarship,Netherland Government,Netherlands,postgraduate,Environmental and Earth Sciences,partial,0.0,0.0,11.0,4.0,https://www.studyinnl.org/finances/nl-scholarship#how-to-apply
+409,NL Scholarship,Netherland Government,Netherlands,postgraduate,Agriculture and Life Sciences,partial,0.0,0.0,11.0,4.0,https://www.studyinnl.org/finances/nl-scholarship#how-to-apply
+410,NL Scholarship,Netherland Government,Netherlands,postgraduate,Business and Economics,partial,0.0,0.0,11.0,4.0,https://www.studyinnl.org/finances/nl-scholarship#how-to-apply
+411,NL Scholarship,Netherland Government,Netherlands,postgraduate,Education,partial,0.0,0.0,11.0,4.0,https://www.studyinnl.org/finances/nl-scholarship#how-to-apply
+412,France Excellence Eiffel Scholarship,French Government,France,postgraduate,Engineering,partial,3.5,6.5,1.0,2.0,https://www.campusfrance.org/en/france-excellence-eiffel-scholarship-program
+413,France Excellence Eiffel Scholarship,French Government,France,postgraduate,Information Technology,partial,3.5,6.5,1.0,2.0,https://www.campusfrance.org/en/france-excellence-eiffel-scholarship-program
+414,France Excellence Eiffel Scholarship,French Government,France,postgraduate,Business and Economics,partial,3.5,6.5,1.0,2.0,https://www.campusfrance.org/en/france-excellence-eiffel-scholarship-program
+415,France Excellence Eiffel Scholarship,French Government,France,postgraduate,Law and Governance,partial,3.5,6.5,1.0,2.0,https://www.campusfrance.org/en/france-excellence-eiffel-scholarship-program
+416,France Excellence Eiffel Scholarship,French Government,France,postgraduate,Environmental and Earth Sciences,partial,3.5,6.5,1.0,2.0,https://www.campusfrance.org/en/france-excellence-eiffel-scholarship-program
+417,France Excellence Eiffel Scholarship,French Government,France,postgraduate,Mathematics and Natural Sciences,partial,3.5,6.5,1.0,2.0,https://www.campusfrance.org/en/france-excellence-eiffel-scholarship-program
+418,France Excellence Eiffel Scholarship,French Government,France,phd,Engineering,partial,3.5,6.5,1.0,2.0,https://www.campusfrance.org/en/france-excellence-eiffel-scholarship-program
+419,France Excellence Eiffel Scholarship,French Government,France,phd,Information Technology,partial,3.5,6.5,1.0,2.0,https://www.campusfrance.org/en/france-excellence-eiffel-scholarship-program
+420,France Excellence Eiffel Scholarship,French Government,France,phd,Business and Economics,partial,3.5,6.5,1.0,2.0,https://www.campusfrance.org/en/france-excellence-eiffel-scholarship-program
+421,France Excellence Eiffel Scholarship,French Government,France,phd,Mathematics and Natural Sciences,partial,3.5,6.5,1.0,2.0,https://www.campusfrance.org/en/france-excellence-eiffel-scholarship-program
+422,France Excellence Eiffel Scholarship,French Government,France,phd,Environmental and Earth Sciences,partial,3.5,6.5,1.0,2.0,https://www.campusfrance.org/en/france-excellence-eiffel-scholarship-program
