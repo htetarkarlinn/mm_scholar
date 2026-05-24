@@ -44,7 +44,7 @@
               <select name="level" class="form-select" required>
                 <option value="" disabled selected>Select a level</option>
                 {% for l in levels %}
-                <option value="{{ l }}">{{ l | capitalize }}</option>
+                <option value="{{ l }}">{{ l | replace("_", " ") | title }}</option>
                 {% endfor %}
               </select>
             </div>
