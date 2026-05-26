@@ -472,3 +472,13 @@ body {
   .card-body { padding: 16px; }
   .navbar-brand { font-size: 18px !important; }
 }
+
+/* dark mode text fix */
+@media (prefers-color-scheme: dark) {
+  .card h5, .card h6, .card p, .card label,
+  .form-label, .form-text, .card-header {
+    color: var(--text) !important;
+  }
+  .text-muted { color: var(--text-muted) !important; }
+  .form-select option { background: var(--card-bg); color: var(--text); }
+}
