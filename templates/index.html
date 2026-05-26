@@ -3,103 +3,140 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mm_scholar — Scholarship Finder</title>
+  <title>mm_scholar — Scholarship Finder for Myanmar Students</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 <body>
 
+<!-- navbar -->
 <nav class="navbar navbar-dark">
-  <div class="container">
-    <a class="navbar-brand fw-bold" href="/">mm_scholar</a>
-    <a class="nav-link text-white" href="/feedback-results">Feedback</a>
+  <div class="container d-flex align-items-center justify-content-between">
+    <a class="navbar-brand" href="/">mm<span>_scholar</span></a>
+    <div class="d-flex align-items-center gap-1">
+      <a class="nav-link" href="/compare">Model Comparison</a>
+      <a class="nav-link" href="/feedback-results">Feedback</a>
+    </div>
   </div>
 </nav>
 
-<div class="container py-5">
+<!-- hero -->
+<section class="hero">
+  <div class="container position-relative">
+    <div class="hero-badge">🎓 For Myanmar Students</div>
+    <h1>Find the Right <span>Scholarship</span><br/>for Your Future</h1>
+    <p>AI-powered recommendations from 421 verified scholarships across 25 countries — matched to your goals in seconds.</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <strong>421</strong>
+        <span>Scholarships</span>
+      </div>
+      <div class="hero-stat">
+        <strong>25</strong>
+        <span>Countries</span>
+      </div>
+      <div class="hero-stat">
+        <strong>3</strong>
+        <span>ML Models</span>
+      </div>
+      <div class="hero-stat">
+        <strong>71.76%</strong>
+        <span>Best Accuracy</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- form card -->
+<div class="container">
   <div class="row justify-content-center">
     <div class="col-lg-7">
 
-      <div class="text-center mb-4">
-        <h1 class="fw-bold">Find Your Scholarship</h1>
-        <p class="text-muted">Tell us about your study goals and we will match you with the best scholarships available for Myanmar students.</p>
-      </div>
-
-      <div class="card shadow-sm">
+      <div class="card form-card shadow">
         <div class="card-body p-4">
+
+          <h5 class="fw-bold mb-1">Tell us about your study goals</h5>
+          <p class="text-muted mb-4" style="font-size:13px;">Fill in all 4 fields to get your personalised scholarship match.</p>
+
           <form action="/recommend" method="POST">
 
-            <div class="mb-3">
-              <label class="form-label fw-semibold">Preferred country of study</label>
-              <select name="country" class="form-select" required>
-                <option value="" disabled selected>Select a country</option>
-                {% for c in countries %}
-                <option value="{{ c }}">{{ c }}</option>
-                {% endfor %}
-              </select>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Preferred country</label>
+                <select name="country" class="form-select" required>
+                  <option value="" disabled selected>Select country</option>
+                  {% for c in countries %}
+                  <option value="{{ c }}">{{ c }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Study level</label>
+                <select name="level" class="form-select" required>
+                  <option value="" disabled selected>Select level</option>
+                  {% for l in levels %}
+                  <option value="{{ l }}">
+                    {% if l == "phd" %}PhD
+                    {% elif l == "short_course" %}Short Course
+                    {% else %}{{ l | capitalize }}
+                    {% endif %}
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Field of study</label>
+                <select name="field" class="form-select" required>
+                  <option value="" disabled selected>Select field</option>
+                  {% for f in fields %}
+                  <option value="{{ f }}">{{ f }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Funding preference</label>
+                <select name="funding" class="form-select" required>
+                  <option value="" disabled selected>Select funding</option>
+                  {% for ft in funding_types %}
+                  <option value="{{ ft }}">{{ ft | replace("_", " ") | title }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label">Recommendation model</label>
+                <select name="model" class="form-select">
+                  <option value="dt" selected>Decision Tree — Best accuracy (71.76%)</option>
+                  <option value="rf">Random Forest (67.06%)</option>
+                  <option value="knn">k-NN (34.12%)</option>
+                </select>
+                <div class="form-text">Decision Tree is recommended based on our evaluation results. <a href="/compare">See comparison →</a></div>
+              </div>
             </div>
 
-            <div class="mb-3">
-              <label class="form-label fw-semibold">Study level</label>
-              <select name="level" class="form-select" required>
-                <option value="" disabled selected>Select a level</option>
-                {% for l in levels %}
-                <option value="{{ l }}">{{ l | replace("_", " ") | title }}</option>
-                {% endfor %}
-              </select>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label fw-semibold">Field of study</label>
-              <select name="field" class="form-select" required>
-                <option value="" disabled selected>Select a field</option>
-                {% for f in fields %}
-                <option value="{{ f }}">{{ f }}</option>
-                {% endfor %}
-              </select>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label fw-semibold">Funding preference</label>
-              <select name="funding" class="form-select" required>
-                <option value="" disabled selected>Select funding type</option>
-                {% for ft in funding_types %}
-                <option value="{{ ft }}">{{ ft | replace("_", " ") | title }}</option>
-                {% endfor %}
-              </select>
-            </div>
-
-            <div class="mb-4">
-              <label class="form-label fw-semibold">Recommendation model</label>
-              <select name="model" class="form-select">
-                <option value="dt" selected>Decision Tree (Best — 71.76%)</option>
-                <option value="rf">Random Forest (67.06%)</option>
-                <option value="knn">k-NN (34.12%)</option>
-              </select>
-              <div class="form-text">Decision Tree is recommended based on evaluation results.</div>
-            </div>
-
-            <div class="d-grid">
-              <button type="submit" class="btn btn-primary btn-lg">Find Scholarships</button>
+            <div class="d-grid mt-4">
+              <button type="submit" class="btn btn-accent btn-lg fw-bold">
+                🔍 Find My Scholarship
+              </button>
             </div>
 
           </form>
         </div>
       </div>
 
-      <p class="text-center text-muted mt-3" style="font-size: 13px;">
-  Based on 421 scholarships across 25 countries
-</p>
-
-<div class="text-center mt-2">
-  <a href="/compare" class="btn btn-outline-secondary btn-sm">
-    View Model Comparison →
-  </a>
-</div>
-
     </div>
   </div>
 </div>
+
+<!-- footer -->
+<footer class="footer">
+  mm_scholar — Built for Myanmar Students &nbsp;·&nbsp;
+  <a href="/compare">Model Comparison</a> &nbsp;·&nbsp;
+  <a href="/feedback-results">Feedback Dashboard</a>
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

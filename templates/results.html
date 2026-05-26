@@ -10,120 +10,132 @@
 <body>
 
 <nav class="navbar navbar-dark">
-  <div class="container">
-    <a class="navbar-brand fw-bold" href="/">mm_scholar</a>
-    <a class="nav-link text-white" href="/feedback-results">Feedback</a>
+  <div class="container d-flex align-items-center justify-content-between">
+    <a class="navbar-brand" href="/">mm<span>_scholar</span></a>
+    <div class="d-flex align-items-center gap-1">
+      <a class="nav-link" href="/compare">Model Comparison</a>
+      <a class="nav-link" href="/feedback-results">Feedback</a>
+    </div>
   </div>
 </nav>
 
 <div class="container py-5">
-
-  <!-- search summary -->
-  <div class="row justify-content-center mb-4">
-    <div class="col-lg-8">
-      <div class="alert alert-info d-flex flex-wrap gap-2 align-items-center">
-        <span class="fw-semibold me-1">Your search:</span>
-        <span class="badge bg-primary">{{ country }}</span>
-        <span class="badge bg-secondary">{{ level | capitalize }}</span>
-        <span class="badge bg-secondary">{{ field }}</span>
-        <span class="badge bg-success">{{ funding | replace("_", " ") | title }}</span>
-        <span class="ms-auto text-muted" style="font-size:12px;">
-          Model:
-          {% if model_choice == "dt" %}Decision Tree
-          {% elif model_choice == "rf" %}Random Forest
-          {% else %}k-NN
-          {% endif %}
-        </span>
-      </div>
-    </div>
-  </div>
-
   <div class="row justify-content-center">
     <div class="col-lg-8">
 
+      <!-- search summary -->
+      <div class="mb-4">
+        <p class="text-muted mb-2" style="font-size:13px;">Your search criteria</p>
+        <div>
+          <span class="search-pill">🌏 {{ country }}</span>
+          <span class="search-pill">🎓
+            {% if level == "phd" %}PhD
+            {% elif level == "short_course" %}Short Course
+            {% else %}{{ level | capitalize }}{% endif %}
+          </span>
+          <span class="search-pill">📚 {{ field }}</span>
+          <span class="search-pill">💰 {{ funding | replace("_"," ") | title }}</span>
+          <span class="search-pill">🤖
+            {% if model_choice == "dt" %}Decision Tree
+            {% elif model_choice == "rf" %}Random Forest
+            {% else %}k-NN{% endif %}
+          </span>
+        </div>
+      </div>
+
       {% if error %}
-      <div class="alert alert-warning">
-        <strong>No match found.</strong> {{ error }} — please try a different combination.
+      <div class="card text-center p-5">
+        <div style="font-size:48px;">😕</div>
+        <h5 class="fw-bold mt-3">No match found</h5>
+        <p class="text-muted">{{ error }}</p>
+        <a href="/" class="btn btn-primary mt-2" style="width:fit-content; margin:0 auto;">Try again</a>
       </div>
 
       {% elif results %}
-      <h5 class="fw-bold mb-3">Top {{ results | length }} Recommendation{% if results | length > 1 %}s{% endif %}</h5>
+      <h5 class="fw-bold mb-3">
+        Top {{ results | length }} Scholarship{% if results | length > 1 %}s{% endif %} for You
+      </h5>
 
       {% for r in results %}
-      <p class="text-muted mb-1" style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px;">
-        #{{ loop.index }} Match
-      </p>
-      <div class="card shadow-sm mb-4">
+      <div class="card scholarship-card mb-4">
+
+        <!-- card header -->
         <div class="card-header d-flex justify-content-between align-items-start">
-          <div>
-            <h5 class="mb-1 fw-bold">{{ r.scholarship_name }}</h5>
-            <span class="text-muted" style="font-size:14px;">{{ r.provider }}</span>
+          <div class="d-flex align-items-center gap-3">
+            <div class="rank-badge rank-{{ loop.index }}">{{ loop.index }}</div>
+            <div>
+              <h5>{{ r.scholarship_name }}</h5>
+              <div class="provider">{{ r.provider }}</div>
+            </div>
           </div>
-          <span class="badge
-            {% if r.funding_type == 'fully_funded' %}bg-success
-            {% else %}bg-warning text-dark{% endif %}">
-            {{ r.funding_type | replace("_", " ") | title }}
-          </span>
+          {% if r.funding_type == "fully_funded" %}
+          <span class="badge-funded">Fully Funded</span>
+          {% else %}
+          <span class="badge-partial">Partial</span>
+          {% endif %}
         </div>
 
-        <div class="card-body">
-          <div class="row g-3">
-            <div class="col-6 col-md-3">
-              <p class="text-muted mb-1" style="font-size:12px;">Country</p>
-              <p class="fw-semibold mb-0">{{ r.country_of_study }}</p>
-            </div>
-            <div class="col-6 col-md-3">
-              <p class="text-muted mb-1" style="font-size:12px;">Level</p>
-              <p class="fw-semibold mb-0">{{ r.level | capitalize }}</p>
-            </div>
-            <div class="col-6 col-md-3">
-              <p class="text-muted mb-1" style="font-size:12px;">Field</p>
-              <p class="fw-semibold mb-0">{{ r.field_of_study }}</p>
-            </div>
-            <div class="col-6 col-md-3">
-              <p class="text-muted mb-1" style="font-size:12px;">Duration</p>
-              <p class="fw-semibold mb-0">
-                {% if r.duration_years == 0.5 %}6 months
-                {% elif r.duration_years == 1.5 %}18 months
-                {% else %}{{ r.duration_years | int }} year{% if r.duration_years > 1 %}s{% endif %}
-                {% endif %}
-              </p>
-            </div>
-            <div class="col-6 col-md-3">
-              <p class="text-muted mb-1" style="font-size:12px;">Min GPA</p>
-              <p class="fw-semibold mb-0">
-                {% if r.min_gpa == 0.0 %}Not specified
-                {% else %}{{ r.min_gpa }} / 4.0{% endif %}
-              </p>
-            </div>
-            <div class="col-6 col-md-3">
-              <p class="text-muted mb-1" style="font-size:12px;">Min IELTS</p>
-              <p class="fw-semibold mb-0">
-                {% if r.min_ielts == 0.0 %}Not required
-                {% else %}{{ r.min_ielts }}{% endif %}
-              </p>
-            </div>
-            <div class="col-6 col-md-3">
-              <p class="text-muted mb-1" style="font-size:12px;">Deadline</p>
-              <p class="fw-semibold mb-0">
-                {% set months = ["Jan","Feb","Mar","Apr","May","Jun",
-                                 "Jul","Aug","Sep","Oct","Nov","Dec"] %}
-                {{ months[r.deadline_month | int - 1] }}
-              </p>
-            </div>
+        <!-- info grid -->
+        <div class="info-grid">
+          <div class="info-item">
+            <label>🌏 Country</label>
+            <p>{{ r.country_of_study }}</p>
+          </div>
+          <div class="info-item">
+            <label>🎓 Level</label>
+            <p>
+              {% if r.level == "phd" %}PhD
+              {% elif r.level == "short_course" %}Short Course
+              {% else %}{{ r.level | capitalize }}{% endif %}
+            </p>
+          </div>
+          <div class="info-item">
+            <label>📚 Field</label>
+            <p>{{ r.field_of_study }}</p>
+          </div>
+          <div class="info-item">
+            <label>⏱ Duration</label>
+            <p>
+              {% if r.duration_years == 0.5 %}6 months
+              {% elif r.duration_years == 1.5 %}18 months
+              {% else %}{{ r.duration_years | int }} year{% if r.duration_years > 1 %}s{% endif %}
+              {% endif %}
+            </p>
+          </div>
+          <div class="info-item">
+            <label>📊 Min GPA</label>
+            <p>{% if r.min_gpa == 0.0 %}Not specified{% else %}{{ r.min_gpa }} / 4.0{% endif %}</p>
+          </div>
+          <div class="info-item">
+            <label>🗣 Min IELTS</label>
+            <p>{% if r.min_ielts == 0.0 %}Not required{% else %}{{ r.min_ielts }}{% endif %}</p>
+          </div>
+          <div class="info-item">
+            <label>📅 Deadline</label>
+            <p>
+              {% set months = ["Jan","Feb","Mar","Apr","May","Jun",
+                               "Jul","Aug","Sep","Oct","Nov","Dec"] %}
+              {{ months[r.deadline_month | int - 1] }}
+            </p>
           </div>
         </div>
 
         <div class="card-footer d-flex justify-content-between align-items-center">
-          <span class="text-muted" style="font-size:12px;">Always verify eligibility on the official website</span>
-          <a href="{{ r.link }}" target="_blank" class="btn btn-primary btn-sm">Apply Now →</a>
+          <span style="font-size:12px; color:var(--text-muted);">
+            Always verify eligibility on the official website
+          </span>
+          <a href="{{ r.link }}" target="_blank" class="btn btn-accent btn-sm fw-bold">
+            Apply Now →
+          </a>
         </div>
       </div>
       {% endfor %}
 
       <!-- feedback form -->
-      <div class="card shadow-sm mb-4">
-        <div class="card-header fw-semibold">Was this recommendation helpful?</div>
+      <div class="card mt-2">
+        <div class="card-header">
+          💬 Was this recommendation helpful?
+        </div>
         <div class="card-body">
           <form action="/feedback" method="POST">
             <input type="hidden" name="country"        value="{{ country }}" />
@@ -134,24 +146,20 @@
             <input type="hidden" name="recommendation" value="{{ recommendation }}" />
 
             <div class="mb-3">
-              <label class="form-label fw-semibold">Rate this recommendation</label>
-              <div class="d-flex gap-2">
-                {% for i in [1, 2, 3, 4, 5] %}
-                <div class="form-check">
-                  <input class="form-check-input" type="radio"
-                         name="rating" value="{{ i }}" id="star{{ i }}"
-                         required />
-                  <label class="form-check-label" for="star{{ i }}">{{ i }}</label>
-                </div>
+              <label class="form-label">Rate this recommendation</label>
+              <div class="star-rating">
+                {% for i in [1,2,3,4,5] %}
+                <input type="radio" name="rating" id="star{{ i }}" value="{{ i }}" required />
+                <label for="star{{ i }}">{{ ["1️⃣","2️⃣","3️⃣","4️⃣","5️⃣"][i-1] }}</label>
                 {% endfor %}
               </div>
-              <div class="form-text">1 = Not helpful &nbsp;·&nbsp; 5 = Very helpful</div>
+              <div class="form-text mt-2">1 = Not helpful &nbsp;·&nbsp; 5 = Very helpful</div>
             </div>
 
             <div class="mb-3">
-              <label class="form-label fw-semibold">Comments <span class="text-muted fw-normal">(optional)</span></label>
+              <label class="form-label">Comments <span class="text-muted fw-normal">(optional)</span></label>
               <textarea name="comment" class="form-control" rows="3"
-                        placeholder="Was the recommendation accurate? Any scholarships we missed?"></textarea>
+                placeholder="Was the recommendation accurate? Any scholarships we missed?"></textarea>
             </div>
 
             <button type="submit" class="btn btn-primary">Submit Feedback</button>
@@ -160,18 +168,26 @@
       </div>
 
       {% else %}
-      <div class="alert alert-warning">
-        No scholarship found for this combination. Please try different options.
+      <div class="card text-center p-5">
+        <div style="font-size:48px;">🔍</div>
+        <h5 class="fw-bold mt-3">No scholarships found</h5>
+        <p class="text-muted">Try a different combination of country, level, or field.</p>
       </div>
       {% endif %}
 
-      <div class="text-center mt-2">
+      <div class="text-center mt-4">
         <a href="/" class="btn btn-outline-secondary">← Search Again</a>
       </div>
 
     </div>
   </div>
 </div>
+
+<footer class="footer">
+  mm_scholar — Built for Myanmar Students &nbsp;·&nbsp;
+  <a href="/compare">Model Comparison</a> &nbsp;·&nbsp;
+  <a href="/feedback-results">Feedback Dashboard</a>
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
