@@ -64,7 +64,7 @@
           <div class="d-flex align-items-center gap-3 mb-2">
             <span style="width: 40px; font-size: 13px;">{{ star }} ★</span>
             <div class="progress flex-grow-1" style="height: 18px;">
-              <div class="progress-bar bg-success" style="width: {% if total > 0 %}{{ (ratings[star] / total * 100) | round(0) }}{% else %}0{% endif %};">
+              <div class="progress-bar bg-success" style="width: {% if total > 0 %}{{ (ratings[star] / total * 100) | round(0) }}%{% else %}0%{% endif %};">
               </div>
             </div>
             <span style="width: 30px; font-size: 13px; text-align:right;">{{ ratings[star] }}</span>

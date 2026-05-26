@@ -1,4 +1,5 @@
 import os
+import json
 import sqlite3
 import joblib
 import datetime
@@ -63,34 +64,41 @@ def get_recommendations(country, level, field, funding, model):
     except ValueError as e:
         return [], str(e)
 
-    x    = scaler.transform([encoded])
-    pred = model.predict(x)[0]
-    name = encoders["scholarship_name"].inverse_transform([pred])[0]
+    x      = scaler.transform([encoded])
+    proba  = model.predict_proba(x)[0]
+    top3   = model.classes_[proba.argsort()[::-1][:3]]
+    names  = encoders["scholarship_name"].inverse_transform(top3)
+
+    cols = ("SELECT DISTINCT scholarship_name, provider, country_of_study, "
+            "level, field_of_study, funding_type, min_gpa, min_ielts, "
+            "deadline_month, duration_years, link FROM scholarships ")
 
     conn    = sqlite3.connect(DB_PATH)
-    results = pd.read_sql(
-        "SELECT DISTINCT scholarship_name, provider, country_of_study, "
-        "level, field_of_study, funding_type, min_gpa, min_ielts, "
-        "deadline_month, duration_years, link "
-        "FROM scholarships WHERE scholarship_name = ? "
-        "AND country_of_study = ? AND level = ? AND field_of_study = ?",
-        conn, params=(name, country, level, field)
-    )
+    results = []
+    seen    = set()
+    for name in names:
+        if name in seen:
+            continue
+        seen.add(name)
+        row = pd.read_sql(
+            cols + "WHERE scholarship_name = ? "
+                   "AND country_of_study = ? AND level = ? AND field_of_study = ?",
+            conn, params=(name, country, level, field)
+        )
+        if row.empty:
+            row = pd.read_sql(
+                cols + "WHERE scholarship_name = ? AND funding_type = ? LIMIT 1",
+                conn, params=(name, funding)
+            )
+        if row.empty:
+            row = pd.read_sql(
+                cols + "WHERE scholarship_name = ? LIMIT 1",
+                conn, params=(name,)
+            )
+        if not row.empty:
+            results.append(row.iloc[0].to_dict())
     conn.close()
-
-    if not results.empty:
-        return results.to_dict("records"), None
-
-    conn     = sqlite3.connect(DB_PATH)
-    fallback = pd.read_sql(
-        "SELECT DISTINCT scholarship_name, provider, country_of_study, "
-        "level, field_of_study, funding_type, min_gpa, min_ielts, "
-        "deadline_month, duration_years, link "
-        "FROM scholarships WHERE scholarship_name = ? LIMIT 1",
-        conn, params=(name,)
-    )
-    conn.close()
-    return fallback.to_dict("records"), None
+    return results, None
 
 
 @app.route("/")
@@ -181,17 +189,9 @@ def feedback_results():
 
 @app.route("/compare")
 def compare():
-    metrics = [
-        {"model": "k-NN",          "params": "k=5",      "accuracy": 34.12,
-         "precision": 25.30, "recall": 34.12, "f1": 27.54,
-         "cv_mean": 29.69, "cv_std": 6.67},
-        {"model": "Decision Tree",  "params": "depth=9",  "accuracy": 71.76,
-         "precision": 71.73, "recall": 71.76, "f1": 71.28,
-         "cv_mean": 76.02, "cv_std": 4.37},
-        {"model": "Random Forest",  "params": "n=50",     "accuracy": 67.06,
-         "precision": 67.65, "recall": 67.06, "f1": 67.29,
-         "cv_mean": 73.40, "cv_std": 2.66},
-    ]
+    metrics_path = os.path.join(MODELS_DIR, "metrics.json")
+    with open(metrics_path) as f:
+        metrics = json.load(f)
     return render_template("compare.html", metrics=metrics)
 
 

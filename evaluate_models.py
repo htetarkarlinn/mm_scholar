@@ -1,4 +1,5 @@
 import os
+import json
 import sqlite3
 import joblib
 import numpy as np
@@ -80,12 +81,14 @@ print("Saved: accuracy_comparison.png")
 print("\n=== Model Evaluation Metrics ===")
 print(f"{'Model':<20} {'Accuracy':>10} {'Precision':>10} {'Recall':>10} {'F1':>10}")
 print("-" * 62)
+eval_metrics = {}
 for name, m in models.items():
     y_pred = m.predict(X_test_s)
     acc    = accuracy_score(y_test, y_pred)
     prec   = precision_score(y_test, y_pred, average="weighted", zero_division=0)
     rec    = recall_score(y_test, y_pred, average="weighted", zero_division=0)
     f1     = f1_score(y_test, y_pred, average="weighted", zero_division=0)
+    eval_metrics[name] = {"accuracy": acc, "precision": prec, "recall": rec, "f1": f1}
     print(f"{name:<20} {acc*100:>9.2f}% {prec*100:>9.2f}% {rec*100:>9.2f}% {f1*100:>9.2f}%")
 print("-" * 62)
 
@@ -94,7 +97,31 @@ print("-" * 62)
 print("\n=== 5-Fold Cross Validation ===")
 for name, m in models.items():
     scores = cross_val_score(m, scaler.transform(X), y, cv=5, scoring="accuracy")
+    eval_metrics[name]["cv_mean"] = scores.mean()
+    eval_metrics[name]["cv_std"]  = scores.std()
     print(f"{name:<20} mean={scores.mean()*100:.2f}%  std={scores.std()*100:.2f}%")
+
+params_map = {
+    "k-NN":          f"k={knn.n_neighbors}",
+    "Decision Tree": f"depth={dt.max_depth}",
+    "Random Forest": f"n={rf.n_estimators}",
+}
+metrics_json = [
+    {
+        "model":     name,
+        "params":    params_map[name],
+        "accuracy":  round(v["accuracy"]  * 100, 2),
+        "precision": round(v["precision"] * 100, 2),
+        "recall":    round(v["recall"]    * 100, 2),
+        "f1":        round(v["f1"]        * 100, 2),
+        "cv_mean":   round(v["cv_mean"]   * 100, 2),
+        "cv_std":    round(v["cv_std"]    * 100, 2),
+    }
+    for name, v in eval_metrics.items()
+]
+with open(os.path.join(MODELS_DIR, "metrics.json"), "w") as f:
+    json.dump(metrics_json, f, indent=2)
+print("Saved: models/metrics.json")
 
 
 # --- 4. Confusion matrix for best model (Decision Tree) ---
