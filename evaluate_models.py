@@ -39,6 +39,10 @@ rf       = joblib.load(os.path.join(MODELS_DIR, "rf_model.pkl"))
 encoders = joblib.load(os.path.join(MODELS_DIR, "encoders.pkl"))
 scaler   = joblib.load(os.path.join(MODELS_DIR, "scaler.pkl"))
 
+# drop singleton classes (same filter applied during training)
+counts = df[TARGET].map(df[TARGET].value_counts())
+df = df[counts >= 2].reset_index(drop=True)
+
 # encode features using saved encoders
 for col in FEATURES + [TARGET]:
     df[col] = encoders[col].transform(df[col])

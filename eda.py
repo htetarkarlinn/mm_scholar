@@ -170,10 +170,11 @@ def plot_correlation(df):
     cols = ["country_of_study", "level", "field_of_study", "funding_type",
             "min_gpa", "min_ielts", "deadline_month", "duration_years"]
     df_enc = df[cols].copy()
+    df_enc["duration_years"] = pd.to_numeric(df_enc["duration_years"], errors="coerce")
     for col in ["country_of_study", "level", "field_of_study", "funding_type"]:
         df_enc[col] = LabelEncoder().fit_transform(df_enc[col])
 
-    corr = df_enc.corr().round(2)
+    corr = df_enc.corr(numeric_only=True).round(2)
     mask = np.triu(np.ones_like(corr, dtype=bool))
 
     fig, ax = plt.subplots(figsize=(10, 8))

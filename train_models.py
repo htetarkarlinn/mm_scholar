@@ -30,6 +30,11 @@ for col in FEATURES + [TARGET]:
     df[col] = le.fit_transform(df[col])
     encoders[col] = le
 
+# drop classes with only 1 sample — stratified split requires ≥2 per class
+counts = df[TARGET].map(df[TARGET].value_counts())
+df = df[counts >= 2].reset_index(drop=True)
+print(f"After dropping singletons: {len(df)} rows, {df[TARGET].nunique()} classes")
+
 # split features and target
 X = df[FEATURES].values
 y = df[TARGET].values

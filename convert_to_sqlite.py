@@ -23,6 +23,15 @@ def load_csv(path: str) -> pd.DataFrame:
     return df
 
 
+def normalize(df: pd.DataFrame) -> pd.DataFrame:
+    level_map = {
+        "PhD": "phd",
+        "Short Course & Exchange": "short_course",
+    }
+    df["level"] = df["level"].replace(level_map)
+    return df
+
+
 def validate(df: pd.DataFrame) -> None:
     log.info("Validating dataset...")
 
@@ -101,6 +110,7 @@ if __name__ == "__main__":
     DB_PATH    = os.path.join(BASE_DIR, "mm_scholar.db")
 
     df = load_csv(CSV_PATH)
+    df = normalize(df)
     validate(df)
     convert(df, DB_PATH)
     verify(DB_PATH)
