@@ -359,9 +359,8 @@ async function toggleExplanation(btn) {
   btn.disabled = true;
   btn.textContent = 'Loading…';
 
-  const scholarship = JSON.parse(btn.dataset.scholarship);
-
   try {
+    const scholarship = JSON.parse(btn.dataset.scholarship);
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 20000);
     const res = await fetch('/explain', {
