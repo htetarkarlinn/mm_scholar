@@ -218,7 +218,10 @@ Keep total response under 150 words.
 Be encouraging and specific.
 Write for a Myanmar student applying for the first time.
 """
-    response = gemini.generate_content(prompt)
+    response = gemini.generate_content(
+        prompt,
+        request_options={"timeout": 15}
+    )
     return response.text
 
 
@@ -231,6 +234,7 @@ def explain():
         explanation = generate_explanation(scholarship, student_profile)
         return {"explanation": explanation}
     except Exception as e:
+        app.logger.error(f"/explain error: {e}")
         return {"explanation": "Explanation unavailable. Please visit the official scholarship website for more details."}, 200
 
 

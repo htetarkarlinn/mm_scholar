@@ -362,11 +362,15 @@ async function toggleExplanation(btn) {
   const scholarship = JSON.parse(btn.dataset.scholarship);
 
   try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 20000);
     const res = await fetch('/explain', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ scholarship, student_profile: STUDENT_PROFILE })
+      body: JSON.stringify({ scholarship, student_profile: STUDENT_PROFILE }),
+      signal: controller.signal
     });
+    clearTimeout(timer);
     const data = await res.json();
 
     spinner.style.display = 'none';
