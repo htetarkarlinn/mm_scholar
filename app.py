@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
-gemini = genai.GenerativeModel("gemini-2.0-flash-lite")
+gemini = genai.GenerativeModel("gemini-2.5-flash")
 
 BASE_DIR   = os.path.dirname(os.path.abspath(__file__))
 DB_PATH    = os.path.join(BASE_DIR, "mm_scholar.db")
@@ -218,10 +218,7 @@ Keep total response under 150 words.
 Be encouraging and specific.
 Write for a Myanmar student applying for the first time.
 """
-    response = gemini.generate_content(
-        prompt,
-        request_options={"timeout": 15}
-    )
+    response = gemini.generate_content(prompt)
     return response.text
 
 

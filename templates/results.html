@@ -361,16 +361,20 @@ async function toggleExplanation(btn) {
 
   try {
     const scholarship = JSON.parse(btn.dataset.scholarship);
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 20000);
+    console.log('step1: parsed scholarship', scholarship.scholarship_name);
+
     const res = await fetch('/explain', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ scholarship, student_profile: STUDENT_PROFILE }),
-      signal: controller.signal
+      body: JSON.stringify({ scholarship, student_profile: STUDENT_PROFILE })
     });
-    clearTimeout(timer);
-    const data = await res.json();
+    console.log('step2: got response', res.status);
+
+    const text = await res.text();
+    console.log('step3: raw response', text.slice(0, 200));
+
+    const data = JSON.parse(text);
+    console.log('step4: parsed data', data);
 
     spinner.style.display = 'none';
     if (data.error) {
@@ -380,6 +384,7 @@ async function toggleExplanation(btn) {
     }
     btn.textContent = 'Hide explanation';
   } catch (err) {
+    console.error('explain error:', err);
     spinner.style.display = 'none';
     textDiv.innerHTML = `<p class="text-danger" style="font-size:13px;">Could not load explanation. Please try again.</p>`;
     btn.textContent = 'Why this matches me? 💡';
