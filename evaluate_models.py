@@ -9,7 +9,7 @@ import matplotlib.patches as mpatches
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.metrics import (accuracy_score, precision_score,
                              recall_score, f1_score, confusion_matrix,
-                             ConfusionMatrixDisplay)
+                             ConfusionMatrixDisplay, top_k_accuracy_score)
 from sklearn.tree import export_text, plot_tree
 
 BASE_DIR   = os.path.dirname(os.path.abspath(__file__))
@@ -18,8 +18,10 @@ MODELS_DIR = os.path.join(BASE_DIR, "models")
 OUTPUT_DIR = os.path.join(BASE_DIR, "static", "eda")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-FEATURES = ["country_of_study", "level", "field_of_study", "funding_type"]
-TARGET   = "scholarship_name"
+CAT_FEATURES = ["country_of_study", "level", "field_of_study", "funding_type"]
+NUM_FEATURES = ["min_gpa", "min_ielts"]
+FEATURES     = CAT_FEATURES + NUM_FEATURES
+TARGET       = "scholarship_name"
 
 BLUE  = "#1F4E79"
 BLUE2 = "#2E75B6"
@@ -43,9 +45,13 @@ scaler   = joblib.load(os.path.join(MODELS_DIR, "scaler.pkl"))
 counts = df[TARGET].map(df[TARGET].value_counts())
 df = df[counts >= 2].reset_index(drop=True)
 
-# encode features using saved encoders
-for col in FEATURES + [TARGET]:
+# encode categorical features using saved encoders
+for col in CAT_FEATURES + [TARGET]:
     df[col] = encoders[col].transform(df[col])
+
+# numeric features: fill NaN with 0
+for col in NUM_FEATURES:
+    df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0)
 
 X = df[FEATURES].values
 y = df[TARGET].values
@@ -83,18 +89,21 @@ print("Saved: accuracy_comparison.png")
 
 # --- 2. Full metrics table ---
 print("\n=== Model Evaluation Metrics ===")
-print(f"{'Model':<20} {'Accuracy':>10} {'Precision':>10} {'Recall':>10} {'F1':>10}")
-print("-" * 62)
+print(f"{'Model':<20} {'Top-1 Acc':>10} {'Top-3 Acc':>10} {'Precision':>10} {'Recall':>10} {'F1':>10}")
+print("-" * 72)
 eval_metrics = {}
 for name, m in models.items():
-    y_pred = m.predict(X_test_s)
-    acc    = accuracy_score(y_test, y_pred)
-    prec   = precision_score(y_test, y_pred, average="weighted", zero_division=0)
-    rec    = recall_score(y_test, y_pred, average="weighted", zero_division=0)
-    f1     = f1_score(y_test, y_pred, average="weighted", zero_division=0)
-    eval_metrics[name] = {"accuracy": acc, "precision": prec, "recall": rec, "f1": f1}
-    print(f"{name:<20} {acc*100:>9.2f}% {prec*100:>9.2f}% {rec*100:>9.2f}% {f1*100:>9.2f}%")
-print("-" * 62)
+    y_pred  = m.predict(X_test_s)
+    y_proba = m.predict_proba(X_test_s)
+    acc     = accuracy_score(y_test, y_pred)
+    top3    = top_k_accuracy_score(y_test, y_proba, k=3, labels=m.classes_)
+    prec    = precision_score(y_test, y_pred, average="weighted", zero_division=0)
+    rec     = recall_score(y_test, y_pred, average="weighted", zero_division=0)
+    f1      = f1_score(y_test, y_pred, average="weighted", zero_division=0)
+    eval_metrics[name] = {"accuracy": acc, "top3_accuracy": top3,
+                          "precision": prec, "recall": rec, "f1": f1}
+    print(f"{name:<20} {acc*100:>9.2f}% {top3*100:>9.2f}% {prec*100:>9.2f}% {rec*100:>9.2f}% {f1*100:>9.2f}%")
+print("-" * 72)
 
 
 # --- 3. Cross-validation scores ---
@@ -110,21 +119,28 @@ params_map = {
     "Decision Tree": f"depth={dt.max_depth}",
     "Random Forest": f"n={rf.n_estimators}",
 }
-metrics_json = [
+models_list = [
     {
-        "model":     name,
-        "params":    params_map[name],
-        "accuracy":  round(v["accuracy"]  * 100, 2),
-        "precision": round(v["precision"] * 100, 2),
-        "recall":    round(v["recall"]    * 100, 2),
-        "f1":        round(v["f1"]        * 100, 2),
-        "cv_mean":   round(v["cv_mean"]   * 100, 2),
-        "cv_std":    round(v["cv_std"]    * 100, 2),
+        "model":         name,
+        "params":        params_map[name],
+        "accuracy":      round(v["accuracy"]      * 100, 2),
+        "top3_accuracy": round(v["top3_accuracy"] * 100, 2),
+        "precision":     round(v["precision"]     * 100, 2),
+        "recall":        round(v["recall"]        * 100, 2),
+        "f1":            round(v["f1"]            * 100, 2),
+        "cv_mean":       round(v["cv_mean"]       * 100, 2),
+        "cv_std":        round(v["cv_std"]        * 100, 2),
     }
     for name, v in eval_metrics.items()
 ]
+with open(os.path.join(MODELS_DIR, "best_model_info.json")) as _f:
+    _best = json.load(_f)
 with open(os.path.join(MODELS_DIR, "metrics.json"), "w") as f:
-    json.dump(metrics_json, f, indent=2)
+    json.dump({
+        "best_model_name": _best["name"],
+        "best_model_acc":  _best["accuracy"],
+        "models":          models_list,
+    }, f, indent=2)
 print("Saved: models/metrics.json")
 
 

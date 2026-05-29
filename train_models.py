@@ -3,7 +3,7 @@ import sqlite3
 import joblib
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
@@ -14,8 +14,10 @@ DB_PATH    = os.path.join(BASE_DIR, "mm_scholar.db")
 MODELS_DIR = os.path.join(BASE_DIR, "models")
 os.makedirs(MODELS_DIR, exist_ok=True)
 
-FEATURES = ["country_of_study", "level", "field_of_study", "funding_type"]
-TARGET   = "scholarship_name"
+CAT_FEATURES = ["country_of_study", "level", "field_of_study", "funding_type"]
+NUM_FEATURES = ["min_gpa", "min_ielts"]
+FEATURES     = CAT_FEATURES + NUM_FEATURES
+TARGET       = "scholarship_name"
 
 # load from database
 conn = sqlite3.connect(DB_PATH)
@@ -23,17 +25,21 @@ df   = pd.read_sql("SELECT * FROM scholarships", conn)
 conn.close()
 print(f"Loaded {len(df)} rows")
 
+# drop singleton classes before encoding so encoders only know trainable classes
+counts = df[TARGET].map(df[TARGET].value_counts())
+df     = df[counts >= 2].reset_index(drop=True)
+print(f"After dropping singletons: {len(df)} rows, {df[TARGET].nunique()} classes")
+
 # encode categorical features and target
 encoders = {}
-for col in FEATURES + [TARGET]:
+for col in CAT_FEATURES + [TARGET]:
     le = LabelEncoder()
     df[col] = le.fit_transform(df[col])
     encoders[col] = le
 
-# drop classes with only 1 sample — stratified split requires ≥2 per class
-counts = df[TARGET].map(df[TARGET].value_counts())
-df = df[counts >= 2].reset_index(drop=True)
-print(f"After dropping singletons: {len(df)} rows, {df[TARGET].nunique()} classes")
+# numeric features: fill any NaN with 0 (no requirement)
+for col in NUM_FEATURES:
+    df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0)
 
 # split features and target
 X = df[FEATURES].values
@@ -44,52 +50,46 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 print(f"Train: {len(X_train)} rows  |  Test: {len(X_test)} rows")
 
-# scale features to 0-1 range
+# scale all features to 0-1 range
 scaler  = MinMaxScaler()
 X_train = scaler.fit_transform(X_train)
 X_test  = scaler.transform(X_test)
 
-# train k-NN — test k = 3, 5, 7, 9
-print("\nk-NN")
-knn_results = {}
-for k in [3, 5, 7, 9]:
-    m   = KNeighborsClassifier(n_neighbors=k, metric="euclidean")
-    m.fit(X_train, y_train)
-    acc = accuracy_score(y_test, m.predict(X_test))
-    knn_results[k] = (m, acc)
-    print(f"  k={k}  →  {acc*100:.2f}%")
+# GridSearchCV — k-NN
+print("\nk-NN (GridSearchCV 5-fold)")
+knn_grid = GridSearchCV(
+    KNeighborsClassifier(),
+    param_grid={"n_neighbors": [3, 5, 7, 9, 11, 15], "metric": ["euclidean", "manhattan"]},
+    cv=5, scoring="accuracy", n_jobs=-1
+)
+knn_grid.fit(X_train, y_train)
+knn_model = knn_grid.best_estimator_
+knn_acc   = accuracy_score(y_test, knn_model.predict(X_test))
+print(f"  Best: {knn_grid.best_params_}  →  {knn_acc*100:.2f}%")
 
-best_k        = max(knn_results, key=lambda k: knn_results[k][1])
-knn_model, knn_acc = knn_results[best_k]
-print(f"  Best k={best_k}  ({knn_acc*100:.2f}%)")
+# GridSearchCV — Decision Tree
+print("\nDecision Tree (GridSearchCV 5-fold)")
+dt_grid = GridSearchCV(
+    DecisionTreeClassifier(random_state=42),
+    param_grid={"max_depth": [3, 5, 7, 9, 11, 15], "min_samples_split": [2, 5, 10]},
+    cv=5, scoring="accuracy", n_jobs=-1
+)
+dt_grid.fit(X_train, y_train)
+dt_model = dt_grid.best_estimator_
+dt_acc   = accuracy_score(y_test, dt_model.predict(X_test))
+print(f"  Best: {dt_grid.best_params_}  →  {dt_acc*100:.2f}%")
 
-# train Decision Tree — test depth = 3, 5, 7
-print("\nDecision Tree")
-dt_results = {}
-for depth in [3, 5, 7, 9, 11]:
-    m   = DecisionTreeClassifier(max_depth=depth, random_state=42)
-    m.fit(X_train, y_train)
-    acc = accuracy_score(y_test, m.predict(X_test))
-    dt_results[depth] = (m, acc)
-    print(f"  depth={depth}  →  {acc*100:.2f}%")
-
-best_depth       = max(dt_results, key=lambda d: dt_results[d][1])
-dt_model, dt_acc = dt_results[best_depth]
-print(f"  Best depth={best_depth}  ({dt_acc*100:.2f}%)")
-
-# train Random Forest — test 50, 100 trees
-print("\nRandom Forest")
-rf_results = {}
-for n in [50, 100]:
-    m   = RandomForestClassifier(n_estimators=n, random_state=42)
-    m.fit(X_train, y_train)
-    acc = accuracy_score(y_test, m.predict(X_test))
-    rf_results[n] = (m, acc)
-    print(f"  n_estimators={n}  →  {acc*100:.2f}%")
-
-best_n           = max(rf_results, key=lambda n: rf_results[n][1])
-rf_model, rf_acc = rf_results[best_n]
-print(f"  Best n={best_n}  ({rf_acc*100:.2f}%)")
+# GridSearchCV — Random Forest
+print("\nRandom Forest (GridSearchCV 5-fold)")
+rf_grid = GridSearchCV(
+    RandomForestClassifier(random_state=42),
+    param_grid={"n_estimators": [50, 100, 200], "max_depth": [None, 10, 20]},
+    cv=5, scoring="accuracy", n_jobs=-1
+)
+rf_grid.fit(X_train, y_train)
+rf_model = rf_grid.best_estimator_
+rf_acc   = accuracy_score(y_test, rf_model.predict(X_test))
+print(f"  Best: {rf_grid.best_params_}  →  {rf_acc*100:.2f}%")
 
 # save everything
 joblib.dump(knn_model, os.path.join(MODELS_DIR, "knn_model.pkl"))
@@ -100,14 +100,23 @@ joblib.dump(scaler,    os.path.join(MODELS_DIR, "scaler.pkl"))
 
 # summary
 print("\n=== Summary ===")
-print(f"{'Model':<20} {'Params':<18} {'Accuracy':>10}")
-print("-" * 50)
-print(f"{'k-NN':<20} {'k='+str(best_k):<18} {knn_acc*100:>9.2f}%")
-print(f"{'Decision Tree':<20} {'depth='+str(best_depth):<18} {dt_acc*100:>9.2f}%")
-print(f"{'Random Forest':<20} {'n='+str(best_n):<18} {rf_acc*100:>9.2f}%")
-print("-" * 50)
+print(f"{'Model':<20} {'Best Params':<40} {'Accuracy':>10}")
+print("-" * 72)
+print(f"{'k-NN':<20} {str(knn_grid.best_params_):<40} {knn_acc*100:>9.2f}%")
+print(f"{'Decision Tree':<20} {str(dt_grid.best_params_):<40} {dt_acc*100:>9.2f}%")
+print(f"{'Random Forest':<20} {str(rf_grid.best_params_):<40} {rf_acc*100:>9.2f}%")
+print("-" * 72)
 
-scores = {"k-NN": knn_acc, "Decision Tree": dt_acc, "Random Forest": rf_acc}
-best   = max(scores, key=scores.get)
+scores  = {"k-NN": knn_acc, "Decision Tree": dt_acc, "Random Forest": rf_acc}
+objects = {"k-NN": knn_model, "Decision Tree": dt_model, "Random Forest": rf_model}
+best    = max(scores, key=scores.get)
 print(f"Best model: {best}  ({scores[best]*100:.2f}%)")
+
+joblib.dump(objects[best], os.path.join(MODELS_DIR, "best_model.pkl"))
+
+import json
+with open(os.path.join(MODELS_DIR, "best_model_info.json"), "w") as f:
+    json.dump({"name": best, "accuracy": round(scores[best] * 100, 2)}, f, indent=2)
+
+print(f"Saved best_model.pkl  ({best})")
 print("\nSaved to models/")

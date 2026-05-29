@@ -25,14 +25,14 @@
   <div class="container position-relative">
     <div class="hero-badge">🎓 For Myanmar Students</div>
     <h1>Find the Right <span>Scholarship</span><br/>for Your Future</h1>
-    <p>AI-powered recommendations from 421 verified scholarships across 25 countries — matched to your goals in seconds.</p>
+    <p>AI-powered recommendations from {{ num_scholarships }} verified scholarships across {{ num_countries }} countries — matched to your goals in seconds.</p>
     <div class="hero-stats">
       <div class="hero-stat">
-        <strong>421</strong>
+        <strong>{{ num_scholarships }}</strong>
         <span>Scholarships</span>
       </div>
       <div class="hero-stat">
-        <strong>25</strong>
+        <strong>{{ num_countries }}</strong>
         <span>Countries</span>
       </div>
       <div class="hero-stat">
@@ -40,7 +40,7 @@
         <span>ML Models</span>
       </div>
       <div class="hero-stat">
-        <strong>71.76%</strong>
+        <strong>{{ metrics.best_accuracy }}%</strong>
         <span>Best Accuracy</span>
       </div>
     </div>
@@ -56,13 +56,15 @@
         <div class="card-body p-4">
 
           <h5 class="fw-bold mb-1" style="color: var(--text);">Tell us about your study goals</h5>
-<p class="mb-4" style="font-size:13px; color: var(--text-muted);">Fill in all 4 fields to get your personalised scholarship match.</p>
+          <p class="mb-4" style="font-size:13px; color: var(--text-muted);">Fill in the required fields to get your personalised scholarship match.</p>
 
           <form action="/recommend" method="POST">
 
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label class="form-label">Preferred country</label>
+            <!-- Section 1: Required -->
+            <p class="fw-semibold mb-2" style="font-size:13px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.05em;">Required *</p>
+            <div class="row g-3 mb-4">
+              <div class="col-md-4">
+                <label class="form-label">Preferred country *</label>
                 <select name="country" class="form-select" required>
                   <option value="" disabled selected>Select country</option>
                   {% for c in countries %}
@@ -71,8 +73,8 @@
                 </select>
               </div>
 
-              <div class="col-md-6">
-                <label class="form-label">Study level</label>
+              <div class="col-md-4">
+                <label class="form-label">Study level *</label>
                 <select name="level" class="form-select" required>
                   <option value="" disabled selected>Select level</option>
                   {% for l in levels %}
@@ -86,18 +88,8 @@
                 </select>
               </div>
 
-              <div class="col-md-6">
-                <label class="form-label">Field of study</label>
-                <select name="field" class="form-select" required>
-                  <option value="" disabled selected>Select field</option>
-                  {% for f in fields %}
-                  <option value="{{ f }}">{{ f }}</option>
-                  {% endfor %}
-                </select>
-              </div>
-
-              <div class="col-md-6">
-                <label class="form-label">Funding preference</label>
+              <div class="col-md-4">
+                <label class="form-label">Funding preference *</label>
                 <select name="funding" class="form-select" required>
                   <option value="" disabled selected>Select funding</option>
                   {% for ft in funding_types %}
@@ -105,21 +97,40 @@
                   {% endfor %}
                 </select>
               </div>
+            </div>
 
-              <div class="col-12">
-                <label class="form-label">Recommendation model</label>
-                <select name="model" class="form-select">
-                  <option value="dt" selected>Decision Tree — Best accuracy (71.76%)</option>
-                  <option value="rf">Random Forest (67.06%)</option>
-                  <option value="knn">k-NN (34.12%)</option>
+            <!-- Section 2: Optional -->
+            <p class="fw-semibold mb-2" style="font-size:13px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.05em;">Optional — refine your results</p>
+            <div class="row g-3 mb-4">
+              <div class="col-md-4">
+                <label class="form-label">Field of study</label>
+                <select name="field" class="form-select">
+                  <option value="any" selected>Any field</option>
+                  {% for f in fields %}
+                  <option value="{{ f }}">{{ f }}</option>
+                  {% endfor %}
                 </select>
-                <div class="form-text">Decision Tree is recommended based on our evaluation results. <a href="/compare">See comparison →</a></div>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Your GPA</label>
+                <input type="number" name="gpa" class="form-control"
+                       min="0" max="4" step="0.1"
+                       placeholder="e.g. 3.5 — leave blank to skip" />
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Your IELTS score</label>
+                <input type="number" name="ielts" class="form-control"
+                       min="0" max="9" step="0.5"
+                       placeholder="e.g. 6.5 — leave blank to skip" />
               </div>
             </div>
 
-            <div class="d-grid mt-4">
+
+            <div class="d-grid">
               <button type="submit" class="btn btn-accent btn-lg fw-bold">
-                🔍 Find My Scholarship
+                🔍 Find Scholarships
               </button>
             </div>
 

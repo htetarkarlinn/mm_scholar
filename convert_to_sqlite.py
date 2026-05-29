@@ -27,6 +27,7 @@ def normalize(df: pd.DataFrame) -> pd.DataFrame:
     level_map = {
         "PhD": "phd",
         "Short Course & Exchange": "short_course",
+        "Short Course or Exchange": "short_course",
     }
     df["level"] = df["level"].replace(level_map)
     return df
@@ -73,6 +74,7 @@ def convert(df: pd.DataFrame, db_path: str) -> None:
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_level ON scholarships(level)")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_field ON scholarships(field_of_study)")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_funding ON scholarships(funding_type)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_name ON scholarships(scholarship_name)")
     conn.commit()
 
     count = cursor.execute("SELECT COUNT(*) FROM scholarships").fetchone()[0]
