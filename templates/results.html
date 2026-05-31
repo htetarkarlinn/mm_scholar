@@ -6,12 +6,18 @@
   <title>mm_scholar — Results</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
 </head>
 <body>
 
 <nav class="navbar navbar-dark">
   <div class="container d-flex align-items-center justify-content-between">
-    <a class="navbar-brand" href="/">mm<span>_scholar</span></a>
+    <a class="navbar-brand" href="/">
+      <img src="{{ url_for('static', filename='logo.png') }}"
+           alt="mm_scholar"
+           height="36"
+           style="object-fit:contain;" />
+    </a>
     <div class="d-flex align-items-center gap-1">
       <a class="nav-link" href="/compare">Model Comparison</a>
       <a class="nav-link" href="/feedback-results">Feedback</a>
@@ -151,12 +157,12 @@
           </span>
           <div class="d-flex gap-2 align-items-center flex-wrap">
             <button class="btn btn-outline-secondary btn-sm explain-btn"
-                    data-scholarship="{{ r | tojson | e }}"
+                    data-idx="{{ loop.index0 }}"
                     onclick="toggleExplanation(this)">
               Why this matches me? 💡
             </button>
             <button class="btn btn-outline-secondary btn-sm"
-                    data-scholarship="{{ r | tojson | e }}"
+                    data-idx="{{ loop.index0 }}"
                     onclick="openShareModal(this)">
               📤 Share
             </button>
@@ -264,6 +270,7 @@
 
 <script>
 const STUDENT_PROFILE = {{ student_profile | tojson }};
+const SCHOLARSHIPS    = {{ results | tojson }};
 
 function calculateDeadline(month) {
   const today    = new Date();
@@ -318,7 +325,7 @@ function buildShareMessage(r) {
 }
 
 function openShareModal(btn) {
-  const r   = JSON.parse(btn.dataset.scholarship);
+  const r   = SCHOLARSHIPS[parseInt(btn.dataset.idx)];
   const msg = buildShareMessage(r);
 
   document.getElementById("shareModalName").textContent = r.scholarship_name;
@@ -360,8 +367,8 @@ async function toggleExplanation(btn) {
   btn.textContent = 'Loading…';
 
   try {
-    const scholarship = JSON.parse(btn.dataset.scholarship);
-    console.log('step1: parsed scholarship', scholarship.scholarship_name);
+    const scholarship = SCHOLARSHIPS[parseInt(btn.dataset.idx)];
+    console.log('step1: scholarship', scholarship.scholarship_name);
 
     const res = await fetch('/explain', {
       method: 'POST',

@@ -50,14 +50,8 @@ body {
 }
 
 .navbar-brand {
-  font-size: 22px !important;
-  font-weight: 800 !important;
-  color: white !important;
-  letter-spacing: -0.5px;
-}
-
-.navbar-brand span {
-  color: var(--accent);
+  display: flex;
+  align-items: center;
 }
 
 .navbar .nav-link {
@@ -482,7 +476,7 @@ body {
   .info-grid { grid-template-columns: repeat(2, 1fr); }
   .form-card { margin-top: -24px; }
   .card-body { padding: 16px; }
-  .navbar-brand { font-size: 18px !important; }
+  .navbar-brand img { height: 28px; }
 }
 
 /* dark mode text fix */
@@ -492,5 +486,12 @@ body {
     color: var(--text) !important;
   }
   .text-muted { color: var(--text-muted) !important; }
+  .form-select,
+  .form-control {
+    background: var(--card-bg) !important;
+    color: var(--text) !important;
+    border-color: var(--border) !important;
+  }
   .form-select option { background: var(--card-bg); color: var(--text); }
+  .form-control::placeholder { color: var(--text-muted) !important; opacity: 1; }
 }
