@@ -131,21 +131,28 @@ def get_recommendations(country, level, funding, field, gpa, ielts):
     gpa   = float(gpa)   if gpa   else 0.0
     ielts = float(ielts) if ielts else 0.0
 
-    opt, opt_p = [], []
-    if field and field != "any":
-        opt.append("field_of_study = ?")
-        opt_p.append(field)
+    # Eligibility filters — applied at every fallback level so students
+    # are never shown scholarships whose GPA/IELTS requirement they can't meet.
+    score_opt, score_p = [], []
     if gpa > 0:
-        opt.append("(min_gpa = 0.0 OR min_gpa <= ?)")
-        opt_p.append(gpa)
+        score_opt.append("(min_gpa = 0.0 OR min_gpa <= ?)")
+        score_p.append(gpa)
     if ielts > 0:
-        opt.append("(min_ielts = 0.0 OR min_ielts <= ?)")
-        opt_p.append(ielts)
+        score_opt.append("(min_ielts = 0.0 OR min_ielts <= ?)")
+        score_p.append(ielts)
+
+    # Preference filters (field) — only applied at levels 1 & 2 where the
+    # search is already scoped tightly enough.
+    pref_opt = list(score_opt)
+    pref_p   = list(score_p)
+    if field and field != "any":
+        pref_opt.insert(0, "field_of_study = ?")
+        pref_p.insert(0, field)
 
     # Level 1 — exact match
     candidates = _fetch(
-        ["country_of_study = ?", "level = ?", "funding_type = ?"] + opt,
-        [country, level, funding] + opt_p
+        ["country_of_study = ?", "level = ?", "funding_type = ?"] + pref_opt,
+        [country, level, funding] + pref_p
     )
     if not candidates.empty:
         results = _rank(candidates)
@@ -154,23 +161,24 @@ def get_recommendations(country, level, funding, field, gpa, ielts):
 
     # Level 2 — relax funding_type
     candidates = _fetch(
-        ["country_of_study = ?", "level = ?"] + opt,
-        [country, level] + opt_p
+        ["country_of_study = ?", "level = ?"] + pref_opt,
+        [country, level] + pref_p
     )
     if not candidates.empty:
         results = _rank(candidates)
         if results:
             return results, "relaxed_funding"
 
-    # Level 3 — country only
-    candidates = _fetch(["country_of_study = ?"], [country])
+    # Level 3 — country only (score filters kept, field/funding relaxed)
+    candidates = _fetch(["country_of_study = ?"] + score_opt, [country] + score_p)
     if not candidates.empty:
         results = _rank(candidates)
         if results:
             return results, "country_only"
 
-    # Level 4 — popular fallback (fully_funded + same level, any country)
-    candidates = _fetch(["funding_type = ?", "level = ?"], ["fully_funded", level])
+    # Level 4 — popular fallback (score filters kept)
+    candidates = _fetch(["funding_type = ?", "level = ?"] + score_opt,
+                        ["fully_funded", level] + score_p)
     if not candidates.empty:
         results = _rank(candidates)
         if results:
@@ -237,6 +245,13 @@ def explain():
 
 @app.route("/")
 def index():
+    conn = sqlite3.connect(DB_PATH)
+    fb_df = pd.read_sql(
+        "SELECT * FROM feedback WHERE comment != '' AND comment IS NOT NULL "
+        "ORDER BY timestamp DESC LIMIT 3",
+        conn
+    )
+    conn.close()
     return render_template("index.html",
                            countries=countries,
                            levels=levels,
@@ -244,7 +259,8 @@ def index():
                            funding_types=funding_types,
                            metrics=load_metrics(),
                            num_scholarships=num_scholarships,
-                           num_countries=num_countries)
+                           num_countries=num_countries,
+                           recent_feedback=fb_df.to_dict("records"))
 
 
 @app.route("/recommend", methods=["POST"])
@@ -335,6 +351,11 @@ def feedback_results():
                            avg_rating=avg_rating,
                            total=total,
                            ratings=ratings)
+
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
 
 
 @app.route("/compare")

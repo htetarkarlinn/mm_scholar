@@ -1,4 +1,5 @@
 /* ─── mm_scholar design system ─────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap');
 
 :root {
   --primary:      #1F4E79;
@@ -52,6 +53,30 @@ body {
 .navbar-brand {
   display: flex;
   align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  line-height: 1;
+}
+
+.logo-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.logo-mm {
+  font-family: 'Poppins', 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--accent);
+  letter-spacing: -0.5px;
+}
+
+.logo-scholar {
+  font-family: 'Poppins', 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: white;
+  letter-spacing: -0.5px;
 }
 
 .navbar .nav-link {
@@ -449,6 +474,97 @@ body {
   background: rgba(31,78,121,0.04);
 }
 
+/* ─── Section layouts ─────────────────────────────────────────── */
+.section-search {
+  background: var(--bg);
+  padding: 72px 0;
+}
+
+.section-tinted {
+  background: rgba(31,78,121,0.05);
+  padding: 72px 0;
+}
+
+.section-white {
+  background: var(--card-bg);
+  padding: 72px 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .section-tinted { background: rgba(46,117,182,0.08); }
+  .section-white  { background: var(--card-bg); }
+}
+
+/* ─── How it works ────────────────────────────────────────────── */
+.step-icon {
+  font-size: 44px;
+  line-height: 1;
+  margin-bottom: 12px;
+}
+
+.step-number {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--primary-light);
+}
+
+/* ─── Featured scholarship cards ──────────────────────────────── */
+.featured-card {
+  cursor: pointer;
+  overflow: hidden;
+  border-top: none !important;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.featured-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.12) !important;
+}
+
+.featured-bar {
+  height: 5px;
+  width: 100%;
+}
+
+.featured-flag { font-size: 36px; line-height: 1; }
+
+/* ─── Why section ─────────────────────────────────────────────── */
+.why-check {
+  font-size: 22px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ─── Browse by Region ────────────────────────────────────────── */
+.region-card {
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.region-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.12) !important;
+}
+
+.region-icon {
+  font-size: 48px;
+  line-height: 1;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.region-badge {
+  display: inline-block;
+  background: var(--accent);
+  color: #1A202C;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 99px;
+}
+
 /* ─── Footer ──────────────────────────────────────────────────── */
 .footer {
   background: var(--primary);
@@ -460,6 +576,34 @@ body {
 }
 
 .footer a { color: var(--accent); text-decoration: none; }
+
+/* ─── Site footer (redesigned) ────────────────────────────────── */
+.site-footer {
+  background: var(--primary);
+  padding: 40px 0;
+}
+
+.site-footer-sub {
+  font-size: 13px;
+  color: rgba(255,255,255,0.55);
+  margin-top: 4px;
+}
+
+.site-footer-credit {
+  font-size: 13px;
+  color: rgba(255,255,255,0.75);
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.site-footer-link {
+  font-size: 13px;
+  color: rgba(255,255,255,0.65);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.site-footer-link:hover { color: var(--accent); }
 
 /* ─── Utilities ───────────────────────────────────────────────── */
 .text-accent  { color: var(--accent); }
@@ -476,7 +620,8 @@ body {
   .info-grid { grid-template-columns: repeat(2, 1fr); }
   .form-card { margin-top: -24px; }
   .card-body { padding: 16px; }
-  .navbar-brand img { height: 28px; }
+  .logo-mm, .logo-scholar { font-size: 18px; }
+  .logo-icon { font-size: 18px; }
 }
 
 /* dark mode text fix */

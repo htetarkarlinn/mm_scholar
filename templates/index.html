@@ -3,35 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mm_scholar — Scholarship Finder for Myanmar Students</title>
+  <title>MM Scholar — Scholarship Finder for Myanmar Students</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
   <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
 </head>
 <body>
 
-<!-- navbar -->
+<!-- 1. NAVBAR -->
 <nav class="navbar navbar-dark">
   <div class="container d-flex align-items-center justify-content-between">
     <a class="navbar-brand" href="/">
-      <img src="{{ url_for('static', filename='logo.png') }}"
-           alt="mm_scholar"
-           height="36"
-           style="object-fit:contain;" />
+      <span class="logo-icon">🎓</span><span class="logo-mm">MM</span><span class="logo-scholar"> Scholar</span>
     </a>
     <div class="d-flex align-items-center gap-1">
-      <a class="nav-link" href="/compare">Model Comparison</a>
+      <a class="nav-link" href="/about">About</a>
       <a class="nav-link" href="/feedback-results">Feedback</a>
     </div>
   </div>
 </nav>
 
-<!-- hero -->
-<section class="hero">
+<!-- 2. HERO -->
+<section class="hero" id="top">
   <div class="container position-relative">
     <div class="hero-badge">🎓 For Myanmar Students</div>
     <h1>Find the Right <span>Scholarship</span><br/>for Your Future</h1>
-    <p>AI-powered recommendations from {{ num_scholarships }} verified scholarships across {{ num_countries }} countries — matched to your goals in seconds.</p>
+    <p>AI-powered recommendations from {{ num_scholarships }} verified scholarships across {{ num_countries }} countries — free and instant.</p>
+    <a href="#search" class="btn btn-accent btn-lg fw-bold mb-5 px-5">🔍 Find My Scholarship</a>
     <div class="hero-stats">
       <div class="hero-stat">
         <strong>{{ num_scholarships }}</strong>
@@ -42,119 +40,391 @@
         <span>Countries</span>
       </div>
       <div class="hero-stat">
-        <strong>3</strong>
-        <span>ML Models</span>
+        <strong>Free</strong>
+        <span>No registration</span>
       </div>
       <div class="hero-stat">
-        <strong>{{ metrics.best_accuracy }}%</strong>
-        <span>Best Accuracy</span>
+        <strong>AI</strong>
+        <span>Powered</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- form card -->
-<div class="container">
-  <div class="row justify-content-center">
-    <div class="col-lg-7">
+<!-- 3. SEARCH FORM -->
+<section id="search" class="section-search">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="text-center mb-4">
+          <h2 class="fw-bold">Find Your Scholarship</h2>
+          <p class="text-muted">Tell us your study goals and our AI will match you instantly.</p>
+        </div>
+        <div class="card shadow">
+          <div class="card-body p-4">
+            <form action="/recommend" method="POST">
 
-      <div class="card form-card shadow">
-        <div class="card-body p-4">
-
-          <h5 class="fw-bold mb-1" style="color: var(--text);">Tell us about your study goals</h5>
-          <p class="mb-4" style="font-size:13px; color: var(--text-muted);">Fill in the required fields to get your personalised scholarship match.</p>
-
-          <form action="/recommend" method="POST">
-
-            <!-- Section 1: Required -->
-            <p class="fw-semibold mb-2" style="font-size:13px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.05em;">Required *</p>
-            <div class="row g-3 mb-4">
-              <div class="col-md-4">
-                <label class="form-label">Preferred country *</label>
-                <select name="country" class="form-select" required>
-                  <option value="" disabled selected>Select country</option>
-                  {% for c in countries %}
-                  <option value="{{ c }}">{{ c }}</option>
-                  {% endfor %}
-                </select>
+              <p class="fw-semibold mb-2" style="font-size:13px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.05em;">Required *</p>
+              <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                  <label class="form-label">Preferred country *</label>
+                  <select name="country" id="country-select" class="form-select" required>
+                    <option value="" disabled selected>Select country</option>
+                    {% for c in countries %}
+                    <option value="{{ c }}">{{ c }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Study level *</label>
+                  <select name="level" class="form-select" required>
+                    <option value="" disabled selected>Select level</option>
+                    {% for l in levels %}
+                    <option value="{{ l }}">
+                      {% if l == "phd" %}PhD
+                      {% elif l == "short_course" %}Short Course
+                      {% else %}{{ l | capitalize }}
+                      {% endif %}
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Funding preference *</label>
+                  <select name="funding" class="form-select" required>
+                    <option value="" disabled selected>Select funding</option>
+                    {% for ft in funding_types %}
+                    <option value="{{ ft }}">{{ ft | replace("_", " ") | title }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
               </div>
 
-              <div class="col-md-4">
-                <label class="form-label">Study level *</label>
-                <select name="level" class="form-select" required>
-                  <option value="" disabled selected>Select level</option>
-                  {% for l in levels %}
-                  <option value="{{ l }}">
-                    {% if l == "phd" %}PhD
-                    {% elif l == "short_course" %}Short Course
-                    {% else %}{{ l | capitalize }}
-                    {% endif %}
-                  </option>
-                  {% endfor %}
-                </select>
+              <p class="fw-semibold mb-2" style="font-size:13px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.05em;">Optional — refine your results</p>
+              <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                  <label class="form-label">Field of study</label>
+                  <select name="field" class="form-select">
+                    <option value="any" selected>Any field</option>
+                    {% for f in fields %}
+                    <option value="{{ f }}">{{ f }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Your GPA</label>
+                  <input type="number" name="gpa" class="form-control"
+                         min="0" max="4" step="0.1"
+                         placeholder="e.g. 3.5 — leave blank to skip" />
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Your IELTS score</label>
+                  <input type="number" name="ielts" class="form-control"
+                         min="0" max="9" step="0.5"
+                         placeholder="e.g. 6.5 — leave blank to skip" />
+                </div>
               </div>
 
-              <div class="col-md-4">
-                <label class="form-label">Funding preference *</label>
-                <select name="funding" class="form-select" required>
-                  <option value="" disabled selected>Select funding</option>
-                  {% for ft in funding_types %}
-                  <option value="{{ ft }}">{{ ft | replace("_", " ") | title }}</option>
-                  {% endfor %}
-                </select>
+              <div class="d-grid">
+                <button type="submit" class="btn btn-accent btn-lg fw-bold">
+                  🔍 Find Scholarships
+                </button>
               </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. HOW IT WORKS -->
+<section class="section-tinted">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold">How it works</h2>
+      <p class="text-muted">Three simple steps to find your scholarship.</p>
+    </div>
+    <div class="row g-4 justify-content-center">
+      <div class="col-md-4">
+        <div class="card h-100 text-center p-4">
+          <div class="step-icon">🔍</div>
+          <div class="step-number">Step 1</div>
+          <h5 class="fw-bold mt-2 mb-2">Fill in your study goals</h5>
+          <p class="text-muted mb-0">Choose your preferred country, study level, and funding type.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 text-center p-4">
+          <div class="step-icon">🤖</div>
+          <div class="step-number">Step 2</div>
+          <h5 class="fw-bold mt-2 mb-2">AI finds your matches</h5>
+          <p class="text-muted mb-0">Our machine learning model ranks scholarships by how well they fit your profile.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 text-center p-4">
+          <div class="step-icon">🎓</div>
+          <div class="step-number">Step 3</div>
+          <h5 class="fw-bold mt-2 mb-2">Get personalised explanations</h5>
+          <p class="text-muted mb-0">Gemini AI explains exactly why each scholarship matches you and what you need to apply.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. FEATURED SCHOLARSHIPS -->
+<section class="section-white">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold">Popular scholarships in our database</h2>
+      <p class="text-muted">Click any card to pre-fill the country and search instantly.</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-3">
+        <div class="card featured-card h-100" onclick="prefill('Japan')">
+          <div class="featured-bar" style="background:#BC002D;"></div>
+          <div class="card-body p-4">
+            <div class="featured-flag">🇯🇵</div>
+            <h6 class="fw-bold mt-3 mb-1">MEXT Scholarship</h6>
+            <p class="text-muted mb-3" style="font-size:13px;">Government of Japan</p>
+            <span class="badge-funded">Fully Funded</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="card featured-card h-100" onclick="prefill('UK')">
+          <div class="featured-bar" style="background:#C8102E;"></div>
+          <div class="card-body p-4">
+            <div class="featured-flag">🇬🇧</div>
+            <h6 class="fw-bold mt-3 mb-1">Chevening Scholarship</h6>
+            <p class="text-muted mb-3" style="font-size:13px;">UK Government</p>
+            <span class="badge-funded">Fully Funded</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="card featured-card h-100" onclick="prefill('South Korea')">
+          <div class="featured-bar" style="background:#0047A0;"></div>
+          <div class="card-body p-4">
+            <div class="featured-flag">🇰🇷</div>
+            <h6 class="fw-bold mt-3 mb-1">Global Korea Scholarship</h6>
+            <p class="text-muted mb-3" style="font-size:13px;">Korean Government</p>
+            <span class="badge-funded">Fully Funded</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="card featured-card h-100" onclick="prefill('Australia')">
+          <div class="featured-bar" style="background:#00843D;"></div>
+          <div class="card-body p-4">
+            <div class="featured-flag">🇦🇺</div>
+            <h6 class="fw-bold mt-3 mb-1">Australia Awards</h6>
+            <p class="text-muted mb-3" style="font-size:13px;">Australian Government</p>
+            <span class="badge-funded">Fully Funded</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. WHY mm_scholar -->
+<section class="section-tinted">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold">Why MM Scholar?</h2>
+      <p class="text-muted">Built specifically for Myanmar students going abroad.</p>
+    </div>
+    <div class="row g-4 justify-content-center">
+      <div class="col-md-6">
+        <div class="card h-100 p-4">
+          <div class="d-flex gap-3 align-items-start">
+            <div class="why-check">✅</div>
+            <div>
+              <h6 class="fw-bold mb-1">Verified for Myanmar</h6>
+              <p class="text-muted mb-0">Every scholarship is manually checked for Myanmar student eligibility.</p>
             </div>
-
-            <!-- Section 2: Optional -->
-            <p class="fw-semibold mb-2" style="font-size:13px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.05em;">Optional — refine your results</p>
-            <div class="row g-3 mb-4">
-              <div class="col-md-4">
-                <label class="form-label">Field of study</label>
-                <select name="field" class="form-select">
-                  <option value="any" selected>Any field</option>
-                  {% for f in fields %}
-                  <option value="{{ f }}">{{ f }}</option>
-                  {% endfor %}
-                </select>
-              </div>
-
-              <div class="col-md-4">
-                <label class="form-label">Your GPA</label>
-                <input type="number" name="gpa" class="form-control"
-                       min="0" max="4" step="0.1"
-                       placeholder="e.g. 3.5 — leave blank to skip" />
-              </div>
-
-              <div class="col-md-4">
-                <label class="form-label">Your IELTS score</label>
-                <input type="number" name="ielts" class="form-control"
-                       min="0" max="9" step="0.5"
-                       placeholder="e.g. 6.5 — leave blank to skip" />
-              </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card h-100 p-4">
+          <div class="d-flex gap-3 align-items-start">
+            <div class="why-check">✅</div>
+            <div>
+              <h6 class="fw-bold mb-1">AI-powered ranking</h6>
+              <p class="text-muted mb-0">A trained machine learning model ranks scholarships by relevance to your profile.</p>
             </div>
-
-
-            <div class="d-grid">
-              <button type="submit" class="btn btn-accent btn-lg fw-bold">
-                🔍 Find Scholarships
-              </button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card h-100 p-4">
+          <div class="d-flex gap-3 align-items-start">
+            <div class="why-check">✅</div>
+            <div>
+              <h6 class="fw-bold mb-1">Instant explanations</h6>
+              <p class="text-muted mb-0">Gemini AI explains each match in plain English — what you need and what to watch out for.</p>
             </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card h-100 p-4">
+          <div class="d-flex gap-3 align-items-start">
+            <div class="why-check">✅</div>
+            <div>
+              <h6 class="fw-bold mb-1">Completely free</h6>
+              <p class="text-muted mb-0">No registration, no subscription, no fees. Just results.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-          </form>
+<!-- 7. BROWSE BY REGION -->
+<section class="section-search">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold">Browse by Region</h2>
+      <p class="text-muted">Select a region to pre-fill the country filter and start searching</p>
+    </div>
+    <div class="row g-4 justify-content-center">
+
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card region-card h-100 text-center p-4" onclick="browseRegion('Japan')">
+          <div class="region-icon">🌏</div>
+          <h5 class="fw-bold mb-1">Asia</h5>
+          <p class="text-muted mb-3" style="font-size:13px;">Japan, South Korea, China, Singapore, Thailand, India, Malaysia...</p>
+          <span class="region-badge">45 scholarships</span>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card region-card h-100 text-center p-4" onclick="browseRegion('UK')">
+          <div class="region-icon">🇪🇺</div>
+          <h5 class="fw-bold mb-1">Europe</h5>
+          <p class="text-muted mb-3" style="font-size:13px;">UK, Germany, Sweden, Hungary, Belgium, France...</p>
+          <span class="region-badge">18 scholarships</span>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card region-card h-100 text-center p-4" onclick="browseRegion('USA')">
+          <div class="region-icon">🌎</div>
+          <h5 class="fw-bold mb-1">Americas</h5>
+          <p class="text-muted mb-3" style="font-size:13px;">USA, Canada</p>
+          <span class="region-badge">8 scholarships</span>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card region-card h-100 text-center p-4" onclick="browseRegion('Turkey')">
+          <div class="region-icon">🌙</div>
+          <h5 class="fw-bold mb-1">Middle East</h5>
+          <p class="text-muted mb-3" style="font-size:13px;">Turkey, UAE, Saudi Arabia, Qatar</p>
+          <span class="region-badge">6 scholarships</span>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card region-card h-100 text-center p-4" onclick="browseRegion('Australia')">
+          <div class="region-icon">🌊</div>
+          <h5 class="fw-bold mb-1">Pacific</h5>
+          <p class="text-muted mb-3" style="font-size:13px;">Australia, New Zealand, Hong Kong</p>
+          <span class="region-badge">8 scholarships</span>
         </div>
       </div>
 
     </div>
   </div>
-</div>
+</section>
 
-<!-- footer -->
-<footer class="footer">
-  mm scholar — Built for Myanmar Students &nbsp;·&nbsp;
-  <a href="/compare">Model Comparison</a> &nbsp;·&nbsp;
-  <a href="/feedback-results">Feedback Dashboard</a>
+<!-- 8. STUDENT FEEDBACK PREVIEW -->
+<section class="section-white">
+  <div class="container">
+    <div class="d-flex flex-wrap justify-content-between align-items-end mb-5 gap-3">
+      <div>
+        <h2 class="fw-bold mb-1">What students say</h2>
+        <p class="text-muted mb-0">Real feedback from Myanmar students who used MM Scholar.</p>
+      </div>
+      <a href="/feedback-results" class="btn btn-outline-secondary">View all →</a>
+    </div>
+    {% if recent_feedback %}
+    <div class="row g-4">
+      {% for f in recent_feedback %}
+      <div class="col-md-4">
+        <div class="card h-100 p-4">
+          <div class="d-flex gap-1 mb-3">
+            {% for i in range(f.rating) %}<span style="color:var(--accent); font-size:18px;">★</span>{% endfor %}
+            {% for i in range(5 - f.rating) %}<span style="color:var(--border); font-size:18px;">★</span>{% endfor %}
+          </div>
+          <p class="mb-3" style="font-size:14px; color:var(--text); flex-grow:1;">
+            "{{ f.comment }}"
+          </p>
+          <div style="font-size:12px; color:var(--text-muted);">
+            {{ f.country }} &nbsp;·&nbsp; {{ f.level | capitalize }} &nbsp;·&nbsp; {{ f.timestamp[:10] }}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+      <div style="font-size:40px;">💬</div>
+      <p class="text-muted mt-3">No feedback yet. <a href="#search">Be the first to try it!</a></p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- 8. FOOTER -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="row align-items-center g-4">
+      <div class="col-md-4">
+        <div class="mb-1">
+          <span class="logo-icon">🎓</span><span class="logo-mm">MM</span><span class="logo-scholar" style="color:rgba(255,255,255,0.75);"> Scholar</span>
+        </div>
+        <div class="site-footer-sub">{{ num_scholarships }} scholarships &nbsp;·&nbsp; {{ num_countries }} countries &nbsp;·&nbsp; Free</div>
+      </div>
+      <div class="col-md-4 text-center">
+        <div class="site-footer-sub">Built for Myanmar Students</div>
+        <div class="site-footer-credit">Htet Arkar Linn &nbsp;·&nbsp; HUST Vietnam 2026</div>
+      </div>
+      <div class="col-md-4 text-md-end d-flex gap-3 justify-content-md-end">
+        <a href="/about" class="site-footer-link">About</a>
+        <a href="/feedback-results" class="site-footer-link">Feedback</a>
+        <a href="https://github.com/htetarkarlinn/mm_scholar" target="_blank" class="site-footer-link">GitHub</a>
+      </div>
+    </div>
+  </div>
 </footer>
 
+<script>
+function prefill(country) {
+  document.getElementById('country-select').value = country;
+  document.getElementById('search').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function browseRegion(country) {
+  const sel = document.getElementById('country-select');
+  sel.value = country;
+  document.getElementById('search').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  sel.style.transition = 'border-color 0.2s, box-shadow 0.2s';
+  sel.style.borderColor = 'var(--accent)';
+  sel.style.boxShadow = '0 0 0 3px rgba(245,166,35,0.30)';
+  setTimeout(() => {
+    sel.style.borderColor = '';
+    sel.style.boxShadow = '';
+  }, 1000);
+}
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MM Scholar — About</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-dark">
+  <div class="container d-flex align-items-center justify-content-between">
+    <a class="navbar-brand" href="/">
+      <span class="logo-icon">🎓</span><span class="logo-mm">MM</span><span class="logo-scholar"> Scholar</span>
+    </a>
+    <div class="d-flex align-items-center gap-1">
+      <a class="nav-link" href="/about">About</a>
+      <a class="nav-link" href="/feedback-results">Feedback</a>
+    </div>
+  </div>
+</nav>
+
+<!-- 1. HERO -->
+<section class="hero" id="top">
+  <div class="container position-relative text-center">
+    <div class="hero-badge">🎓 MM Scholar</div>
+    <h1>About <span>MM Scholar</span></h1>
+    <p>A free scholarship finder built specifically for Myanmar students</p>
+  </div>
+</section>
+
+<!-- 2. THE STORY -->
+<section class="section-search">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <h2 class="fw-bold mb-4">Why MM Scholar Exists</h2>
+        <p style="font-size:16px; line-height:1.8; color:var(--text);">
+          Finding a scholarship as a Myanmar student is harder than it should be. Information is scattered across hundreds of websites, eligibility requirements are unclear, and many students miss great opportunities simply because they never heard about them.
+        </p>
+        <p style="font-size:16px; line-height:1.8; color:var(--text);">
+          MM Scholar was built to change that. As a Myanmar student studying abroad through the EU Mobility Programme for Myanmar (EMPM), I know this challenge personally — and I wanted to build something that would make it easier for every Myanmar student who comes after me.
+        </p>
+        <p style="font-size:16px; line-height:1.8; color:var(--text);">
+          MM Scholar brings together 87 verified scholarships from 31 countries into one place, with AI-powered matching that helps you find the right opportunity in seconds — completely free.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. HOW IT WORKS -->
+<section class="section-tinted">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold">How MM Scholar Works</h2>
+    </div>
+    <div class="row g-4 justify-content-center">
+      <div class="col-md-4">
+        <div class="card h-100 text-center p-4">
+          <div class="step-icon">🎯</div>
+          <div class="step-number">Step 1</div>
+          <h5 class="fw-bold mt-2 mb-2">Tell us your goals</h5>
+          <p class="text-muted mb-0">Enter your preferred country, study level, and funding type. Add your field and scores for more precise results.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 text-center p-4">
+          <div class="step-icon">🔍</div>
+          <div class="step-number">Step 2</div>
+          <h5 class="fw-bold mt-2 mb-2">We find your matches</h5>
+          <p class="text-muted mb-0">Our system searches 87 verified scholarships and ranks the best matches for your profile using machine learning.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 text-center p-4">
+          <div class="step-icon">💡</div>
+          <div class="step-number">Step 3</div>
+          <h5 class="fw-bold mt-2 mb-2">Understand your options</h5>
+          <p class="text-muted mb-0">Click "Why this matches me?" on any result to get a personalised AI explanation of why the scholarship suits you and what you need to apply.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. BY THE NUMBERS -->
+<section class="section-white">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold">MM Scholar in Numbers</h2>
+    </div>
+    <div class="row g-4 justify-content-center">
+      <div class="col-6 col-md-3">
+        <div class="card text-center p-4">
+          <h2 class="fw-bold mb-1" style="color:var(--accent); font-size:2.5rem;">87</h2>
+          <p class="text-muted mb-0">Scholarships</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card text-center p-4">
+          <h2 class="fw-bold mb-1" style="color:var(--accent); font-size:2.5rem;">31</h2>
+          <p class="text-muted mb-0">Countries</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card text-center p-4">
+          <h2 class="fw-bold mb-1" style="color:var(--accent); font-size:2.5rem;">529</h2>
+          <p class="text-muted mb-0">Records in database</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card text-center p-4">
+          <h2 class="fw-bold mb-1" style="color:var(--accent); font-size:2.5rem;">Free</h2>
+          <p class="text-muted mb-0">Always</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. ABOUT THE DEVELOPER -->
+<section class="section-tinted">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-7 text-center">
+        <h2 class="fw-bold mb-5">About the Developer</h2>
+        <div class="d-flex justify-content-center mb-4">
+          <div class="card d-flex align-items-center justify-content-center"
+               style="width:120px; height:120px; border-radius:50%; font-size:56px; border:3px solid var(--accent);">
+            👨‍💻
+          </div>
+        </div>
+        <h4 class="fw-bold mb-1">Htet Arkar Linn</h4>
+        <p class="text-muted mb-4" style="font-size:14px;">
+          Hanoi University of Science and Technology (HUST), Vietnam<br/>
+          Bachelor of Engineering — Information Technology<br/>
+          EU Mobility Programme for Myanmar (EMPM)<br/>
+          Supervisor: Banh Thi Quynh Mai &nbsp;·&nbsp; Class of 2026
+        </p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+          <a href="https://github.com/htetarkarlinn/mm_scholar" target="_blank"
+             class="btn btn-primary fw-semibold px-4">🐙 GitHub</a>
+          <a href="https://www.linkedin.com/in/htet-arkar-linn/" target="_blank" class="btn btn-outline-secondary fw-semibold px-4">💼 LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. ACKNOWLEDGEMENTS -->
+<section class="section-white">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-7">
+        <h2 class="fw-bold mb-4">With Thanks To</h2>
+        <ul style="list-style:none; padding:0; margin:0; font-size:16px; line-height:2; color:var(--text);">
+          <li>• Supervisor Banh Thi Quynh Mai for her guidance and support throughout this project</li>
+          <li>• The EU Mobility Programme for Myanmar (EMPM) for making my studies in Vietnam possible</li>
+          <li>• Every Myanmar student who tested MM Scholar and shared their feedback</li>
+          <li>• The open-source community behind Flask, scikit-learn, Bootstrap, and Google Gemini</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. CALL TO ACTION -->
+<section class="section-tinted">
+  <div class="container text-center py-2">
+    <h2 class="fw-bold mb-3">Ready to find your scholarship?</h2>
+    <a href="/" class="btn btn-accent btn-lg fw-bold px-5">🔍 Start Searching</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="row align-items-center g-4">
+      <div class="col-md-4">
+        <div><span class="logo-icon">🎓</span><span class="logo-mm">MM</span><span class="logo-scholar" style="color:rgba(255,255,255,0.75);"> Scholar</span></div>
+        <div class="site-footer-sub">Built for Myanmar Students</div>
+      </div>
+      <div class="col-md-4 text-center">
+        <div class="site-footer-credit">Htet Arkar Linn &nbsp;·&nbsp; HUST Vietnam 2026</div>
+      </div>
+      <div class="col-md-4 text-md-end d-flex gap-3 justify-content-md-end">
+        <a href="/about" class="site-footer-link">About</a>
+        <a href="/feedback-results" class="site-footer-link">Feedback</a>
+        <a href="https://github.com/htetarkarlinn/mm_scholar" target="_blank" class="site-footer-link">GitHub</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
