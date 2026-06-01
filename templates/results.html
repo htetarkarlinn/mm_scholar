@@ -330,13 +330,14 @@ function buildShareMessage(r) {
     `🔗 Apply: ${r.link}`,
     "",
     "Find more scholarships for Myanmar students:",
-    "👉 https://mm-scholar.onrender.com"
+    `👉 ${window.location.origin}`
   ].join("\n");
 }
 
 function openShareModal(btn) {
-  const r   = SCHOLARSHIPS[parseInt(btn.dataset.idx)];
-  const msg = buildShareMessage(r);
+  const r      = SCHOLARSHIPS[parseInt(btn.dataset.idx)];
+  const msg    = buildShareMessage(r);
+  const siteUrl = window.location.origin;
 
   document.getElementById("shareModalName").textContent = r.scholarship_name;
 
@@ -344,7 +345,7 @@ function openShareModal(btn) {
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
 
   document.getElementById("shareTelegram").onclick = () =>
-    window.open(`https://t.me/share/url?url=https://mm-scholar.onrender.com&text=${encodeURIComponent(msg)}`, "_blank");
+    window.open(`https://t.me/share/url?url=${encodeURIComponent(siteUrl)}&text=${encodeURIComponent(msg)}`, "_blank");
 
   const copyBtn = document.getElementById("shareCopy");
   copyBtn.textContent = "📋 Copy to clipboard";

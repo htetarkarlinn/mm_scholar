@@ -37,6 +37,22 @@ funding_types = sorted(df_all["funding_type"].unique())
 
 num_scholarships = int(df_all["scholarship_name"].nunique())
 num_countries    = int(df_all["country_of_study"].nunique())
+num_rows         = len(df_all)
+
+_REGION_COUNTRIES = {
+    "Asia":       ["Japan","South Korea","China","Singapore","Thailand","India",
+                   "Malaysia","Vietnam","Indonesia","Philippines","Taiwan"],
+    "Europe":     ["UK","Germany","Sweden","Hungary","Belgium","France","Netherlands",
+                   "Italy","Spain","Finland","Norway","Denmark","Switzerland",
+                   "Austria","Czech Republic","Poland"],
+    "Americas":   ["USA","Canada"],
+    "MiddleEast": ["Turkey","UAE","Saudi Arabia","Qatar"],
+    "Pacific":    ["Australia","New Zealand","Hong Kong"],
+}
+region_counts = {
+    r: int(df_all[df_all["country_of_study"].isin(c)]["scholarship_name"].nunique())
+    for r, c in _REGION_COUNTRIES.items()
+}
 
 def load_metrics():
     with open(os.path.join(MODELS_DIR, "metrics.json")) as _f:
@@ -260,6 +276,7 @@ def index():
                            metrics=load_metrics(),
                            num_scholarships=num_scholarships,
                            num_countries=num_countries,
+                           region_counts=region_counts,
                            recent_feedback=fb_df.to_dict("records"))
 
 
@@ -355,14 +372,21 @@ def feedback_results():
 
 @app.route("/about")
 def about():
-    return render_template("about.html")
+    return render_template("about.html",
+                           num_scholarships=num_scholarships,
+                           num_countries=num_countries,
+                           num_rows=num_rows)
 
 
 @app.route("/compare")
 def compare():
     with open(os.path.join(MODELS_DIR, "metrics.json")) as f:
         data = json.load(f)
-    return render_template("compare.html", metrics=data["models"])
+    return render_template("compare.html",
+                           metrics=data["models"],
+                           num_rows=num_rows,
+                           num_scholarships=num_scholarships,
+                           num_countries=num_countries)
 
 
 if __name__ == "__main__":

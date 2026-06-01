@@ -28,7 +28,7 @@
 
       <div class="text-center mb-4">
         <h1 class="fw-bold">Model Comparison</h1>
-        <p class="text-muted">Evaluation results for all three machine learning models trained on 421 scholarship records.</p>
+        <p class="text-muted">Evaluation results for all three machine learning models trained on {{ num_rows }} scholarship records.</p>
       </div>
 
       <!-- accuracy cards -->
@@ -161,15 +161,15 @@
         <div class="card-body">
           <div class="row text-center g-3">
             <div class="col-6 col-md-3">
-              <h4 class="fw-bold text-primary mb-0">421</h4>
+              <h4 class="fw-bold text-primary mb-0">{{ num_rows }}</h4>
               <p class="text-muted mb-0" style="font-size:13px;">Total records</p>
             </div>
             <div class="col-6 col-md-3">
-              <h4 class="fw-bold text-primary mb-0">39</h4>
+              <h4 class="fw-bold text-primary mb-0">{{ num_scholarships }}</h4>
               <p class="text-muted mb-0" style="font-size:13px;">Scholarships</p>
             </div>
             <div class="col-6 col-md-3">
-              <h4 class="fw-bold text-primary mb-0">25</h4>
+              <h4 class="fw-bold text-primary mb-0">{{ num_countries }}</h4>
               <p class="text-muted mb-0" style="font-size:13px;">Countries</p>
             </div>
             <div class="col-6 col-md-3">

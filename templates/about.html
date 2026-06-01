@@ -45,7 +45,7 @@
           MM Scholar was built to change that. As a Myanmar student studying abroad through the EU Mobility Programme for Myanmar (EMPM), I know this challenge personally — and I wanted to build something that would make it easier for every Myanmar student who comes after me.
         </p>
         <p style="font-size:16px; line-height:1.8; color:var(--text);">
-          MM Scholar brings together 87 verified scholarships from 31 countries into one place, with AI-powered matching that helps you find the right opportunity in seconds — completely free.
+          MM Scholar brings together {{ num_scholarships }} verified scholarships from {{ num_countries }} countries into one place, with AI-powered matching that helps you find the right opportunity in seconds — completely free.
         </p>
       </div>
     </div>
@@ -72,7 +72,7 @@
           <div class="step-icon">🔍</div>
           <div class="step-number">Step 2</div>
           <h5 class="fw-bold mt-2 mb-2">We find your matches</h5>
-          <p class="text-muted mb-0">Our system searches 87 verified scholarships and ranks the best matches for your profile using machine learning.</p>
+          <p class="text-muted mb-0">Our system searches {{ num_scholarships }} verified scholarships and ranks the best matches for your profile using machine learning.</p>
         </div>
       </div>
       <div class="col-md-4">
@@ -96,19 +96,19 @@
     <div class="row g-4 justify-content-center">
       <div class="col-6 col-md-3">
         <div class="card text-center p-4">
-          <h2 class="fw-bold mb-1" style="color:var(--accent); font-size:2.5rem;">87</h2>
+          <h2 class="fw-bold mb-1" style="color:var(--accent); font-size:2.5rem;">{{ num_scholarships }}</h2>
           <p class="text-muted mb-0">Scholarships</p>
         </div>
       </div>
       <div class="col-6 col-md-3">
         <div class="card text-center p-4">
-          <h2 class="fw-bold mb-1" style="color:var(--accent); font-size:2.5rem;">31</h2>
+          <h2 class="fw-bold mb-1" style="color:var(--accent); font-size:2.5rem;">{{ num_countries }}</h2>
           <p class="text-muted mb-0">Countries</p>
         </div>
       </div>
       <div class="col-6 col-md-3">
         <div class="card text-center p-4">
-          <h2 class="fw-bold mb-1" style="color:var(--accent); font-size:2.5rem;">529</h2>
+          <h2 class="fw-bold mb-1" style="color:var(--accent); font-size:2.5rem;">{{ num_rows }}</h2>
           <p class="text-muted mb-0">Records in database</p>
         </div>
       </div>
