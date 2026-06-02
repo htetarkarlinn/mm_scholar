@@ -6,7 +6,7 @@ from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.metrics import accuracy_score
 
 BASE_DIR   = os.path.dirname(os.path.abspath(__file__))
@@ -91,10 +91,23 @@ rf_model = rf_grid.best_estimator_
 rf_acc   = accuracy_score(y_test, rf_model.predict(X_test))
 print(f"  Best: {rf_grid.best_params_}  →  {rf_acc*100:.2f}%")
 
+# GridSearchCV — Gradient Boosting (comparison baseline)
+print("\nGradient Boosting (GridSearchCV 5-fold)")
+gb_grid = GridSearchCV(
+    GradientBoostingClassifier(random_state=42),
+    param_grid={"n_estimators": [50, 100], "max_depth": [3, 5], "learning_rate": [0.1, 0.2]},
+    cv=5, scoring="accuracy", n_jobs=-1
+)
+gb_grid.fit(X_train, y_train)
+gb_model = gb_grid.best_estimator_
+gb_acc   = accuracy_score(y_test, gb_model.predict(X_test))
+print(f"  Best: {gb_grid.best_params_}  →  {gb_acc*100:.2f}%")
+
 # save everything
 joblib.dump(knn_model, os.path.join(MODELS_DIR, "knn_model.pkl"))
 joblib.dump(dt_model,  os.path.join(MODELS_DIR, "dt_model.pkl"))
 joblib.dump(rf_model,  os.path.join(MODELS_DIR, "rf_model.pkl"))
+joblib.dump(gb_model,  os.path.join(MODELS_DIR, "gb_model.pkl"))
 joblib.dump(encoders,  os.path.join(MODELS_DIR, "encoders.pkl"))
 joblib.dump(scaler,    os.path.join(MODELS_DIR, "scaler.pkl"))
 
@@ -105,18 +118,18 @@ print("-" * 72)
 print(f"{'k-NN':<20} {str(knn_grid.best_params_):<40} {knn_acc*100:>9.2f}%")
 print(f"{'Decision Tree':<20} {str(dt_grid.best_params_):<40} {dt_acc*100:>9.2f}%")
 print(f"{'Random Forest':<20} {str(rf_grid.best_params_):<40} {rf_acc*100:>9.2f}%")
+print(f"{'Gradient Boosting':<20} {str(gb_grid.best_params_):<40} {gb_acc*100:>9.2f}%")
 print("-" * 72)
-
-scores  = {"k-NN": knn_acc, "Decision Tree": dt_acc, "Random Forest": rf_acc}
-objects = {"k-NN": knn_model, "Decision Tree": dt_model, "Random Forest": rf_model}
-best    = max(scores, key=scores.get)
-print(f"Best model: {best}  ({scores[best]*100:.2f}%)")
-
-joblib.dump(objects[best], os.path.join(MODELS_DIR, "best_model.pkl"))
+print("k-NN is the production recommendation model (similarity-based matching).")
+print("DT, RF, GB are academic comparison baselines.")
 
 import json
+# best classifier baseline (for compare page, not for ranking)
+scores  = {"Decision Tree": dt_acc, "Random Forest": rf_acc, "Gradient Boosting": gb_acc}
+best    = max(scores, key=scores.get)
+print(f"Best classifier baseline: {best}  ({scores[best]*100:.2f}%)")
+
 with open(os.path.join(MODELS_DIR, "best_model_info.json"), "w") as f:
     json.dump({"name": best, "accuracy": round(scores[best] * 100, 2)}, f, indent=2)
 
-print(f"Saved best_model.pkl  ({best})")
 print("\nSaved to models/")

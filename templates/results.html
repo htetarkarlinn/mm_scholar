@@ -90,11 +90,18 @@
               <div class="provider">{{ r.provider }}</div>
             </div>
           </div>
-          {% if r.funding_type == "fully_funded" %}
-          <span class="badge-funded">Fully Funded</span>
-          {% else %}
-          <span class="badge-partial">Partial</span>
-          {% endif %}
+          <div class="d-flex flex-column align-items-end gap-1">
+            {% if r.funding_type == "fully_funded" %}
+            <span class="badge-funded">Fully Funded</span>
+            {% else %}
+            <span class="badge-partial">Partial</span>
+            {% endif %}
+            {% if r.match_pct is defined and r.match_pct > 0 %}
+            <span style="font-size:11px; font-weight:600; color:#1a6091; background:#e8f4fb; padding:2px 8px; border-radius:20px; white-space:nowrap;">
+              {{ "%.1f"|format(r.match_pct) }}% match
+            </span>
+            {% endif %}
+          </div>
         </div>
 
         <!-- info grid -->
@@ -182,7 +189,7 @@
       {% endfor %}
 
       <p class="text-muted text-center mb-4" style="font-size:12px;">
-        Ranked by <strong>{{ best_model_name }}</strong> ({{ best_model_acc }}% accuracy)
+        Ranked by <strong>k-NN</strong> (similarity-based matching)
       </p>
 
       <!-- share modal (single shared instance, populated by JS) -->
@@ -222,7 +229,7 @@
             <input type="hidden" name="level"          value="{{ level }}" />
             <input type="hidden" name="field"          value="{{ field }}" />
             <input type="hidden" name="funding"        value="{{ funding }}" />
-            <input type="hidden" name="model_used"     value="{{ best_model_name }}" />
+            <input type="hidden" name="model_used"     value="k-NN" />
             <input type="hidden" name="recommendation" value="{{ recommendation }}" />
 
             <div class="mb-3">

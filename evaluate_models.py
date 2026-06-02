@@ -38,6 +38,7 @@ print(f"Loaded {len(df)} rows")
 knn      = joblib.load(os.path.join(MODELS_DIR, "knn_model.pkl"))
 dt       = joblib.load(os.path.join(MODELS_DIR, "dt_model.pkl"))
 rf       = joblib.load(os.path.join(MODELS_DIR, "rf_model.pkl"))
+gb       = joblib.load(os.path.join(MODELS_DIR, "gb_model.pkl"))
 encoders = joblib.load(os.path.join(MODELS_DIR, "encoders.pkl"))
 scaler   = joblib.load(os.path.join(MODELS_DIR, "scaler.pkl"))
 
@@ -65,7 +66,7 @@ X_test_s  = scaler.transform(X_test)
 
 
 # --- 1. Accuracy comparison bar chart ---
-models      = {"k-NN": knn, "Decision Tree": dt, "Random Forest": rf}
+models      = {"k-NN": knn, "Decision Tree": dt, "Random Forest": rf, "Gradient Boosting": gb}
 accuracies  = {name: accuracy_score(y_test, m.predict(X_test_s))
                for name, m in models.items()}
 
@@ -115,9 +116,10 @@ for name, m in models.items():
     print(f"{name:<20} mean={scores.mean()*100:.2f}%  std={scores.std()*100:.2f}%")
 
 params_map = {
-    "k-NN":          f"k={knn.n_neighbors}",
-    "Decision Tree": f"depth={dt.max_depth}",
-    "Random Forest": f"n={rf.n_estimators}",
+    "k-NN":               f"k={knn.n_neighbors}",
+    "Decision Tree":      f"depth={dt.max_depth}",
+    "Random Forest":      f"n={rf.n_estimators}",
+    "Gradient Boosting":  f"n={gb.n_estimators}, lr={gb.learning_rate}",
 }
 models_list = [
     {
@@ -137,6 +139,7 @@ with open(os.path.join(MODELS_DIR, "best_model_info.json")) as _f:
     _best = json.load(_f)
 with open(os.path.join(MODELS_DIR, "metrics.json"), "w") as f:
     json.dump({
+        "knn_role":        "production_ranker",
         "best_model_name": _best["name"],
         "best_model_acc":  _best["accuracy"],
         "models":          models_list,
@@ -144,13 +147,15 @@ with open(os.path.join(MODELS_DIR, "metrics.json"), "w") as f:
 print("Saved: models/metrics.json")
 
 
-# --- 4. Confusion matrix for best model (Decision Tree) ---
-y_pred_dt = dt.predict(X_test_s)
-cm        = confusion_matrix(y_test, y_pred_dt)
+# --- 4. Confusion matrix for best classifier baseline ---
+_baseline_models = {"Decision Tree": dt, "Random Forest": rf, "Gradient Boosting": gb}
+_best_baseline   = max(_baseline_models, key=lambda n: eval_metrics[n]["accuracy"])
+y_pred_best = _baseline_models[_best_baseline].predict(X_test_s)
+cm        = confusion_matrix(y_test, y_pred_best)
 fig, ax   = plt.subplots(figsize=(14, 12))
 disp      = ConfusionMatrixDisplay(confusion_matrix=cm)
 disp.plot(ax=ax, colorbar=True, cmap="Blues", xticks_rotation=90)
-ax.set_title("Confusion Matrix — Decision Tree (Best Model)",
+ax.set_title(f"Confusion Matrix — {_best_baseline} (Best Classifier Baseline)",
              fontsize=12, fontweight="bold")
 plt.tight_layout()
 plt.savefig(os.path.join(OUTPUT_DIR, "confusion_matrix_dt.png"), dpi=150, bbox_inches="tight")
@@ -158,13 +163,13 @@ plt.close()
 print("\nSaved: confusion_matrix_dt.png")
 
 
-# --- 5. Decision Tree visualization (top 3 levels only) ---
+# --- 5. Decision Tree visualization (top 3 levels) ---
 fig, ax = plt.subplots(figsize=(20, 8))
 plot_tree(dt, max_depth=3,
           feature_names=FEATURES,
           filled=True, rounded=True,
           fontsize=9, ax=ax)
-ax.set_title("Decision Tree Structure (top 3 levels)", fontsize=13, fontweight="bold")
+ax.set_title("Decision Tree Structure — Comparison Baseline (top 3 levels)", fontsize=13, fontweight="bold")
 plt.tight_layout()
 plt.savefig(os.path.join(OUTPUT_DIR, "decision_tree_plot.png"), dpi=150, bbox_inches="tight")
 plt.close()

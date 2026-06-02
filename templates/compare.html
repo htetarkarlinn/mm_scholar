@@ -28,28 +28,42 @@
 
       <div class="text-center mb-4">
         <h1 class="fw-bold">Model Comparison</h1>
-        <p class="text-muted">Evaluation results for all three machine learning models trained on {{ num_rows }} scholarship records.</p>
+        <p class="text-muted">
+          k-NN is the primary recommendation model as it performs similarity-based matching between
+          student profiles and scholarship requirements. Decision Tree, Random Forest, and Gradient
+          Boosting are trained as academic baselines for comparative evaluation.
+        </p>
+        <p class="text-muted" style="font-size:13px;">
+          Evaluation results for all four models trained on {{ num_rows }} scholarship records.
+        </p>
       </div>
 
       <!-- accuracy cards -->
       <div class="row g-3 mb-4">
         {% for m in metrics %}
-        <div class="col-md-4">
-          <div class="card text-center shadow-sm 
-            {% if m.accuracy == metrics | map(attribute='accuracy') | max %}border-success{% endif %}">
+        <div class="col-md-3 col-sm-6">
+          <div class="card text-center shadow-sm
+            {% if m.model == 'k-NN' %}border-primary
+            {% elif m.accuracy == metrics | map(attribute='accuracy') | max %}border-success
+            {% endif %}">
             <div class="card-body py-4">
-              {% if m.accuracy == metrics | map(attribute='accuracy') | max %}
-              <span class="badge bg-success mb-2">Best Model</span><br/>
+              {% if m.model == 'k-NN' %}
+              <span class="badge bg-primary mb-2">Production Ranker</span><br/>
+              {% elif m.accuracy == metrics | map(attribute='accuracy') | max %}
+              <span class="badge bg-success mb-2">Best Baseline</span><br/>
               {% endif %}
               <h5 class="fw-bold">{{ m.model }}</h5>
               <p class="text-muted mb-1" style="font-size:13px;">{{ m.params }}</p>
-              <h2 class="fw-bold 
-                {% if m.accuracy == metrics | map(attribute='accuracy') | max %}text-success
+              <h2 class="fw-bold
+                {% if m.model == 'k-NN' %}text-primary
+                {% elif m.accuracy == metrics | map(attribute='accuracy') | max %}text-success
                 {% elif m.accuracy == metrics | map(attribute='accuracy') | min %}text-danger
-                {% else %}text-primary{% endif %}">
+                {% else %}text-secondary{% endif %}">
                 {{ m.accuracy }}%
               </h2>
-              <p class="text-muted mb-0" style="font-size:12px;">Test accuracy</p>
+              <p class="text-muted mb-0" style="font-size:12px;">
+                {% if m.model == 'k-NN' %}Similarity ranker{% else %}Test accuracy{% endif %}
+              </p>
             </div>
           </div>
         </div>
@@ -57,7 +71,7 @@
       </div>
 
       <!-- full metrics table -->
-      <div class="card shadow-sm mb-4">
+      <div class="card shadow-sm mb-2">
         <div class="card-header fw-semibold">Evaluation Metrics (Test Set)</div>
         <div class="card-body p-0">
           <div class="table-responsive">
@@ -66,7 +80,8 @@
                 <tr>
                   <th>Model</th>
                   <th>Params</th>
-                  <th>Accuracy</th>
+                  <th>Top-1 Accuracy</th>
+                  <th class="table-primary fw-semibold">Top-3 Accuracy</th>
                   <th>Precision</th>
                   <th>Recall</th>
                   <th>F1 Score</th>
@@ -74,10 +89,18 @@
               </thead>
               <tbody>
                 {% for m in metrics %}
-                <tr {% if m.accuracy == metrics | map(attribute='accuracy') | max %}class="table-success"{% endif %}>
-                  <td class="fw-semibold">{{ m.model }}</td>
+                <tr {% if m.model == 'k-NN' %}class="table-primary"
+                    {% elif m.accuracy == metrics | map(attribute='accuracy') | max %}class="table-success"
+                    {% endif %}>
+                  <td class="fw-semibold">
+                    {{ m.model }}
+                    {% if m.model == 'k-NN' %}
+                    <span class="badge bg-primary ms-1" style="font-size:10px;">Ranker</span>
+                    {% endif %}
+                  </td>
                   <td><span class="badge bg-secondary">{{ m.params }}</span></td>
-                  <td class="fw-bold">{{ m.accuracy }}%</td>
+                  <td>{{ m.accuracy }}%</td>
+                  <td class="fw-bold">{{ m.top3_accuracy }}%</td>
                   <td>{{ m.precision }}%</td>
                   <td>{{ m.recall }}%</td>
                   <td>{{ m.f1 }}%</td>
@@ -86,6 +109,17 @@
               </tbody>
             </table>
           </div>
+        </div>
+      </div>
+
+      <!-- rationale note -->
+      <div class="alert alert-primary d-flex gap-2 mb-4" style="font-size:13px;">
+        <span style="font-size:16px; flex-shrink:0;">ℹ️</span>
+        <div>
+          <strong>Top-3 accuracy is the primary evaluation metric for this recommendation system.</strong>
+          k-NN is selected as the production ranker because its similarity-based mechanism aligns with
+          the recommendation task: student profiles are matched to scholarships by nearest-neighbour
+          similarity in qualification space.
         </div>
       </div>
 
@@ -173,7 +207,7 @@
               <p class="text-muted mb-0" style="font-size:13px;">Countries</p>
             </div>
             <div class="col-6 col-md-3">
-              <h4 class="fw-bold text-primary mb-0">4</h4>
+              <h4 class="fw-bold text-primary mb-0">6</h4>
               <p class="text-muted mb-0" style="font-size:13px;">ML features</p>
             </div>
           </div>

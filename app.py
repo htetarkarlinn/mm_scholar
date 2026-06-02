@@ -17,13 +17,52 @@ BASE_DIR   = os.path.dirname(os.path.abspath(__file__))
 DB_PATH    = os.path.join(BASE_DIR, "mm_scholar.db")
 MODELS_DIR = os.path.join(BASE_DIR, "models")
 
+# ── Feedback DB: SQLite locally, PostgreSQL on Render / Heroku ───────────────
+# Both platforms inject DATABASE_URL automatically when a Postgres addon is
+# attached.  Heroku uses the legacy "postgres://" scheme; normalize it.
+_PG_URL = os.environ.get("DATABASE_URL", "")
+if _PG_URL.startswith("postgres://"):
+    _PG_URL = _PG_URL.replace("postgres://", "postgresql://", 1)
+_USE_PG = bool(_PG_URL)
+
+if _USE_PG:
+    import psycopg2
+    def _fb_conn():
+        return psycopg2.connect(_PG_URL)
+    _PH     = "%s"
+    _ID_DEF = "id SERIAL PRIMARY KEY"
+else:
+    def _fb_conn():
+        return sqlite3.connect(DB_PATH)
+    _PH     = "?"
+    _ID_DEF = "id INTEGER PRIMARY KEY AUTOINCREMENT"
+
+def _fb_read(query):
+    conn = _fb_conn()
+    df   = pd.read_sql(query, conn)
+    conn.close()
+    return df
+
+def _fb_insert(vals):
+    conn = _fb_conn()
+    cur  = conn.cursor()
+    cur.execute(
+        f"INSERT INTO feedback "
+        f"(timestamp, country, level, field, funding, model_used, recommendation, rating, comment) "
+        f"VALUES ({_PH},{_PH},{_PH},{_PH},{_PH},{_PH},{_PH},{_PH},{_PH})",
+        vals
+    )
+    conn.commit()
+    cur.close()
+    conn.close()
+
 app      = Flask(__name__)
 encoders   = joblib.load(os.path.join(MODELS_DIR, "encoders.pkl"))
 scaler     = joblib.load(os.path.join(MODELS_DIR, "scaler.pkl"))
 knn        = joblib.load(os.path.join(MODELS_DIR, "knn_model.pkl"))
 dt         = joblib.load(os.path.join(MODELS_DIR, "dt_model.pkl"))
 rf         = joblib.load(os.path.join(MODELS_DIR, "rf_model.pkl"))
-best_model = joblib.load(os.path.join(MODELS_DIR, "best_model.pkl"))
+# best_model.pkl kept for compare-page metrics only; knn is the production ranker
 
 # load dropdown options from database
 conn          = sqlite3.connect(DB_PATH)
@@ -69,10 +108,11 @@ def load_metrics():
 
 
 def init_feedback_table():
-    conn = sqlite3.connect(DB_PATH)
-    conn.execute("""
+    conn = _fb_conn()
+    cur  = conn.cursor()
+    cur.execute(f"""
         CREATE TABLE IF NOT EXISTS feedback (
-            id              INTEGER PRIMARY KEY AUTOINCREMENT,
+            {_ID_DEF},
             timestamp       TEXT,
             country         TEXT,
             level           TEXT,
@@ -84,9 +124,10 @@ def init_feedback_table():
             comment         TEXT
         )
     """)
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_fb_timestamp ON feedback(timestamp)")
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_fb_rating    ON feedback(rating)")
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_fb_timestamp ON feedback(timestamp)")
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_fb_rating    ON feedback(rating)")
     conn.commit()
+    cur.close()
     conn.close()
 
 init_feedback_table()
@@ -104,8 +145,53 @@ def _fetch(where, params):
     return df
 
 
-def _rank(candidates):
-    classes_idx = {int(c): i for i, c in enumerate(best_model.classes_)}
+def _rank(candidates, student):
+    """Rank SQL candidates by k-NN similarity to the student profile.
+
+    The student's preferences are encoded as a feature vector in the same
+    space as the training data.  k-NN predict_proba gives the fraction of
+    the k nearest training neighbours that belong to each scholarship class —
+    a genuine similarity score derived from the student side, not from
+    feeding each scholarship's own features back through the model.
+    """
+    gpa   = float(student.get("gpa")   or 0)
+    ielts = float(student.get("ielts") or 0)
+    field = student.get("field", "any")
+
+    try:
+        # For "any" field, use the midpoint of label-encoded field values so
+        # no single field dominates similarity; SQL already filtered upstream.
+        field_enc = (int(encoders["field_of_study"].transform([field])[0])
+                     if field and field != "any"
+                     else int(len(encoders["field_of_study"].classes_) / 2))
+        student_vec = [
+            int(encoders["country_of_study"].transform([student["country"]])[0]),
+            int(encoders["level"].transform([student["level"]])[0]),
+            field_enc,
+            int(encoders["funding_type"].transform([student["funding"]])[0]),
+            gpa,
+            ielts,
+        ]
+    except (ValueError, KeyError):
+        # Encoding failed (unseen label) — return candidates unranked
+        seen, results = set(), []
+        for _, row in candidates.iterrows():
+            name = row["scholarship_name"]
+            if name in seen:
+                continue
+            seen.add(name)
+            record = {k: (None if isinstance(v, float) and pd.isna(v) else v)
+                      for k, v in row.to_dict().items()}
+            record["match_pct"] = 0.0
+            results.append(record)
+            if len(results) >= 3:
+                break
+        return results
+
+    # One predict_proba call for the student profile
+    proba = knn.predict_proba(scaler.transform([student_vec]))[0]
+    classes_idx = {int(c): i for i, c in enumerate(knn.classes_)}
+
     scored = []
     for _, row in candidates.iterrows():
         name = row["scholarship_name"]
@@ -114,29 +200,19 @@ def _rank(candidates):
         target_enc = int(encoders["scholarship_name"].transform([name])[0])
         if target_enc not in classes_idx:
             continue
-        try:
-            enc = [
-                encoders["country_of_study"].transform([row["country_of_study"]])[0],
-                encoders["level"].transform([row["level"]])[0],
-                encoders["field_of_study"].transform([row["field_of_study"]])[0],
-                encoders["funding_type"].transform([row["funding_type"]])[0],
-                float(row["min_gpa"] or 0),
-                float(row["min_ielts"] or 0),
-            ]
-            proba = best_model.predict_proba(scaler.transform([enc]))[0]
-            scored.append((proba[classes_idx[target_enc]], row))
-        except (ValueError, KeyError):
-            continue
+        match_score = float(proba[classes_idx[target_enc]])
+        record = {k: (None if isinstance(v, float) and pd.isna(v) else v)
+                  for k, v in row.to_dict().items()}
+        record["match_pct"] = round(match_score * 100, 1)
+        scored.append((match_score, record))
 
     scored.sort(key=lambda x: x[0], reverse=True)
     seen, results = set(), []
-    for _, row in scored:
-        name = row["scholarship_name"]
+    for _, record in scored:
+        name = record["scholarship_name"]
         if name in seen:
             continue
         seen.add(name)
-        record = {k: (None if isinstance(v, float) and pd.isna(v) else v)
-                  for k, v in row.to_dict().items()}
         results.append(record)
         if len(results) >= 3:
             break
@@ -146,6 +222,15 @@ def _rank(candidates):
 def get_recommendations(country, level, funding, field, gpa, ielts):
     gpa   = float(gpa)   if gpa   else 0.0
     ielts = float(ielts) if ielts else 0.0
+
+    student = {
+        "country": country,
+        "level":   level,
+        "field":   field,
+        "funding": funding,
+        "gpa":     gpa,
+        "ielts":   ielts,
+    }
 
     # Eligibility filters — applied at every fallback level so students
     # are never shown scholarships whose GPA/IELTS requirement they can't meet.
@@ -171,7 +256,7 @@ def get_recommendations(country, level, funding, field, gpa, ielts):
         [country, level, funding] + pref_p
     )
     if not candidates.empty:
-        results = _rank(candidates)
+        results = _rank(candidates, student)
         if results:
             return results, "exact"
 
@@ -181,14 +266,14 @@ def get_recommendations(country, level, funding, field, gpa, ielts):
         [country, level] + pref_p
     )
     if not candidates.empty:
-        results = _rank(candidates)
+        results = _rank(candidates, student)
         if results:
             return results, "relaxed_funding"
 
     # Level 3 — country only (score filters kept, field/funding relaxed)
     candidates = _fetch(["country_of_study = ?"] + score_opt, [country] + score_p)
     if not candidates.empty:
-        results = _rank(candidates)
+        results = _rank(candidates, student)
         if results:
             return results, "country_only"
 
@@ -196,7 +281,7 @@ def get_recommendations(country, level, funding, field, gpa, ielts):
     candidates = _fetch(["funding_type = ?", "level = ?"] + score_opt,
                         ["fully_funded", level] + score_p)
     if not candidates.empty:
-        results = _rank(candidates)
+        results = _rank(candidates, student)
         if results:
             return results, "popular_fallback"
 
@@ -261,13 +346,10 @@ def explain():
 
 @app.route("/")
 def index():
-    conn = sqlite3.connect(DB_PATH)
-    fb_df = pd.read_sql(
+    fb_df = _fb_read(
         "SELECT * FROM feedback WHERE comment != '' AND comment IS NOT NULL "
-        "ORDER BY timestamp DESC LIMIT 3",
-        conn
+        "ORDER BY timestamp DESC LIMIT 3"
     )
-    conn.close()
     return render_template("index.html",
                            countries=countries,
                            levels=levels,
@@ -293,7 +375,6 @@ def recommend():
     results, match_type = get_recommendations(country, level, funding, field, gpa, ielts)
 
     recommendation = results[0]["scholarship_name"] if results else "None"
-    _m = load_metrics()
 
     student_profile = {
         "country": country,
@@ -314,20 +395,12 @@ def recommend():
                            gpa=gpa,
                            ielts=ielts,
                            recommendation=recommendation,
-                           best_model_name=_m["best_model_name"],
-                           best_model_acc=_m["best_model_acc"],
                            student_profile=student_profile)
 
 
 @app.route("/feedback", methods=["POST"])
 def feedback():
-    conn = sqlite3.connect(DB_PATH)
-    conn.execute("""
-        INSERT INTO feedback
-            (timestamp, country, level, field, funding,
-             model_used, recommendation, rating, comment)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, (
+    _fb_insert((
         datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         request.form.get("country"),
         request.form.get("level"),
@@ -338,8 +411,6 @@ def feedback():
         int(request.form.get("rating", 0)),
         request.form.get("comment", "").strip()
     ))
-    conn.commit()
-    conn.close()
     return redirect(url_for("thank_you"))
 
 
@@ -350,9 +421,7 @@ def thank_you():
 
 @app.route("/feedback-results")
 def feedback_results():
-    conn = sqlite3.connect(DB_PATH)
-    df   = pd.read_sql("SELECT * FROM feedback ORDER BY timestamp DESC", conn)
-    conn.close()
+    df = _fb_read("SELECT * FROM feedback ORDER BY timestamp DESC")
 
     if df.empty:
         avg_rating = 0
