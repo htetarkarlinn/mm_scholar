@@ -1,6 +1,6 @@
 # MM Scholar
 
-A free, AI-powered scholarship finder for Myanmar students. Enter your study goals and get personalised scholarship recommendations — ranked by machine learning and explained by Google Gemini.
+A free, AI-powered scholarship finder for Myanmar students. Enter your study goals and get personalised scholarship recommendations — ranked by k-NN similarity matching and explained by Google Gemini.
 
 **Live:** [mm-scholar.onrender.com](https://mm-scholar.onrender.com)
 
@@ -9,9 +9,9 @@ A free, AI-powered scholarship finder for Myanmar students. Enter your study goa
 ## What it does
 
 - Recommends scholarships from a database of 87 verified scholarships across 30 countries
-- Ranks results using k-NN trained on scholarship features
+- Ranks results using a Decision Tree classifier (77% accuracy) trained on scholarship features
 - Explains each match with a personalised AI summary powered by Google Gemini
-- Collects and displays student feedback with star ratings
+- Collects student feedback with star ratings, stored persistently in PostgreSQL on deployment
 
 ---
 
@@ -20,9 +20,10 @@ A free, AI-powered scholarship finder for Myanmar students. Enter your study goa
 | Layer | Technology |
 |---|---|
 | Web framework | Flask 3.0 |
-| ML models | scikit-learn (Decision Tree, Random Forest, k-NN) |
+| Production ranker | k-NN (scikit-learn) — similarity-based matching |
+| Comparison baselines | Decision Tree, Random Forest, Gradient Boosting (scikit-learn) |
 | AI explanations | Google Gemini 2.5 Flash |
-| Database | SQLite via pandas + sqlite3 |
+| Database | SQLite (local dev) / PostgreSQL via psycopg2 (production) |
 | Frontend | Bootstrap 5.3 + custom CSS |
 | Deployment | Gunicorn on Render |
 
@@ -35,7 +36,7 @@ A free, AI-powered scholarship finder for Myanmar students. Enter your study goa
 
 ---
 
-## Setup
+## Local setup
 
 ### 1. Clone and create a virtual environment
 
@@ -70,7 +71,7 @@ python convert_to_sqlite.py
 
 ### 5. Train the models
 
-Trains k-NN, Decision Tree, and Random Forest using GridSearchCV. Saves models and encoders to `models/`:
+Trains k-NN, Decision Tree, Random Forest, and Gradient Boosting using GridSearchCV. Saves all models and encoders to `models/`:
 
 ```bash
 python train_models.py
@@ -78,7 +79,7 @@ python train_models.py
 
 ### 6. Evaluate the models
 
-Generates `models/metrics.json` and four charts in `static/eda/` (accuracy comparison, feature importance, decision tree structure, confusion matrix):
+Generates `models/metrics.json` and evaluation charts in `static/eda/`:
 
 ```bash
 python evaluate_models.py
@@ -94,15 +95,41 @@ Open [http://localhost:5001](http://localhost:5001)
 
 ---
 
-## Deployment
+## Deployment (Render)
 
-The `Procfile` configures Gunicorn for Render (or any WSGI host):
+### 1. Push to GitHub
 
+```bash
+git add .
+git commit -m "your message"
+git push
 ```
-web: gunicorn app:app
-```
 
-Set `GEMINI_API_KEY` as an environment variable in your hosting dashboard. No other config is needed.
+### 2. Create a PostgreSQL database on Render
+
+Dashboard → **New** → **PostgreSQL** → name it `mm-scholar-db` → Region: Singapore → Plan: Free → **Create Database**. Copy the **Internal Database URL**.
+
+### 3. Create a Web Service on Render
+
+Dashboard → **New** → **Web Service** → connect your GitHub repo, then:
+
+| Field | Value |
+|---|---|
+| Runtime | Python 3 |
+| Build Command | `pip install -r requirements.txt` |
+| Start Command | `gunicorn app:app` |
+| Plan | Free |
+
+Add environment variables:
+
+| Key | Value |
+|---|---|
+| `DATABASE_URL` | Internal Database URL from step 2 |
+| `GEMINI_API_KEY` | your Gemini API key |
+
+The app detects `DATABASE_URL` on first boot and automatically creates the feedback table in PostgreSQL. No migration scripts needed.
+
+> **Free tier note:** Render's free web service sleeps after 15 minutes of inactivity. The first request after sleep takes ~30 seconds to wake up.
 
 ---
 
@@ -111,8 +138,8 @@ Set `GEMINI_API_KEY` as an environment variable in your hosting dashboard. No ot
 ```
 mm_scholar/
 ├── app.py                   # Flask app — routes, recommendation logic, Gemini integration
-├── convert_to_sqlite.py     # CRISP-ML Phase 2 — CSV → SQLite pipeline
-├── train_models.py          # Trains k-NN, Decision Tree, Random Forest with GridSearchCV
+├── convert_to_sqlite.py     # CSV → SQLite pipeline
+├── train_models.py          # Trains k-NN, DT, RF, GB with GridSearchCV
 ├── evaluate_models.py       # Generates metrics.json and evaluation charts
 ├── eda.py                   # Exploratory data analysis charts
 ├── requirements.txt
@@ -120,13 +147,14 @@ mm_scholar/
 ├── data/
 │   └── scholarships_dataset.csv   # Source dataset (87 scholarships, 30 countries)
 ├── models/
-│   ├── best_model.pkl       # Best-performing model (Decision Tree)
-│   ├── dt_model.pkl
-│   ├── rf_model.pkl
-│   ├── knn_model.pkl
+│   ├── knn_model.pkl        # Production ranker (similarity-based matching)
+│   ├── dt_model.pkl         # Comparison baseline
+│   ├── rf_model.pkl         # Comparison baseline
+│   ├── gb_model.pkl         # Comparison baseline
 │   ├── encoders.pkl         # LabelEncoders for categorical features
 │   ├── scaler.pkl           # MinMaxScaler
-│   └── metrics.json         # Evaluation results — read by /compare route
+│   ├── best_model_info.json # Best classifier baseline name + accuracy
+│   └── metrics.json         # Full evaluation results — read by /compare route
 ├── static/
 │   ├── style.css
 │   ├── hero_bg.jpg
@@ -143,13 +171,35 @@ mm_scholar/
 
 ---
 
-## ML pipeline notes
+## ML pipeline
 
-- **Features:** `country_of_study`, `level`, `field_of_study`, `funding_type`, `min_gpa`, `min_ielts`
-- **Target:** `scholarship_name` (87 classes)
-- **Encoding:** LabelEncoder for categorical features, MinMaxScaler for numeric
-- **Selection:** Best model chosen automatically by `train_models.py` and saved as `best_model.pkl`
-- **Fallback strategy:** If no exact match exists, the app progressively relaxes constraints (exact → relax funding → country only → popular fallback) while always enforcing GPA/IELTS eligibility
+### Features (6)
+
+| Feature | Type | Encoding |
+|---|---|---|
+| `country_of_study` | Categorical | LabelEncoder |
+| `level` | Categorical | LabelEncoder |
+| `field_of_study` | Categorical | LabelEncoder |
+| `funding_type` | Categorical | LabelEncoder |
+| `min_gpa` | Numeric | MinMaxScaler |
+| `min_ielts` | Numeric | MinMaxScaler |
+
+### Recommendation logic
+
+1. **SQL filter** — hard eligibility constraints (country, level, funding type, GPA, IELTS) with a 4-level fallback chain: exact match → relax funding → country only → popular fallback
+2. **k-NN ranking** — the student's encoded profile is passed to `knn.predict_proba()` once; each SQL candidate is scored by its class probability in that output and sorted descending
+3. **Match %** — `proba[scholarship_class_index] × 100`, shown on each result card
+
+### Evaluation results
+
+| Model | Role | Top-1 Acc | Top-3 Acc | CV Mean |
+|---|---|---|---|---|
+| k-NN | Production ranker | 41.90% | **80.00%** | 51.05% |
+| Decision Tree | Baseline | 77.14% | 80.95% | 83.24% |
+| Random Forest | Baseline | 76.19% | 100.00% | 80.76% |
+| Gradient Boosting | Baseline | 77.14% | 99.05% | 82.48% |
+
+Top-3 accuracy is the primary metric for a recommendation system that returns 3 results. k-NN is selected as the production ranker because its similarity-based mechanism directly aligns with the recommendation task: student profiles are matched to scholarships by nearest-neighbour similarity in qualification space.
 
 ---
 
