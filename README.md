@@ -9,7 +9,7 @@ A free, AI-powered scholarship finder for Myanmar students. Enter your study goa
 ## What it does
 
 - Recommends scholarships from a database of 87 verified scholarships across 30 countries
-- Ranks results using a Decision Tree classifier (77% accuracy) trained on scholarship features
+- Ranks results using k-NN trained on scholarship features
 - Explains each match with a personalised AI summary powered by Google Gemini
 - Collects and displays student feedback with star ratings
 
