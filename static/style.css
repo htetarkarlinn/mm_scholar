@@ -212,7 +212,7 @@ body {
 .explanation-panel {
   padding: 16px 20px;
   border-top: 1px solid var(--border);
-  background: var(--surface);
+  background: var(--card-bg);
   border-radius: 0 0 16px 16px;
 }
 

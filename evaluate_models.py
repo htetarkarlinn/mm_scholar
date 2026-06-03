@@ -6,6 +6,9 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+from sklearn.base import clone
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.metrics import (accuracy_score, precision_score,
                              recall_score, f1_score, confusion_matrix,
@@ -108,9 +111,12 @@ print("-" * 72)
 
 
 # --- 3. Cross-validation scores ---
+# Pipeline wraps MinMaxScaler + model so the scaler is re-fitted on each
+# fold's training split only — no leakage from test folds into the scaler.
 print("\n=== 5-Fold Cross Validation ===")
 for name, m in models.items():
-    scores = cross_val_score(m, scaler.transform(X), y, cv=5, scoring="accuracy")
+    pipe   = Pipeline([("scaler", MinMaxScaler()), ("clf", clone(m))])
+    scores = cross_val_score(pipe, X, y, cv=5, scoring="accuracy")
     eval_metrics[name]["cv_mean"] = scores.mean()
     eval_metrics[name]["cv_std"]  = scores.std()
     print(f"{name:<20} mean={scores.mean()*100:.2f}%  std={scores.std()*100:.2f}%")
@@ -192,6 +198,8 @@ print("Saved: feature_importance.png")
 
 
 # --- 7. Robustness check ---
+# Pipeline keeps scaler inside the loop so each seed gets its own scaler
+# fitted on that seed's training split only — consistent with CV treatment.
 print("\n=== Robustness Check (different random seeds) ===")
 for name, m in models.items():
     accs = []
@@ -199,8 +207,9 @@ for name, m in models.items():
         Xtr, Xte, ytr, yte = train_test_split(
             X, y, test_size=0.2, random_state=seed, stratify=y
         )
-        m.fit(scaler.transform(Xtr), ytr)
-        accs.append(accuracy_score(yte, m.predict(scaler.transform(Xte))))
+        pipe = Pipeline([("scaler", MinMaxScaler()), ("clf", clone(m))])
+        pipe.fit(Xtr, ytr)
+        accs.append(accuracy_score(yte, pipe.predict(Xte)))
     print(f"{name:<20} min={min(accs)*100:.2f}%  max={max(accs)*100:.2f}%  mean={sum(accs)/len(accs)*100:.2f}%")
 
 print("\nEvaluation complete. Charts saved to static/eda/")

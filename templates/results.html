@@ -134,11 +134,11 @@
           </div>
           <div class="info-item">
             <label>📊 Min GPA</label>
-            <p>{% if r.min_gpa == 0.0 %}Not specified{% else %}{{ r.min_gpa }} / 4.0{% endif %}</p>
+            <p>{% if not r.min_gpa or r.min_gpa == 0.0 %}Not specified{% else %}{{ r.min_gpa }} / 4.0{% endif %}</p>
           </div>
           <div class="info-item">
             <label>🗣 Min IELTS</label>
-            <p>{% if r.min_ielts == 0.0 %}Not specified{% else %}{{ r.min_ielts }}{% endif %}</p>
+            <p>{% if not r.min_ielts or r.min_ielts == 0.0 %}Not specified{% else %}{{ r.min_ielts }}{% endif %}</p>
           </div>
           <div class="info-item">
             <label>📅 Deadline</label>
@@ -386,20 +386,14 @@ async function toggleExplanation(btn) {
 
   try {
     const scholarship = SCHOLARSHIPS[parseInt(btn.dataset.idx)];
-    console.log('step1: scholarship', scholarship.scholarship_name);
 
     const res = await fetch('/explain', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ scholarship, student_profile: STUDENT_PROFILE })
     });
-    console.log('step2: got response', res.status);
 
-    const text = await res.text();
-    console.log('step3: raw response', text.slice(0, 200));
-
-    const data = JSON.parse(text);
-    console.log('step4: parsed data', data);
+    const data = await res.json();
 
     spinner.style.display = 'none';
     if (data.error) {

@@ -60,9 +60,8 @@ app      = Flask(__name__)
 encoders   = joblib.load(os.path.join(MODELS_DIR, "encoders.pkl"))
 scaler     = joblib.load(os.path.join(MODELS_DIR, "scaler.pkl"))
 knn        = joblib.load(os.path.join(MODELS_DIR, "knn_model.pkl"))
-dt         = joblib.load(os.path.join(MODELS_DIR, "dt_model.pkl"))
-rf         = joblib.load(os.path.join(MODELS_DIR, "rf_model.pkl"))
-# best_model.pkl kept for compare-page metrics only; knn is the production ranker
+
+explanation_cache: dict = {}
 
 # load dropdown options from database
 conn          = sqlite3.connect(DB_PATH)
@@ -93,18 +92,17 @@ region_counts = {
     for r, c in _REGION_COUNTRIES.items()
 }
 
-def load_metrics():
-    with open(os.path.join(MODELS_DIR, "metrics.json")) as _f:
-        _data     = json.load(_f)
-        _by_model = {m["model"]: m for m in _data["models"]}
-        return {
-            "best_accuracy":   _data["best_model_acc"],
-            "best_model_name": _data["best_model_name"],
-            "best_model_acc":  _data["best_model_acc"],
-            "dt_accuracy":     _by_model["Decision Tree"]["accuracy"],
-            "rf_accuracy":     _by_model["Random Forest"]["accuracy"],
-            "knn_accuracy":    _by_model["k-NN"]["accuracy"],
-        }
+with open(os.path.join(MODELS_DIR, "metrics.json")) as _mf:
+    _METRICS_DATA = json.load(_mf)
+_METRICS_BY_MODEL = {m["model"]: m for m in _METRICS_DATA["models"]}
+_HOMEPAGE_METRICS = {
+    "best_accuracy":   _METRICS_DATA["best_model_acc"],
+    "best_model_name": _METRICS_DATA["best_model_name"],
+    "best_model_acc":  _METRICS_DATA["best_model_acc"],
+    "dt_accuracy":     _METRICS_BY_MODEL["Decision Tree"]["accuracy"],
+    "rf_accuracy":     _METRICS_BY_MODEL["Random Forest"]["accuracy"],
+    "knn_accuracy":    _METRICS_BY_MODEL["k-NN"]["accuracy"],
+}
 
 
 def init_feedback_table():
@@ -336,8 +334,17 @@ def explain():
     data            = request.get_json()
     scholarship     = data.get("scholarship")
     student_profile = data.get("student_profile")
+    cache_key = (
+        scholarship.get("scholarship_name"),
+        student_profile.get("country"),
+        student_profile.get("level"),
+        student_profile.get("funding"),
+    )
+    if cache_key in explanation_cache:
+        return {"explanation": explanation_cache[cache_key]}
     try:
         explanation = generate_explanation(scholarship, student_profile)
+        explanation_cache[cache_key] = explanation
         return {"explanation": explanation}
     except Exception as e:
         app.logger.error(f"/explain error: {e}")
@@ -355,7 +362,7 @@ def index():
                            levels=levels,
                            fields=fields,
                            funding_types=funding_types,
-                           metrics=load_metrics(),
+                           metrics=_HOMEPAGE_METRICS,
                            num_scholarships=num_scholarships,
                            num_countries=num_countries,
                            region_counts=region_counts,
@@ -370,7 +377,6 @@ def recommend():
     field        = request.form.get("field", "any") or "any"
     gpa          = request.form.get("gpa", "").strip()
     ielts        = request.form.get("ielts", "").strip()
-    model_choice = request.form.get("model", "dt")
 
     results, match_type = get_recommendations(country, level, funding, field, gpa, ielts)
 
@@ -421,7 +427,7 @@ def thank_you():
 
 @app.route("/feedback-results")
 def feedback_results():
-    df = _fb_read("SELECT * FROM feedback ORDER BY timestamp DESC")
+    df = _fb_read("SELECT * FROM feedback ORDER BY timestamp DESC LIMIT 200")
 
     if df.empty:
         avg_rating = 0
@@ -449,10 +455,8 @@ def about():
 
 @app.route("/compare")
 def compare():
-    with open(os.path.join(MODELS_DIR, "metrics.json")) as f:
-        data = json.load(f)
     return render_template("compare.html",
-                           metrics=data["models"],
+                           metrics=_METRICS_DATA["models"],
                            num_rows=num_rows,
                            num_scholarships=num_scholarships,
                            num_countries=num_countries)
