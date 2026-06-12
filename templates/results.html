@@ -74,12 +74,19 @@
       </div>
       {% endif %}
 
-      <h5 class="fw-bold mb-3">
-        Top {{ results | length }} Scholarship{% if results | length > 1 %}s{% endif %} for You
-      </h5>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold mb-0">
+          Top {{ results | length }} Scholarship{% if results | length > 1 %}s{% endif %} for You
+        </h5>
+        <div class="d-flex gap-2" id="sort-controls">
+          <button class="btn btn-sm btn-primary"         id="btn-sort-match"    onclick="sortResults('match')">Best Match</button>
+          <button class="btn btn-sm btn-outline-secondary" id="btn-sort-deadline" onclick="sortResults('deadline')">⏰ Deadline</button>
+        </div>
+      </div>
 
+      <div id="results-list">
       {% for r in results %}
-      <div class="card scholarship-card mb-4">
+      <div class="card scholarship-card mb-4" data-sort-idx="{{ loop.index0 }}">
 
         <!-- card header -->
         <div class="card-header d-flex justify-content-between align-items-start">
@@ -187,6 +194,7 @@
 
       </div>
       {% endfor %}
+      </div>
 
       <p class="text-muted text-center mb-4" style="font-size:12px;">
         Ranked by <strong>k-NN</strong> (similarity-based matching)
@@ -295,10 +303,10 @@ function calculateDeadline(month) {
   if (deadline <= today) deadline = new Date(today.getFullYear() + 1, month - 1, 15);
   const daysLeft = Math.round((deadline - today) / 86400000);
 
-  if (daysLeft <= 0)  return { label: "⚠️ May have passed", color: "var(--text-muted)", bg: "#e2e8f0" };
-  if (daysLeft <= 30) return { label: `🔴 ${daysLeft} days left`, color: "#fff", bg: "var(--danger)" };
-  if (daysLeft <= 60) return { label: `🟡 ${daysLeft} days left`, color: "#7c4a00", bg: "#fff3cd" };
-  return               { label: `🟢 ${daysLeft} days left`, color: "#fff", bg: "var(--success)" };
+  if (daysLeft <= 0)  return { days: daysLeft, label: "⚠️ May have passed", color: "var(--text-muted)", bg: "#e2e8f0" };
+  if (daysLeft <= 30) return { days: daysLeft, label: `🔴 ${daysLeft} days left`, color: "#fff", bg: "var(--danger)" };
+  if (daysLeft <= 60) return { days: daysLeft, label: `🟡 ${daysLeft} days left`, color: "#7c4a00", bg: "#fff3cd" };
+  return               { days: daysLeft, label: `🟢 ${daysLeft} days left`, color: "#fff", bg: "var(--success)" };
 }
 
 document.querySelectorAll('.deadline-badge[data-month]').forEach(badge => {
@@ -422,6 +430,35 @@ function formatExplanation(text) {
     .replace(/\n/g, '<br>')
     .replace(/^/, '<p style="font-size:13px; line-height:1.7; margin:0">')
     .replace(/$/, '</p>');
+}
+
+function sortResults(mode) {
+  const list  = document.getElementById('results-list');
+  const cards = Array.from(list.querySelectorAll('.scholarship-card'));
+
+  if (mode === 'match') {
+    cards.sort((a, b) => parseInt(a.dataset.sortIdx) - parseInt(b.dataset.sortIdx));
+  } else {
+    const getDays = card => {
+      const badge = card.querySelector('.deadline-badge[data-month]');
+      return badge ? calculateDeadline(parseInt(badge.dataset.month)).days : 9999;
+    };
+    cards.sort((a, b) => getDays(a) - getDays(b));
+  }
+
+  document.getElementById('btn-sort-match').className =
+    mode === 'match' ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline-secondary';
+  document.getElementById('btn-sort-deadline').className =
+    mode === 'deadline' ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline-secondary';
+
+  cards.forEach((card, i) => {
+    list.appendChild(card);
+    const badge = card.querySelector('.rank-badge');
+    if (!badge) return;
+    ['rank-1', 'rank-2', 'rank-3'].forEach(c => badge.classList.remove(c));
+    badge.classList.add(`rank-${i + 1}`);
+    badge.textContent = i + 1;
+  });
 }
 </script>
 </body>
