@@ -57,9 +57,8 @@ def _fb_insert(vals):
     conn.close()
 
 app      = Flask(__name__)
-encoders   = joblib.load(os.path.join(MODELS_DIR, "encoders.pkl"))
-scaler     = joblib.load(os.path.join(MODELS_DIR, "scaler.pkl"))
-knn        = joblib.load(os.path.join(MODELS_DIR, "knn_model.pkl"))
+encoders = joblib.load(os.path.join(MODELS_DIR, "encoders.pkl"))
+knn      = joblib.load(os.path.join(MODELS_DIR, "knn_model.pkl"))
 
 explanation_cache: dict = {}
 
@@ -146,32 +145,28 @@ def _fetch(where, params):
 def _rank(candidates, student):
     """Rank SQL candidates by k-NN similarity to the student profile.
 
-    The student's preferences are encoded as a feature vector in the same
-    space as the training data.  k-NN predict_proba gives the fraction of
-    the k nearest training neighbours that belong to each scholarship class —
-    a genuine similarity score derived from the student side, not from
-    feeding each scholarship's own features back through the model.
+    The k-NN model is a full Pipeline (OHE + MinMaxScaler + KNN).  We pass a
+    one-row raw DataFrame — the pipeline handles all preprocessing internally.
+    OneHotEncoder(handle_unknown="ignore") maps field="any" (an unseen label)
+    to all-zeros, which is the correct neutral signal: no field preference.
     """
     gpa   = float(student.get("gpa")   or 0)
     ielts = float(student.get("ielts") or 0)
     field = student.get("field", "any")
 
+    student_df = pd.DataFrame([{
+        "country_of_study": student["country"],
+        "level":            student["level"],
+        "field_of_study":   field if field and field != "any" else "any",
+        "funding_type":     student["funding"],
+        "min_gpa":          gpa,
+        "min_ielts":        ielts,
+    }])
+
     try:
-        # For "any" field, use the midpoint of label-encoded field values so
-        # no single field dominates similarity; SQL already filtered upstream.
-        field_enc = (int(encoders["field_of_study"].transform([field])[0])
-                     if field and field != "any"
-                     else int(len(encoders["field_of_study"].classes_) / 2))
-        student_vec = [
-            int(encoders["country_of_study"].transform([student["country"]])[0]),
-            int(encoders["level"].transform([student["level"]])[0]),
-            field_enc,
-            int(encoders["funding_type"].transform([student["funding"]])[0]),
-            gpa,
-            ielts,
-        ]
-    except (ValueError, KeyError):
-        # Encoding failed (unseen label) — return candidates unranked
+        proba = knn.predict_proba(student_df)[0]
+    except Exception:
+        # predict failed — return candidates unranked
         seen, results = set(), []
         for _, row in candidates.iterrows():
             name = row["scholarship_name"]
@@ -186,8 +181,6 @@ def _rank(candidates, student):
                 break
         return results
 
-    # One predict_proba call for the student profile
-    proba = knn.predict_proba(scaler.transform([student_vec]))[0]
     classes_idx = {int(c): i for i, c in enumerate(knn.classes_)}
 
     scored = []
@@ -339,6 +332,9 @@ def explain():
         student_profile.get("country"),
         student_profile.get("level"),
         student_profile.get("funding"),
+        student_profile.get("field"),
+        str(student_profile.get("gpa", "")),
+        str(student_profile.get("ielts", "")),
     )
     if cache_key in explanation_cache:
         return {"explanation": explanation_cache[cache_key]}

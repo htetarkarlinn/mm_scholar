@@ -5,14 +5,14 @@
   "models": [
     {
       "model": "k-NN",
-      "params": "k=7",
-      "accuracy": 41.9,
-      "top3_accuracy": 80.0,
-      "precision": 35.48,
-      "recall": 41.9,
-      "f1": 36.4,
-      "cv_mean": 51.05,
-      "cv_std": 2.53
+      "params": "k=7, weights=distance",
+      "accuracy": 51.43,
+      "top3_accuracy": 78.1,
+      "precision": 51.43,
+      "recall": 51.43,
+      "f1": 50.38,
+      "cv_mean": 64.57,
+      "cv_std": 6.77
     },
     {
       "model": "Decision Tree",

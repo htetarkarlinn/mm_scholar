@@ -7,8 +7,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from sklearn.base import clone
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.metrics import (accuracy_score, precision_score,
                              recall_score, f1_score, confusion_matrix,
@@ -31,51 +29,59 @@ BLUE2 = "#2E75B6"
 GREEN = "#1D9E75"
 RED   = "#E24B4A"
 
-# load data
 conn = sqlite3.connect(DB_PATH)
 df   = pd.read_sql("SELECT * FROM scholarships", conn)
 conn.close()
 print(f"Loaded {len(df)} rows")
 
-# load models and encoders
 knn      = joblib.load(os.path.join(MODELS_DIR, "knn_model.pkl"))
 dt       = joblib.load(os.path.join(MODELS_DIR, "dt_model.pkl"))
 rf       = joblib.load(os.path.join(MODELS_DIR, "rf_model.pkl"))
 gb       = joblib.load(os.path.join(MODELS_DIR, "gb_model.pkl"))
 encoders = joblib.load(os.path.join(MODELS_DIR, "encoders.pkl"))
-scaler   = joblib.load(os.path.join(MODELS_DIR, "scaler.pkl"))
 
-# drop singleton classes (same filter applied during training)
 counts = df[TARGET].map(df[TARGET].value_counts())
 df = df[counts >= 2].reset_index(drop=True)
 
-# encode categorical features using saved encoders
-for col in CAT_FEATURES + [TARGET]:
-    df[col] = encoders[col].transform(df[col])
-
-# numeric features: fill NaN with 0
 for col in NUM_FEATURES:
     df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0)
 
-X = df[FEATURES].values
-y = df[TARGET].values
+# ── Two data views to match each model's expected input ───────────────────────
+# k-NN pipeline: ColumnTransformer(OHE + MinMaxScaler) — needs raw DataFrame
+X_knn = df[FEATURES]
+y     = encoders[TARGET].transform(df[TARGET])
 
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42, stratify=y
-)
+# Tree pipelines: Pipeline(MinMaxScaler + clf) — need label-encoded array
+df_le = df.copy()
+for col in CAT_FEATURES:
+    df_le[col] = encoders[col].transform(df_le[col])
+X = df_le[FEATURES].values.astype(float)
 
-X_train_s = scaler.transform(X_train)
-X_test_s  = scaler.transform(X_test)
+# Same deterministic split as training (random_state=42, stratify=y)
+idx = np.arange(len(df))
+train_idx, test_idx = train_test_split(idx, test_size=0.2, random_state=42, stratify=y)
+
+X_train,     X_test     = X[train_idx],              X[test_idx]
+X_knn_train, X_knn_test = X_knn.iloc[train_idx],     X_knn.iloc[test_idx]
+y_train,     y_test     = y[train_idx],               y[test_idx]
+
+
+def _X(name):
+    """Return the right test split for each model type."""
+    return X_knn_test if name == "k-NN" else X_test
+
+
+def _X_full(name):
+    """Return the full feature matrix for each model type (used in CV/robustness)."""
+    return X_knn if name == "k-NN" else X
 
 
 # --- 1. Accuracy comparison bar chart ---
-models      = {"k-NN": knn, "Decision Tree": dt, "Random Forest": rf, "Gradient Boosting": gb}
-accuracies  = {name: accuracy_score(y_test, m.predict(X_test_s))
-               for name, m in models.items()}
+models     = {"k-NN": knn, "Decision Tree": dt, "Random Forest": rf, "Gradient Boosting": gb}
+accuracies = {name: accuracy_score(y_test, m.predict(_X(name))) for name, m in models.items()}
 
 fig, ax = plt.subplots(figsize=(8, 5))
-colors  = [GREEN if v == max(accuracies.values()) else BLUE2
-           for v in accuracies.values()]
+colors  = [GREEN if v == max(accuracies.values()) else BLUE2 for v in accuracies.values()]
 bars = ax.bar(accuracies.keys(), [v * 100 for v in accuracies.values()],
               color=colors, width=0.5)
 ax.set_title("Model Accuracy Comparison", fontsize=13, fontweight="bold")
@@ -97,8 +103,9 @@ print(f"{'Model':<20} {'Top-1 Acc':>10} {'Top-3 Acc':>10} {'Precision':>10} {'Re
 print("-" * 72)
 eval_metrics = {}
 for name, m in models.items():
-    y_pred  = m.predict(X_test_s)
-    y_proba = m.predict_proba(X_test_s)
+    Xev     = _X(name)
+    y_pred  = m.predict(Xev)
+    y_proba = m.predict_proba(Xev)
     acc     = accuracy_score(y_test, y_pred)
     top3    = top_k_accuracy_score(y_test, y_proba, k=3, labels=m.classes_)
     prec    = precision_score(y_test, y_pred, average="weighted", zero_division=0)
@@ -111,21 +118,24 @@ print("-" * 72)
 
 
 # --- 3. Cross-validation scores ---
-# Pipeline wraps MinMaxScaler + model so the scaler is re-fitted on each
-# fold's training split only — no leakage from test folds into the scaler.
+# Each model is already a Pipeline with internal preprocessing — clone it
+# directly so each fold independently re-fits the scaler (or OHE).
 print("\n=== 5-Fold Cross Validation ===")
 for name, m in models.items():
-    pipe   = Pipeline([("scaler", MinMaxScaler()), ("clf", clone(m))])
-    scores = cross_val_score(pipe, X, y, cv=5, scoring="accuracy")
+    scores = cross_val_score(clone(m), _X_full(name), y, cv=5, scoring="accuracy")
     eval_metrics[name]["cv_mean"] = scores.mean()
     eval_metrics[name]["cv_std"]  = scores.std()
     print(f"{name:<20} mean={scores.mean()*100:.2f}%  std={scores.std()*100:.2f}%")
 
+knn_clf = knn.named_steps["clf"]
+dt_clf  = dt.named_steps["clf"]
+rf_clf  = rf.named_steps["clf"]
+gb_clf  = gb.named_steps["clf"]
 params_map = {
-    "k-NN":               f"k={knn.n_neighbors}",
-    "Decision Tree":      f"depth={dt.max_depth}",
-    "Random Forest":      f"n={rf.n_estimators}",
-    "Gradient Boosting":  f"n={gb.n_estimators}, lr={gb.learning_rate}",
+    "k-NN":              f"k={knn_clf.n_neighbors}, weights={knn_clf.weights}",
+    "Decision Tree":     f"depth={dt_clf.max_depth}",
+    "Random Forest":     f"n={rf_clf.n_estimators}",
+    "Gradient Boosting": f"n={gb_clf.n_estimators}, lr={gb_clf.learning_rate}",
 }
 models_list = [
     {
@@ -156,7 +166,7 @@ print("Saved: models/metrics.json")
 # --- 4. Confusion matrix for best classifier baseline ---
 _baseline_models = {"Decision Tree": dt, "Random Forest": rf, "Gradient Boosting": gb}
 _best_baseline   = max(_baseline_models, key=lambda n: eval_metrics[n]["accuracy"])
-y_pred_best = _baseline_models[_best_baseline].predict(X_test_s)
+y_pred_best = _baseline_models[_best_baseline].predict(X_test)
 cm        = confusion_matrix(y_test, y_pred_best)
 fig, ax   = plt.subplots(figsize=(14, 12))
 disp      = ConfusionMatrixDisplay(confusion_matrix=cm)
@@ -171,7 +181,7 @@ print("\nSaved: confusion_matrix_dt.png")
 
 # --- 5. Decision Tree visualization (top 3 levels) ---
 fig, ax = plt.subplots(figsize=(20, 8))
-plot_tree(dt, max_depth=3,
+plot_tree(dt.named_steps["clf"], max_depth=3,
           feature_names=FEATURES,
           filled=True, rounded=True,
           fontsize=9, ax=ax)
@@ -183,7 +193,7 @@ print("Saved: decision_tree_plot.png")
 
 
 # --- 6. Feature importance from Random Forest ---
-importances = rf.feature_importances_
+importances = rf.named_steps["clf"].feature_importances_
 fig, ax     = plt.subplots(figsize=(8, 4))
 colors      = [GREEN if v == max(importances) else BLUE2 for v in importances]
 ax.barh(FEATURES, importances, color=colors)
@@ -198,16 +208,16 @@ print("Saved: feature_importance.png")
 
 
 # --- 7. Robustness check ---
-# Pipeline keeps scaler inside the loop so each seed gets its own scaler
-# fitted on that seed's training split only — consistent with CV treatment.
+# Clone the full pipeline per seed so each seed gets independently fitted
+# preprocessing (OHE+scaler for k-NN, scaler for trees).
 print("\n=== Robustness Check (different random seeds) ===")
 for name, m in models.items():
     accs = []
     for seed in [0, 7, 21, 42, 99]:
         Xtr, Xte, ytr, yte = train_test_split(
-            X, y, test_size=0.2, random_state=seed, stratify=y
+            _X_full(name), y, test_size=0.2, random_state=seed, stratify=y
         )
-        pipe = Pipeline([("scaler", MinMaxScaler()), ("clf", clone(m))])
+        pipe = clone(m)
         pipe.fit(Xtr, ytr)
         accs.append(accuracy_score(yte, pipe.predict(Xte)))
     print(f"{name:<20} min={min(accs)*100:.2f}%  max={max(accs)*100:.2f}%  mean={sum(accs)/len(accs)*100:.2f}%")

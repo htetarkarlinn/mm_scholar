@@ -25,7 +25,7 @@ def check(name, condition, detail=""):
 
 print("\n=== MM Scholar Test Suite ===\n")
 
-# ── T1: All model pkl files exist and load without error ──────────────────────
+# ── T1: All model pkl files exist, load without error, and are Pipelines ──────
 print("T1: Model files load cleanly")
 try:
     knn      = joblib.load(os.path.join(MODELS_DIR, "knn_model.pkl"))
@@ -33,13 +33,16 @@ try:
     rf       = joblib.load(os.path.join(MODELS_DIR, "rf_model.pkl"))
     gb       = joblib.load(os.path.join(MODELS_DIR, "gb_model.pkl"))
     encoders = joblib.load(os.path.join(MODELS_DIR, "encoders.pkl"))
-    scaler   = joblib.load(os.path.join(MODELS_DIR, "scaler.pkl"))
-    check("knn_model.pkl loads",  True)
-    check("dt_model.pkl loads",   True)
-    check("rf_model.pkl loads",   True)
-    check("gb_model.pkl loads",   True)
-    check("encoders.pkl loads",   True)
-    check("scaler.pkl loads",     True)
+    check("knn_model.pkl loads",        True)
+    check("dt_model.pkl loads",         True)
+    check("rf_model.pkl loads",         True)
+    check("gb_model.pkl loads",         True)
+    check("encoders.pkl loads",         True)
+    check("knn is Pipeline (OHE+KNN)",  hasattr(knn, "named_steps") and "pre" in knn.named_steps)
+    check("dt is Pipeline (scaler+DT)", hasattr(dt,  "named_steps") and "scaler" in dt.named_steps)
+    check("rf is Pipeline (scaler+RF)", hasattr(rf,  "named_steps") and "scaler" in rf.named_steps)
+    check("gb is Pipeline (scaler+GB)", hasattr(gb,  "named_steps") and "scaler" in gb.named_steps)
+    check("knn weights=distance",       knn.named_steps["clf"].weights == "distance")
 except Exception as e:
     check("model files load", False, str(e))
 
@@ -54,17 +57,22 @@ check("top3_accuracy field present", all("top3_accuracy" in m for m in metrics["
 check("cv_mean field present",       all("cv_mean" in m for m in metrics["models"]))
 check("knn_role field present",      metrics.get("knn_role") == "production_ranker")
 
-# ── T3: k-NN ranking is non-circular ─────────────────────────────────────────
-print("\nT3: k-NN ranking — student vector fed once, not per scholarship")
-country_enc = int(encoders["country_of_study"].transform(["Japan"])[0])
-level_enc   = int(encoders["level"].transform(["postgraduate"])[0])
-field_enc   = int(encoders["field_of_study"].transform(["STEM"])[0])
-funding_enc = int(encoders["funding_type"].transform(["fully_funded"])[0])
-student_vec = [country_enc, level_enc, field_enc, funding_enc, 3.5, 6.5]
-proba = knn.predict_proba(scaler.transform([student_vec]))[0]
-check("predict_proba output length == n_classes", len(proba) == len(knn.classes_))
-check("probabilities sum to ~1.0",               abs(proba.sum() - 1.0) < 1e-6)
-check("match_pct is fraction of k neighbours",   proba.max() <= 1.0 and proba.min() >= 0.0)
+# ── T3: k-NN pipeline — raw DataFrame input, continuous distance-weighted proba
+print("\nT3: k-NN pipeline — raw DataFrame input, distance-weighted probabilities")
+student_df = pd.DataFrame([{
+    "country_of_study": "Japan",
+    "level":            "postgraduate",
+    "field_of_study":   "STEM",
+    "funding_type":     "fully_funded",
+    "min_gpa":          3.5,
+    "min_ielts":        6.5,
+}])
+proba = knn.predict_proba(student_df)[0]
+check("predict_proba output length == n_classes",  len(proba) == len(knn.classes_))
+check("probabilities sum to ~1.0",                 abs(proba.sum() - 1.0) < 1e-6)
+check("match_pct continuous (distance-weighted)",  proba.max() <= 1.0 and proba.min() >= 0.0)
+check("field='any' encodes as all-zeros (no crash)",
+      knn.predict_proba(student_df.assign(field_of_study="any")) is not None)
 
 # ── T4: Flask app imports and routes register without error ───────────────────
 print("\nT4: Flask app imports cleanly")
