@@ -1,80 +1,37 @@
 import os
 import json
-import sqlite3
-import joblib
 import datetime
-import numpy as np
-import pandas as pd
+import logging
 from flask import Flask, render_template, request, redirect, url_for, jsonify
-import google.generativeai as genai
-from dotenv import load_dotenv
 
-load_dotenv()
-genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
-gemini = genai.GenerativeModel("gemini-2.5-flash")
+import config
+from config import MODELS_DIR, PORT, DEBUG
+from repositories.scholarship_repo import ScholarshipRepository
+from repositories.feedback_repo import FeedbackRepository
+from services.recommendation_service import get_recommendations
+from services.explanation_service import generate_explanation
 
-BASE_DIR   = os.path.dirname(os.path.abspath(__file__))
-DB_PATH    = os.path.join(BASE_DIR, "mm_scholar.db")
-MODELS_DIR = os.path.join(BASE_DIR, "models")
+config.configure_logging()
+logger = logging.getLogger(__name__)
 
-# ── Feedback DB: SQLite locally, PostgreSQL on Render / Heroku ───────────────
-# Both platforms inject DATABASE_URL automatically when a Postgres addon is
-# attached.  Heroku uses the legacy "postgres://" scheme; normalize it.
-_PG_URL = os.environ.get("DATABASE_URL", "")
-if _PG_URL.startswith("postgres://"):
-    _PG_URL = _PG_URL.replace("postgres://", "postgresql://", 1)
-_USE_PG = bool(_PG_URL)
+app = Flask(__name__)
 
-if _USE_PG:
-    import psycopg2
-    def _fb_conn():
-        return psycopg2.connect(_PG_URL)
-    _PH     = "%s"
-    _ID_DEF = "id SERIAL PRIMARY KEY"
-else:
-    def _fb_conn():
-        return sqlite3.connect(DB_PATH)
-    _PH     = "?"
-    _ID_DEF = "id INTEGER PRIMARY KEY AUTOINCREMENT"
+# ── Bootstrap repositories ────────────────────────────────────────────────────
+scholarship_repo = ScholarshipRepository()
+feedback_repo    = FeedbackRepository()
+feedback_repo.initialise()
 
-def _fb_read(query):
-    conn = _fb_conn()
-    df   = pd.read_sql(query, conn)
-    conn.close()
-    return df
+# ── Startup data (dropdown options, region counts, metrics) ───────────────────
+_opts         = scholarship_repo.get_dropdown_options()
+countries     = _opts["countries"]
+levels        = _opts["levels"]
+fields        = _opts["fields"]
+funding_types = _opts["funding_types"]
 
-def _fb_insert(vals):
-    conn = _fb_conn()
-    cur  = conn.cursor()
-    cur.execute(
-        f"INSERT INTO feedback "
-        f"(timestamp, country, level, field, funding, model_used, recommendation, rating, comment) "
-        f"VALUES ({_PH},{_PH},{_PH},{_PH},{_PH},{_PH},{_PH},{_PH},{_PH})",
-        vals
-    )
-    conn.commit()
-    cur.close()
-    conn.close()
-
-app      = Flask(__name__)
-encoders = joblib.load(os.path.join(MODELS_DIR, "encoders.pkl"))
-knn      = joblib.load(os.path.join(MODELS_DIR, "knn_model.pkl"))
-
-explanation_cache: dict = {}
-
-# load dropdown options from database
-conn          = sqlite3.connect(DB_PATH)
-df_all        = pd.read_sql("SELECT * FROM scholarships", conn)
-conn.close()
-
-countries     = sorted(df_all["country_of_study"].unique())
-levels        = ["diploma", "undergraduate", "postgraduate", "phd", "short_course"]
-fields        = ["STEM", "Business", "Humanities", "Medical", "Education"]
-funding_types = sorted(df_all["funding_type"].unique())
-
-num_scholarships = int(df_all["scholarship_name"].nunique())
-num_countries    = int(df_all["country_of_study"].nunique())
-num_rows         = len(df_all)
+_stats           = scholarship_repo.get_stats()
+num_scholarships = _stats["num_scholarships"]
+num_countries    = _stats["num_countries"]
+num_rows         = _stats["num_rows"]
 
 _REGION_COUNTRIES = {
     "Asia":       ["Japan","South Korea","China","Singapore","Thailand","India",
@@ -86,10 +43,7 @@ _REGION_COUNTRIES = {
     "MiddleEast": ["Turkey","UAE","Saudi Arabia","Qatar"],
     "Pacific":    ["Australia","New Zealand","Hong Kong"],
 }
-region_counts = {
-    r: int(df_all[df_all["country_of_study"].isin(c)]["scholarship_name"].nunique())
-    for r, c in _REGION_COUNTRIES.items()
-}
+region_counts = scholarship_repo.get_region_counts(_REGION_COUNTRIES)
 
 with open(os.path.join(MODELS_DIR, "metrics.json")) as _mf:
     _METRICS_DATA = json.load(_mf)
@@ -103,223 +57,55 @@ _HOMEPAGE_METRICS = {
     "knn_accuracy":    _METRICS_BY_MODEL["k-NN"]["accuracy"],
 }
 
-
-def init_feedback_table():
-    conn = _fb_conn()
-    cur  = conn.cursor()
-    cur.execute(f"""
-        CREATE TABLE IF NOT EXISTS feedback (
-            {_ID_DEF},
-            timestamp       TEXT,
-            country         TEXT,
-            level           TEXT,
-            field           TEXT,
-            funding         TEXT,
-            model_used      TEXT,
-            recommendation  TEXT,
-            rating          INTEGER,
-            comment         TEXT
-        )
-    """)
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_fb_timestamp ON feedback(timestamp)")
-    cur.execute("CREATE INDEX IF NOT EXISTS idx_fb_rating    ON feedback(rating)")
-    conn.commit()
-    cur.close()
-    conn.close()
-
-init_feedback_table()
+logger.info(
+    "MM Scholar started — %d scholarships, %d countries, feedback backend: %s",
+    num_scholarships, num_countries, "PostgreSQL" if config.USE_PG else "SQLite",
+)
 
 
-_COLS = ("SELECT DISTINCT scholarship_name, provider, country_of_study, level, "
-         "field_of_study, funding_type, min_gpa, min_ielts, "
-         "deadline_month, duration_years, link FROM scholarships WHERE ")
+# ── Routes ────────────────────────────────────────────────────────────────────
+
+@app.route("/")
+def index():
+    recent = feedback_repo.read(
+        "SELECT * FROM feedback WHERE comment != '' AND comment IS NOT NULL "
+        "ORDER BY timestamp DESC LIMIT 3"
+    )
+    return render_template("index.html",
+                           countries=countries, levels=levels,
+                           fields=fields, funding_types=funding_types,
+                           metrics=_HOMEPAGE_METRICS,
+                           num_scholarships=num_scholarships,
+                           num_countries=num_countries,
+                           region_counts=region_counts,
+                           recent_feedback=recent.to_dict("records"))
 
 
-def _fetch(where, params):
-    conn = sqlite3.connect(DB_PATH)
-    df   = pd.read_sql(_COLS + " AND ".join(where), conn, params=params)
-    conn.close()
-    return df
-
-
-def _rank(candidates, student):
-    """Rank SQL candidates by k-NN similarity to the student profile.
-
-    The k-NN model is a full Pipeline (OHE + MinMaxScaler + KNN).  We pass a
-    one-row raw DataFrame — the pipeline handles all preprocessing internally.
-    OneHotEncoder(handle_unknown="ignore") maps field="any" (an unseen label)
-    to all-zeros, which is the correct neutral signal: no field preference.
-    """
-    gpa   = float(student.get("gpa")   or 0)
-    ielts = float(student.get("ielts") or 0)
-    field = student.get("field", "any")
-
-    student_df = pd.DataFrame([{
-        "country_of_study": student["country"],
-        "level":            student["level"],
-        "field_of_study":   field if field and field != "any" else "any",
-        "funding_type":     student["funding"],
-        "min_gpa":          gpa,
-        "min_ielts":        ielts,
-    }])
+@app.route("/recommend", methods=["POST"])
+def recommend():
+    country = request.form.get("country")
+    level   = request.form.get("level")
+    funding = request.form.get("funding")
+    field   = request.form.get("field", "any") or "any"
+    gpa     = request.form.get("gpa", "").strip()
+    ielts   = request.form.get("ielts", "").strip()
 
     try:
-        proba = knn.predict_proba(student_df)[0]
-    except Exception:
-        # predict failed — return candidates unranked
-        seen, results = set(), []
-        for _, row in candidates.iterrows():
-            name = row["scholarship_name"]
-            if name in seen:
-                continue
-            seen.add(name)
-            record = {k: (None if isinstance(v, float) and pd.isna(v) else v)
-                      for k, v in row.to_dict().items()}
-            record["match_pct"] = 0.0
-            results.append(record)
-            if len(results) >= 3:
-                break
-        return results
+        results, match_type = get_recommendations(country, level, funding, field, gpa, ielts)
+    except ValueError as exc:
+        logger.warning("Invalid recommendation request: %s", exc)
+        return render_template("400.html", error=str(exc)), 400
 
-    classes_idx = {int(c): i for i, c in enumerate(knn.classes_)}
+    recommendation = results[0]["scholarship_name"] if results else "None"
+    student_profile = {"country": country, "level": level, "field": field,
+                       "funding": funding, "gpa": gpa, "ielts": ielts}
 
-    scored = []
-    for _, row in candidates.iterrows():
-        name = row["scholarship_name"]
-        if name not in encoders["scholarship_name"].classes_:
-            continue
-        target_enc = int(encoders["scholarship_name"].transform([name])[0])
-        if target_enc not in classes_idx:
-            continue
-        match_score = float(proba[classes_idx[target_enc]])
-        record = {k: (None if isinstance(v, float) and pd.isna(v) else v)
-                  for k, v in row.to_dict().items()}
-        record["match_pct"] = round(match_score * 100, 1)
-        scored.append((match_score, record))
-
-    scored.sort(key=lambda x: x[0], reverse=True)
-    seen, results = set(), []
-    for _, record in scored:
-        name = record["scholarship_name"]
-        if name in seen:
-            continue
-        seen.add(name)
-        results.append(record)
-        if len(results) >= 3:
-            break
-    return results
-
-
-def get_recommendations(country, level, funding, field, gpa, ielts):
-    gpa   = float(gpa)   if gpa   else 0.0
-    ielts = float(ielts) if ielts else 0.0
-
-    student = {
-        "country": country,
-        "level":   level,
-        "field":   field,
-        "funding": funding,
-        "gpa":     gpa,
-        "ielts":   ielts,
-    }
-
-    # Eligibility filters — applied at every fallback level so students
-    # are never shown scholarships whose GPA/IELTS requirement they can't meet.
-    score_opt, score_p = [], []
-    if gpa > 0:
-        score_opt.append("(min_gpa = 0.0 OR min_gpa <= ?)")
-        score_p.append(gpa)
-    if ielts > 0:
-        score_opt.append("(min_ielts = 0.0 OR min_ielts <= ?)")
-        score_p.append(ielts)
-
-    # Preference filters (field) — only applied at levels 1 & 2 where the
-    # search is already scoped tightly enough.
-    pref_opt = list(score_opt)
-    pref_p   = list(score_p)
-    if field and field != "any":
-        pref_opt.insert(0, "field_of_study = ?")
-        pref_p.insert(0, field)
-
-    # Level 1 — exact match
-    candidates = _fetch(
-        ["country_of_study = ?", "level = ?", "funding_type = ?"] + pref_opt,
-        [country, level, funding] + pref_p
-    )
-    if not candidates.empty:
-        results = _rank(candidates, student)
-        if results:
-            return results, "exact"
-
-    # Level 2 — relax funding_type
-    candidates = _fetch(
-        ["country_of_study = ?", "level = ?"] + pref_opt,
-        [country, level] + pref_p
-    )
-    if not candidates.empty:
-        results = _rank(candidates, student)
-        if results:
-            return results, "relaxed_funding"
-
-    # Level 3 — country only (score filters kept, field/funding relaxed)
-    candidates = _fetch(["country_of_study = ?"] + score_opt, [country] + score_p)
-    if not candidates.empty:
-        results = _rank(candidates, student)
-        if results:
-            return results, "country_only"
-
-    # Level 4 — popular fallback (score filters kept)
-    candidates = _fetch(["funding_type = ?", "level = ?"] + score_opt,
-                        ["fully_funded", level] + score_p)
-    if not candidates.empty:
-        results = _rank(candidates, student)
-        if results:
-            return results, "popular_fallback"
-
-    return [], "no_results"
-
-
-def generate_explanation(scholarship, student):
-    prompt = f"""
-You are a scholarship advisor helping a Myanmar student.
-
-Student is looking for:
-- Country: {student['country']}
-- Level: {student['level']}
-- Funding: {student['funding']}
-- Field: {student.get('field', 'not specified')}
-- GPA: {student.get('gpa', 'not provided')}
-- IELTS: {student.get('ielts', 'not provided')}
-
-Scholarship details:
-- Name: {scholarship['scholarship_name']}
-- Provider: {scholarship['provider']}
-- Country: {scholarship['country_of_study']}
-- Level: {scholarship['level']}
-- Field: {scholarship['field_of_study']}
-- Funding: {scholarship['funding_type']}
-- Min GPA: {scholarship['min_gpa']}
-- Min IELTS: {scholarship['min_ielts']}
-- Deadline: month {int(scholarship['deadline_month']) if scholarship.get('deadline_month') else 'not specified'}
-- Duration: {scholarship['duration_years']} years
-
-Write a short explanation with exactly 3 sections:
-
-WHY THIS MATCHES YOU
-(2 sentences — explain why this scholarship suits this student specifically)
-
-WHAT YOU NEED TO APPLY
-(3-4 bullet points — practical requirements)
-
-THINGS TO CHECK
-(1-2 warnings — important eligibility notes for Myanmar students)
-
-Keep total response under 150 words.
-Be encouraging and specific.
-Write for a Myanmar student applying for the first time.
-"""
-    response = gemini.generate_content(prompt)
-    return response.text
+    return render_template("results.html",
+                           results=results, match_type=match_type,
+                           country=country, level=level, field=field,
+                           funding=funding, gpa=gpa, ielts=ielts,
+                           recommendation=recommendation,
+                           student_profile=student_profile)
 
 
 @app.route("/explain", methods=["POST"])
@@ -327,82 +113,17 @@ def explain():
     data            = request.get_json()
     scholarship     = data.get("scholarship")
     student_profile = data.get("student_profile")
-    cache_key = (
-        scholarship.get("scholarship_name"),
-        student_profile.get("country"),
-        student_profile.get("level"),
-        student_profile.get("funding"),
-        student_profile.get("field"),
-        str(student_profile.get("gpa", "")),
-        str(student_profile.get("ielts", "")),
-    )
-    if cache_key in explanation_cache:
-        return {"explanation": explanation_cache[cache_key]}
     try:
         explanation = generate_explanation(scholarship, student_profile)
-        explanation_cache[cache_key] = explanation
         return {"explanation": explanation}
-    except Exception as e:
-        app.logger.error(f"/explain error: {e}")
+    except Exception as exc:
+        logger.error("/explain error: %s", exc)
         return {"explanation": "Explanation unavailable. Please visit the official scholarship website for more details."}, 200
-
-
-@app.route("/")
-def index():
-    fb_df = _fb_read(
-        "SELECT * FROM feedback WHERE comment != '' AND comment IS NOT NULL "
-        "ORDER BY timestamp DESC LIMIT 3"
-    )
-    return render_template("index.html",
-                           countries=countries,
-                           levels=levels,
-                           fields=fields,
-                           funding_types=funding_types,
-                           metrics=_HOMEPAGE_METRICS,
-                           num_scholarships=num_scholarships,
-                           num_countries=num_countries,
-                           region_counts=region_counts,
-                           recent_feedback=fb_df.to_dict("records"))
-
-
-@app.route("/recommend", methods=["POST"])
-def recommend():
-    country      = request.form.get("country")
-    level        = request.form.get("level")
-    funding      = request.form.get("funding")
-    field        = request.form.get("field", "any") or "any"
-    gpa          = request.form.get("gpa", "").strip()
-    ielts        = request.form.get("ielts", "").strip()
-
-    results, match_type = get_recommendations(country, level, funding, field, gpa, ielts)
-
-    recommendation = results[0]["scholarship_name"] if results else "None"
-
-    student_profile = {
-        "country": country,
-        "level":   level,
-        "field":   field,
-        "funding": funding,
-        "gpa":     gpa,
-        "ielts":   ielts,
-    }
-
-    return render_template("results.html",
-                           results=results,
-                           match_type=match_type,
-                           country=country,
-                           level=level,
-                           field=field,
-                           funding=funding,
-                           gpa=gpa,
-                           ielts=ielts,
-                           recommendation=recommendation,
-                           student_profile=student_profile)
 
 
 @app.route("/feedback", methods=["POST"])
 def feedback():
-    _fb_insert((
+    feedback_repo.insert((
         datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         request.form.get("country"),
         request.form.get("level"),
@@ -411,7 +132,7 @@ def feedback():
         request.form.get("model_used"),
         request.form.get("recommendation"),
         int(request.form.get("rating", 0)),
-        request.form.get("comment", "").strip()
+        request.form.get("comment", "").strip(),
     ))
     return redirect(url_for("thank_you"))
 
@@ -423,22 +144,16 @@ def thank_you():
 
 @app.route("/feedback-results")
 def feedback_results():
-    df = _fb_read("SELECT * FROM feedback ORDER BY timestamp DESC LIMIT 200")
-
+    df = feedback_repo.read("SELECT * FROM feedback ORDER BY timestamp DESC LIMIT 200")
     if df.empty:
-        avg_rating = 0
-        total      = 0
-        ratings    = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+        avg_rating, total, ratings = 0, 0, {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
     else:
         avg_rating = round(df["rating"].mean(), 2)
         total      = len(df)
-        ratings    = df["rating"].value_counts().reindex([1,2,3,4,5], fill_value=0).to_dict()
-
+        ratings    = df["rating"].value_counts().reindex([1, 2, 3, 4, 5], fill_value=0).to_dict()
     return render_template("feedback_results.html",
                            feedbacks=df.to_dict("records"),
-                           avg_rating=avg_rating,
-                           total=total,
-                           ratings=ratings)
+                           avg_rating=avg_rating, total=total, ratings=ratings)
 
 
 @app.route("/about")
@@ -458,5 +173,50 @@ def compare():
                            num_countries=num_countries)
 
 
+@app.route("/health")
+def health():
+    sc_ok = scholarship_repo.is_available()
+    fb_ok = feedback_repo.is_available()
+    status = "ok" if sc_ok and fb_ok else "degraded"
+    code   = 200 if status == "ok" else 503
+    return jsonify({
+        "status":           status,
+        "timestamp":        datetime.datetime.utcnow().isoformat() + "Z",
+        "scholarship_db":   "ok" if sc_ok else "error",
+        "feedback_db":      "ok" if fb_ok else "error",
+        "num_scholarships": num_scholarships,
+    }), code
+
+
+@app.route("/admin")
+def admin():
+    df = feedback_repo.read("SELECT * FROM feedback ORDER BY timestamp DESC LIMIT 500")
+    if df.empty:
+        avg_rating, total, ratings = 0, 0, {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+    else:
+        avg_rating = round(df["rating"].mean(), 2)
+        total      = len(df)
+        ratings    = df["rating"].value_counts().reindex([1, 2, 3, 4, 5], fill_value=0).to_dict()
+    return render_template("admin.html",
+                           feedbacks=df.to_dict("records"),
+                           avg_rating=avg_rating, total=total, ratings=ratings,
+                           num_scholarships=num_scholarships,
+                           num_countries=num_countries,
+                           models=_METRICS_DATA["models"])
+
+
+# ── Error handlers ────────────────────────────────────────────────────────────
+
+@app.errorhandler(404)
+def not_found(exc):
+    return render_template("404.html"), 404
+
+
+@app.errorhandler(500)
+def server_error(exc):
+    logger.error("Unhandled server error: %s", exc)
+    return render_template("500.html"), 500
+
+
 if __name__ == "__main__":
-    app.run(debug=False, host="0.0.0.0", port=int(os.environ.get("PORT", 5001)))
+    app.run(debug=DEBUG, host="0.0.0.0", port=PORT)

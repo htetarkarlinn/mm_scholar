@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MM Scholar — Admin Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+  <style>
+    .stat-card { border-top: 3px solid var(--accent); }
+    .stat-value { font-size: 2rem; font-weight: 700; color: var(--accent); }
+    .table th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--text-muted); }
+    .rating-star { color: #f5a623; }
+    .badge-model { font-size: 11px; background: rgba(99,102,241,.12); color: #6366f1; border-radius: 4px; padding: 2px 7px; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark">
+  <div class="container d-flex align-items-center justify-content-between">
+    <a class="navbar-brand" href="/">
+      <span class="logo-icon">🎓</span><span class="logo-mm">MM</span><span class="logo-scholar"> Scholar</span>
+    </a>
+    <div class="d-flex align-items-center gap-1">
+      <a class="nav-link" href="/">Home</a>
+      <a class="nav-link" href="/about">About</a>
+      <a class="nav-link" href="/feedback-results">Feedback</a>
+      <a class="nav-link active fw-semibold" href="/admin">Admin</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container py-4">
+
+  <!-- Header -->
+  <div class="mb-4">
+    <h1 class="fw-bold mb-1" style="font-size:1.6rem; color:var(--text);">Admin Dashboard</h1>
+    <p style="color:var(--text-muted); font-size:14px;">System overview · Read-only</p>
+  </div>
+
+  <!-- KPI row -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="card stat-card p-3 shadow-sm">
+        <div class="stat-value">{{ num_scholarships }}</div>
+        <div style="font-size:13px; color:var(--text-muted);">Scholarships</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card stat-card p-3 shadow-sm">
+        <div class="stat-value">{{ num_countries }}</div>
+        <div style="font-size:13px; color:var(--text-muted);">Countries</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card stat-card p-3 shadow-sm">
+        <div class="stat-value">{{ total }}</div>
+        <div style="font-size:13px; color:var(--text-muted);">Feedback records</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card stat-card p-3 shadow-sm">
+        <div class="stat-value">{{ avg_rating }}</div>
+        <div style="font-size:13px; color:var(--text-muted);">Avg rating / 5</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rating distribution -->
+  {% if total > 0 %}
+  <div class="card shadow-sm mb-4 p-3">
+    <h6 class="fw-semibold mb-3" style="color:var(--text);">Rating Distribution</h6>
+    {% for star in [5,4,3,2,1] %}
+    {% set count = ratings.get(star, 0) %}
+    {% set pct = (count / total * 100) | round(1) %}
+    <div class="d-flex align-items-center gap-2 mb-1">
+      <span class="rating-star fw-semibold" style="width:16px;">{{ star }}</span>
+      <div class="progress flex-grow-1" style="height:10px;">
+        <div class="progress-bar" style="width:{{ pct }}%; background:var(--accent);"></div>
+      </div>
+      <span style="font-size:12px; color:var(--text-muted); width:40px;">{{ count }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Model metrics -->
+  <div class="card shadow-sm mb-4 p-3">
+    <h6 class="fw-semibold mb-3" style="color:var(--text);">Recommendation Engine — Model Metrics</h6>
+    <div class="table-responsive">
+      <table class="table table-sm table-hover mb-0">
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th class="text-end">Top-1 Acc</th>
+            <th class="text-end">Top-3 Acc</th>
+            <th class="text-end">CV Mean</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for m in models %}
+          <tr>
+            <td>
+              {{ m.model }}
+              {% if m.model == "k-NN" %}
+              <span class="badge-model ms-1">production</span>
+              {% endif %}
+            </td>
+            <td class="text-end">{{ "%.1f"|format(m.accuracy * 100) }}%</td>
+            <td class="text-end">{{ "%.1f"|format(m.top3_accuracy * 100) }}%</td>
+            <td class="text-end">{{ "%.1f"|format(m.cv_mean * 100) }}%</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- System status links -->
+  <div class="card shadow-sm mb-4 p-3">
+    <h6 class="fw-semibold mb-3" style="color:var(--text);">System</h6>
+    <div class="d-flex gap-2 flex-wrap">
+      <a href="/health" class="btn btn-sm btn-outline-secondary" target="_blank">Health Check (JSON)</a>
+      <a href="/compare" class="btn btn-sm btn-outline-secondary">Model Comparison</a>
+      <a href="/feedback-results" class="btn btn-sm btn-outline-secondary">Public Feedback Page</a>
+    </div>
+  </div>
+
+  <!-- Feedback table -->
+  <div class="card shadow-sm p-3">
+    <h6 class="fw-semibold mb-3" style="color:var(--text);">Recent Feedback (last 500)</h6>
+    {% if feedbacks %}
+    <div class="table-responsive">
+      <table class="table table-sm table-hover mb-0">
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Country</th>
+            <th>Level</th>
+            <th>Field</th>
+            <th>Recommendation</th>
+            <th class="text-center">Rating</th>
+            <th>Comment</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for fb in feedbacks %}
+          <tr>
+            <td style="font-size:12px; white-space:nowrap;">{{ fb.timestamp }}</td>
+            <td style="font-size:13px;">{{ fb.country }}</td>
+            <td style="font-size:13px;">{{ fb.level }}</td>
+            <td style="font-size:13px;">{{ fb.field }}</td>
+            <td style="font-size:12px; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="{{ fb.recommendation }}">{{ fb.recommendation }}</td>
+            <td class="text-center">
+              <span class="rating-star fw-semibold">{{ fb.rating }}</span>
+            </td>
+            <td style="font-size:12px; max-width:200px;">{{ fb.comment or "—" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p style="color:var(--text-muted); font-size:14px;">No feedback records yet.</p>
+    {% endif %}
+  </div>
+
+</div>
+
+<footer class="site-footer mt-5">
+  <div class="container">
+    <div class="row align-items-center g-4">
+      <div class="col-md-4">
+        <div><span class="logo-icon">🎓</span><span class="logo-mm">MM</span><span class="logo-scholar" style="color:rgba(255,255,255,0.75);"> Scholar</span></div>
+        <div class="site-footer-sub">Built for Myanmar Students</div>
+      </div>
+      <div class="col-md-4 text-center">
+        <div class="site-footer-credit">Htet Arkar Linn &nbsp;·&nbsp; HUST Vietnam 2026</div>
+      </div>
+      <div class="col-md-4 text-md-end d-flex gap-3 justify-content-md-end">
+        <a href="/about" class="site-footer-link">About</a>
+        <a href="/feedback-results" class="site-footer-link">Feedback</a>
+        <a href="https://github.com/htetarkarlinn/mm_scholar" target="_blank" class="site-footer-link">GitHub</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

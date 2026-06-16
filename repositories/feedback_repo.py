@@ -1,0 +1,75 @@
+import logging
+import sqlite3
+import pandas as pd
+from config import DB_PATH, USE_PG, PG_URL
+
+logger = logging.getLogger(__name__)
+
+# Adapter pattern: select connection factory and SQL placeholder at import time
+# so all higher-level code is database-agnostic.
+if USE_PG:
+    import psycopg2
+    def _conn():
+        return psycopg2.connect(PG_URL)
+    _PH     = "%s"
+    _ID_DEF = "id SERIAL PRIMARY KEY"
+else:
+    def _conn():
+        return sqlite3.connect(DB_PATH)
+    _PH     = "?"
+    _ID_DEF = "id INTEGER PRIMARY KEY AUTOINCREMENT"
+
+
+class FeedbackRepository:
+    """Data access layer for user feedback — adapter over SQLite (dev) / PostgreSQL (prod)."""
+
+    def initialise(self):
+        conn = _conn()
+        cur  = conn.cursor()
+        cur.execute(f"""
+            CREATE TABLE IF NOT EXISTS feedback (
+                {_ID_DEF},
+                timestamp       TEXT,
+                country         TEXT,
+                level           TEXT,
+                field           TEXT,
+                funding         TEXT,
+                model_used      TEXT,
+                recommendation  TEXT,
+                rating          INTEGER,
+                comment         TEXT
+            )
+        """)
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_fb_timestamp ON feedback(timestamp)")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_fb_rating    ON feedback(rating)")
+        conn.commit()
+        cur.close()
+        conn.close()
+        logger.info("Feedback table initialised (backend: %s)", "PostgreSQL" if USE_PG else "SQLite")
+
+    def insert(self, vals: tuple):
+        conn = _conn()
+        cur  = conn.cursor()
+        cur.execute(
+            f"INSERT INTO feedback "
+            f"(timestamp, country, level, field, funding, model_used, recommendation, rating, comment) "
+            f"VALUES ({_PH},{_PH},{_PH},{_PH},{_PH},{_PH},{_PH},{_PH},{_PH})",
+            vals,
+        )
+        conn.commit()
+        cur.close()
+        conn.close()
+
+    def read(self, query: str) -> pd.DataFrame:
+        conn = _conn()
+        df   = pd.read_sql(query, conn)
+        conn.close()
+        return df
+
+    def is_available(self) -> bool:
+        try:
+            self.read("SELECT 1 FROM feedback LIMIT 1")
+            return True
+        except Exception as exc:
+            logger.error("Feedback DB health check failed: %s", exc)
+            return False
