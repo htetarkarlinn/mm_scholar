@@ -239,6 +239,31 @@ try:
 except Exception as e:
     check("ScholarshipRepository", False, str(e))
 
+# ── T16: /scholarships browse endpoint ───────────────────────────────────────
+print("\nT16: /scholarships browse endpoint")
+try:
+    with flask_app.app.test_client() as client:
+        resp = client.get("/scholarships")
+        check("/scholarships returns 200",  resp.status_code == 200)
+        check("/scholarships is HTML",      b"<!DOCTYPE html>" in resp.data)
+
+    from repositories.scholarship_repo import ScholarshipRepository
+    sc = ScholarshipRepository()
+
+    rows_p1, total = sc.get_catalogue(per_page=12, page=1)
+    check("Result count <= per_page",                len(rows_p1) <= 12)
+    check("Total unique scholarships == num_scholarships",
+          total == flask_app.num_scholarships)
+
+    rows_jp, _ = sc.get_catalogue(country="Japan", per_page=50)
+    check("Japan filter: all rows have country=Japan",
+          len(rows_jp) > 0 and all(r["country_of_study"] == "Japan" for r in rows_jp))
+
+    all_rows, total2 = sc.get_catalogue(per_page=total)
+    check("All pages together == total unique count",  len(all_rows) == total2)
+except Exception as e:
+    check("browse endpoint", False, str(e))
+
 # ── Summary ───────────────────────────────────────────────────────────────────
 passed = sum(results)
 total  = len(results)

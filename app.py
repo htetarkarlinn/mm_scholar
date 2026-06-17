@@ -173,6 +173,35 @@ def compare():
                            num_countries=num_countries)
 
 
+@app.route("/scholarships")
+def browse():
+    country = request.args.get("country", "")
+    level   = request.args.get("level",   "")
+    field   = request.args.get("field",   "")
+    funding = request.args.get("funding", "")
+    page    = max(1, int(request.args.get("page", 1) or 1))
+    per_page = 12
+
+    scholarship_list, total = scholarship_repo.get_catalogue(
+        country=country or None,
+        level=level     or None,
+        field=field     or None,
+        funding=funding or None,
+        page=page, per_page=per_page,
+    )
+    total_pages = max(1, (total + per_page - 1) // per_page)
+
+    return render_template("browse.html",
+                           scholarships=scholarship_list,
+                           total=total, page=page,
+                           per_page=per_page, total_pages=total_pages,
+                           countries=countries, levels=levels,
+                           fields=fields, funding_types=funding_types,
+                           current_country=country, current_level=level,
+                           current_field=field, current_funding=funding,
+                           num_scholarships=num_scholarships)
+
+
 @app.route("/health")
 def health():
     sc_ok = scholarship_repo.is_available()
