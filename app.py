@@ -86,10 +86,7 @@ def require_auth(f):
 
 @app.route("/")
 def index():
-    recent = feedback_repo.read(
-        "SELECT * FROM feedback WHERE comment != '' AND comment IS NOT NULL "
-        "ORDER BY timestamp DESC LIMIT 3"
-    )
+    recent = feedback_repo.get_recent_with_comments(3)
     return render_template("index.html",
                            countries=countries, levels=levels,
                            fields=fields, funding_types=funding_types,
@@ -163,7 +160,7 @@ def thank_you():
 
 @app.route("/feedback-results")
 def feedback_results():
-    df = feedback_repo.read("SELECT * FROM feedback ORDER BY timestamp DESC LIMIT 200")
+    df = feedback_repo.get_recent(200)
     if df.empty:
         avg_rating, total, ratings = 0, 0, {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
     else:
@@ -239,7 +236,7 @@ def health():
 @app.route("/admin")
 @require_auth
 def admin():
-    df = feedback_repo.read("SELECT * FROM feedback ORDER BY timestamp DESC LIMIT 500")
+    df = feedback_repo.get_all_for_admin(500)
     if df.empty:
         avg_rating, total, ratings = 0, 0, {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
     else:

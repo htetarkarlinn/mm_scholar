@@ -91,6 +91,34 @@ class FeedbackRepository:
         cur.close()
         conn.close()
 
+    def get_recent_with_comments(self, n: int = 3) -> pd.DataFrame:
+        conn = _conn()
+        df   = pd.read_sql(
+            f"SELECT * FROM feedback WHERE comment != '' AND comment IS NOT NULL "
+            f"ORDER BY timestamp DESC LIMIT {int(n)}",
+            conn,
+        )
+        conn.close()
+        return df
+
+    def get_recent(self, limit: int = 200) -> pd.DataFrame:
+        conn = _conn()
+        df   = pd.read_sql(
+            f"SELECT * FROM feedback ORDER BY timestamp DESC LIMIT {int(limit)}",
+            conn,
+        )
+        conn.close()
+        return df
+
+    def get_all_for_admin(self, limit: int = 500) -> pd.DataFrame:
+        conn = _conn()
+        df   = pd.read_sql(
+            f"SELECT * FROM feedback ORDER BY timestamp DESC LIMIT {int(limit)}",
+            conn,
+        )
+        conn.close()
+        return df
+
     def is_available(self) -> bool:
         try:
             self.read("SELECT 1 FROM feedback LIMIT 1")
