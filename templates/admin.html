@@ -121,9 +121,9 @@
               <span class="badge-model ms-1">production</span>
               {% endif %}
             </td>
-            <td class="text-end">{{ "%.1f"|format(m.accuracy * 100) }}%</td>
-            <td class="text-end">{{ "%.1f"|format(m.top3_accuracy * 100) }}%</td>
-            <td class="text-end">{{ "%.1f"|format(m.cv_mean * 100) }}%</td>
+            <td class="text-end">{{ "%.2f"|format(m.accuracy) }}%</td>
+            <td class="text-end">{{ "%.2f"|format(m.top3_accuracy) }}%</td>
+            <td class="text-end">{{ "%.2f"|format(m.cv_mean) }}%</td>
           </tr>
           {% endfor %}
         </tbody>
