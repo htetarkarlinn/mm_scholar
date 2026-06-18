@@ -66,6 +66,31 @@ class FeedbackRepository:
         conn.close()
         return df
 
+    def get_by_id(self, record_id: int):
+        conn = _conn()
+        df   = pd.read_sql(f"SELECT * FROM feedback WHERE id = {int(record_id)}", conn)
+        conn.close()
+        return df.to_dict("records")[0] if not df.empty else None
+
+    def delete(self, record_id: int):
+        conn = _conn()
+        cur  = conn.cursor()
+        cur.execute(f"DELETE FROM feedback WHERE id = {_PH}", (record_id,))
+        conn.commit()
+        cur.close()
+        conn.close()
+
+    def update(self, record_id: int, rating: int, comment: str):
+        conn = _conn()
+        cur  = conn.cursor()
+        cur.execute(
+            f"UPDATE feedback SET rating = {_PH}, comment = {_PH} WHERE id = {_PH}",
+            (rating, comment, record_id),
+        )
+        conn.commit()
+        cur.close()
+        conn.close()
+
     def is_available(self) -> bool:
         try:
             self.read("SELECT 1 FROM feedback LIMIT 1")

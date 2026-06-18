@@ -91,6 +91,29 @@ class ScholarshipRepository:
             conn.close()
         return rows.to_dict("records"), total
 
+    def get_for_admin(self, limit: int = 500) -> list:
+        """Return scholarship rows for the admin dashboard table."""
+        conn = sqlite3.connect(DB_PATH)
+        try:
+            df = pd.read_sql(
+                "SELECT scholarship_id, scholarship_name, country_of_study, level, "
+                f"field_of_study, funding_type FROM scholarships "
+                f"ORDER BY scholarship_name, level LIMIT {int(limit)}",
+                conn,
+            )
+        finally:
+            conn.close()
+        return df.to_dict("records")
+
+    def delete(self, scholarship_id: int):
+        """Delete a single scholarship row by scholarship_id."""
+        conn = sqlite3.connect(DB_PATH)
+        try:
+            conn.execute("DELETE FROM scholarships WHERE scholarship_id = ?", (scholarship_id,))
+            conn.commit()
+        finally:
+            conn.close()
+
     def is_available(self) -> bool:
         try:
             conn = sqlite3.connect(DB_PATH)

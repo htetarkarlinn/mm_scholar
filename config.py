@@ -16,6 +16,7 @@ GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 GEMINI_MODEL   = "gemini-2.5-flash"
 
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "")
+SECRET_KEY     = os.environ.get("SECRET_KEY", "mm-scholar-dev-key-2026")
 
 PORT        = int(os.environ.get("PORT", 5001))
 DEBUG       = os.environ.get("FLASK_DEBUG", "0") == "1"

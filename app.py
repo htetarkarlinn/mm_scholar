@@ -3,7 +3,7 @@ import json
 import datetime
 import logging
 from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, jsonify, Response
+from flask import Flask, render_template, request, redirect, url_for, jsonify, Response, flash
 
 import config
 from config import MODELS_DIR, PORT, DEBUG
@@ -16,6 +16,7 @@ config.configure_logging()
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+app.secret_key = config.SECRET_KEY
 
 # ── Bootstrap repositories ────────────────────────────────────────────────────
 scholarship_repo = ScholarshipRepository()
@@ -250,7 +251,39 @@ def admin():
                            avg_rating=avg_rating, total=total, ratings=ratings,
                            num_scholarships=num_scholarships,
                            num_countries=num_countries,
-                           models=_METRICS_DATA["models"])
+                           models=_METRICS_DATA["models"],
+                           scholarships_all=scholarship_repo.get_for_admin())
+
+
+@app.route("/admin/feedback/delete/<int:record_id>", methods=["POST"])
+@require_auth
+def admin_feedback_delete(record_id):
+    feedback_repo.delete(record_id)
+    flash("Feedback record deleted")
+    return redirect(url_for("admin"))
+
+
+@app.route("/admin/feedback/edit/<int:record_id>", methods=["GET", "POST"])
+@require_auth
+def admin_feedback_edit(record_id):
+    if request.method == "POST":
+        rating  = int(request.form.get("rating", 0))
+        comment = request.form.get("comment", "").strip()
+        feedback_repo.update(record_id, rating, comment)
+        flash("Feedback record updated")
+        return redirect(url_for("admin"))
+    record = feedback_repo.get_by_id(record_id)
+    if record is None:
+        return render_template("404.html"), 404
+    return render_template("admin_edit_feedback.html", record=record)
+
+
+@app.route("/admin/scholarship/delete/<int:scholarship_id>", methods=["POST"])
+@require_auth
+def admin_scholarship_delete(scholarship_id):
+    scholarship_repo.delete(scholarship_id)
+    flash("Scholarship deleted. Note: retrain models to reflect this change.")
+    return redirect(url_for("admin"))
 
 
 # ── Error handlers ────────────────────────────────────────────────────────────

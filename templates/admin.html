@@ -36,8 +36,22 @@
   <!-- Header -->
   <div class="mb-4">
     <h1 class="fw-bold mb-1" style="font-size:1.6rem; color:var(--text);">Admin Dashboard</h1>
-    <p style="color:var(--text-muted); font-size:14px;">System overview · Read-only</p>
+    <p style="color:var(--text-muted); font-size:14px;">System overview · CRUD management</p>
   </div>
+
+  <!-- Flash messages -->
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <div class="mb-3">
+    {% for msg in messages %}
+    <div class="alert alert-success alert-dismissible fade show py-2 px-3" role="alert" style="font-size:14px;">
+      {{ msg }}
+      <button type="button" class="btn-close btn-close-sm" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
 
   <!-- KPI row -->
   <div class="row g-3 mb-4">
@@ -142,6 +156,7 @@
             <th>Recommendation</th>
             <th class="text-center">Rating</th>
             <th>Comment</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -156,6 +171,12 @@
               <span class="rating-star fw-semibold">{{ fb.rating }}</span>
             </td>
             <td style="font-size:12px; max-width:200px;">{{ fb.comment or "—" }}</td>
+            <td style="white-space:nowrap;">
+              <a href="/admin/feedback/edit/{{ fb.id }}" class="btn btn-primary btn-sm py-0 px-2" style="font-size:11px;">Edit</a>
+              <form action="/admin/feedback/delete/{{ fb.id }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this feedback record?');">
+                <button type="submit" class="btn btn-danger btn-sm py-0 px-2" style="font-size:11px;">Delete</button>
+              </form>
+            </td>
           </tr>
           {% endfor %}
         </tbody>
@@ -164,6 +185,42 @@
     {% else %}
     <p style="color:var(--text-muted); font-size:14px;">No feedback records yet.</p>
     {% endif %}
+  </div>
+
+  <!-- Scholarship table -->
+  <div class="card shadow-sm p-3 mt-4">
+    <h6 class="fw-semibold mb-1" style="color:var(--text);">Scholarship Catalogue ({{ scholarships_all|length }} rows)</h6>
+    <p style="font-size:12px; color:var(--text-muted); margin-bottom:0.75rem;">Deleting a row removes that level/field combination. Retrain models after any deletion.</p>
+    <div class="table-responsive" style="max-height:400px; overflow-y:auto;">
+      <table class="table table-sm table-hover mb-0">
+        <thead class="sticky-top bg-white">
+          <tr>
+            <th>Name</th>
+            <th>Country</th>
+            <th>Level</th>
+            <th>Field</th>
+            <th>Funding</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for sc in scholarships_all %}
+          <tr>
+            <td style="font-size:12px; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="{{ sc.scholarship_name }}">{{ sc.scholarship_name }}</td>
+            <td style="font-size:12px;">{{ sc.country_of_study }}</td>
+            <td style="font-size:12px;">{{ sc.level }}</td>
+            <td style="font-size:12px;">{{ sc.field_of_study }}</td>
+            <td style="font-size:12px;">{{ sc.funding_type }}</td>
+            <td>
+              <form action="/admin/scholarship/delete/{{ sc.scholarship_id }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this scholarship row? Retrain models after deletion.');">
+                <button type="submit" class="btn btn-danger btn-sm py-0 px-2" style="font-size:11px;">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 
 </div>

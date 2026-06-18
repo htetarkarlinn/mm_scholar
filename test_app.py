@@ -284,6 +284,45 @@ try:
 except Exception as e:
     check("admin auth", False, str(e))
 
+# ── T18–T20: Admin CRUD routes ────────────────────────────────────────────────
+print("\nT18–T20: Admin CRUD — feedback delete, feedback edit, scholarship delete")
+
+import datetime as _dt
+flask_app.feedback_repo.insert((
+    _dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    "Japan", "postgraduate", "STEM", "fully_funded",
+    "k-NN", "MEXT Scholarship", 5, "CRUD test record",
+))
+_test_fb = flask_app.feedback_repo.read(
+    "SELECT id FROM feedback ORDER BY id DESC LIMIT 1"
+)
+_fb_id = int(_test_fb["id"].iloc[0]) if not _test_fb.empty else 1
+
+_sc_rows = flask_app.scholarship_repo.get_for_admin(limit=1)
+_sc_id   = int(_sc_rows[0]["scholarship_id"]) if _sc_rows else 1
+
+try:
+    with flask_app.app.test_client() as client:
+        # T18: no auth → 401
+        resp = client.post(f"/admin/feedback/delete/{_fb_id}")
+        check("/admin/feedback/delete no auth → 401", resp.status_code == 401)
+
+        # T19: with auth → 302
+        resp = client.post(
+            f"/admin/feedback/delete/{_fb_id}",
+            headers={"Authorization": f"Basic {_admin_creds}"},
+        )
+        check("/admin/feedback/delete with auth → 302", resp.status_code == 302)
+
+        # T20: scholarship delete with auth → 302
+        resp = client.post(
+            f"/admin/scholarship/delete/{_sc_id}",
+            headers={"Authorization": f"Basic {_admin_creds}"},
+        )
+        check("/admin/scholarship/delete with auth → 302", resp.status_code == 302)
+except Exception as e:
+    check("admin CRUD routes", False, str(e))
+
 # ── Summary ───────────────────────────────────────────────────────────────────
 passed = sum(results)
 total  = len(results)
