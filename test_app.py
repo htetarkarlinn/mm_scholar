@@ -204,9 +204,12 @@ except Exception as e:
 
 # ── T13: /admin endpoint renders without error ───────────────────────────────
 print("\nT13: /admin dashboard")
+import base64 as _b64
+os.environ["ADMIN_PASSWORD"] = "testpass123"
+_admin_creds = _b64.b64encode(b"admin:testpass123").decode()
 try:
     with flask_app.app.test_client() as client:
-        resp = client.get("/admin")
+        resp = client.get("/admin", headers={"Authorization": f"Basic {_admin_creds}"})
         check("/admin status code 200",        resp.status_code == 200)
         check("/admin contains 'Admin'",       b"Admin" in resp.data)
         check("/admin contains scholarship count",
@@ -263,6 +266,23 @@ try:
     check("All pages together == total unique count",  len(all_rows) == total2)
 except Exception as e:
     check("browse endpoint", False, str(e))
+
+# ── T17: /admin HTTP Basic Auth ───────────────────────────────────────────────
+print("\nT17: /admin HTTP Basic Auth")
+try:
+    with flask_app.app.test_client() as client:
+        resp = client.get("/admin")
+        check("/admin no credentials → 401",      resp.status_code == 401)
+
+        creds = _b64.b64encode(b"admin:testpass123").decode()
+        resp = client.get("/admin", headers={"Authorization": f"Basic {creds}"})
+        check("/admin valid credentials → 200",   resp.status_code == 200)
+
+        bad = _b64.b64encode(b"admin:wrongpass").decode()
+        resp = client.get("/admin", headers={"Authorization": f"Basic {bad}"})
+        check("/admin wrong credentials → 401",   resp.status_code == 401)
+except Exception as e:
+    check("admin auth", False, str(e))
 
 # ── Summary ───────────────────────────────────────────────────────────────────
 passed = sum(results)

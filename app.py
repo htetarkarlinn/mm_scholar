@@ -2,7 +2,8 @@ import os
 import json
 import datetime
 import logging
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from functools import wraps
+from flask import Flask, render_template, request, redirect, url_for, jsonify, Response
 
 import config
 from config import MODELS_DIR, PORT, DEBUG
@@ -61,6 +62,23 @@ logger.info(
     "MM Scholar started — %d scholarships, %d countries, feedback backend: %s",
     num_scholarships, num_countries, "PostgreSQL" if config.USE_PG else "SQLite",
 )
+
+
+# ── Admin authentication ──────────────────────────────────────────────────────
+
+def check_auth(username, password):
+    return username == "admin" and password == os.environ.get("ADMIN_PASSWORD")
+
+def require_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return Response(
+                "Authentication required", 401,
+                {"WWW-Authenticate": 'Basic realm="MM Scholar Admin"'})
+        return f(*args, **kwargs)
+    return decorated
 
 
 # ── Routes ────────────────────────────────────────────────────────────────────
@@ -218,6 +236,7 @@ def health():
 
 
 @app.route("/admin")
+@require_auth
 def admin():
     df = feedback_repo.read("SELECT * FROM feedback ORDER BY timestamp DESC LIMIT 500")
     if df.empty:

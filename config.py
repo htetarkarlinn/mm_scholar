@@ -15,6 +15,8 @@ PG_URL = _PG_URL
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 GEMINI_MODEL   = "gemini-2.5-flash"
 
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "")
+
 PORT        = int(os.environ.get("PORT", 5001))
 DEBUG       = os.environ.get("FLASK_DEBUG", "0") == "1"
 
