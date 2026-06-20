@@ -288,40 +288,79 @@ except Exception as e:
 print("\nT18–T20: Admin CRUD — feedback delete, feedback edit, scholarship delete")
 
 import datetime as _dt
+
+# Setup: insert a test feedback record — T19 deletes it (self-contained)
 flask_app.feedback_repo.insert((
     _dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
     "Japan", "postgraduate", "STEM", "fully_funded",
     "k-NN", "MEXT Scholarship", 5, "CRUD test record",
 ))
-_test_fb = flask_app.feedback_repo.read(
-    "SELECT id FROM feedback ORDER BY id DESC LIMIT 1"
-)
-_fb_id = int(_test_fb["id"].iloc[0]) if not _test_fb.empty else 1
+_test_fb_df = flask_app.feedback_repo.get_recent(1)
+_fb_id = int(_test_fb_df["id"].iloc[0]) if not _test_fb_df.empty else 1
 
-_sc_rows = flask_app.scholarship_repo.get_for_admin(limit=1)
-_sc_id   = int(_sc_rows[0]["scholarship_id"]) if _sc_rows else 1
-
+# Setup: insert an isolated test scholarship row with an explicit scholarship_id
+# (scholarship_id is a plain INTEGER column, not AUTOINCREMENT, so we must set it)
+_sc_id = None
+_sc_setup_conn = sqlite3.connect(DB_PATH)
 try:
-    with flask_app.app.test_client() as client:
-        # T18: no auth → 401
-        resp = client.post(f"/admin/feedback/delete/{_fb_id}")
-        check("/admin/feedback/delete no auth → 401", resp.status_code == 401)
+    _sc_cur = _sc_setup_conn.cursor()
+    _max_sc_id = _sc_setup_conn.execute(
+        "SELECT MAX(scholarship_id) FROM scholarships"
+    ).fetchone()[0] or 0
+    _sc_id = _max_sc_id + 1
+    _sc_cur.execute(
+        "INSERT INTO scholarships "
+        "(scholarship_id, scholarship_name, provider, country_of_study, level, "
+        "field_of_study, funding_type, min_gpa, min_ielts, deadline_month, "
+        "duration_years, link) "
+        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+        (_sc_id, "__TEST_DELETE_ME__", "Test", "Japan", "postgraduate", "STEM",
+         "fully_funded", 0.0, 0.0, 6, 1.0, "https://example.com/test"),
+    )
+    _sc_setup_conn.commit()
+except Exception as _sc_insert_err:
+    check("test scholarship insert (T20 prerequisite)", False, str(_sc_insert_err))
+    _sc_id = None
+finally:
+    _sc_setup_conn.close()
 
-        # T19: with auth → 302
-        resp = client.post(
-            f"/admin/feedback/delete/{_fb_id}",
-            headers={"Authorization": f"Basic {_admin_creds}"},
-        )
-        check("/admin/feedback/delete with auth → 302", resp.status_code == 302)
+if _sc_id is None:
+    # Insert failed — mark all three CRUD checks as failed rather than touching real rows
+    check("/admin/feedback/delete no auth → 401",    False, "T20 prerequisite insert failed")
+    check("/admin/feedback/delete with auth → 302",  False, "T20 prerequisite insert failed")
+    check("/admin/scholarship/delete with auth → 302", False, "T20 prerequisite insert failed")
+    check("test scholarship row gone after delete",  False, "T20 prerequisite insert failed")
+else:
+    try:
+        with flask_app.app.test_client() as client:
+            # T18: no auth → 401
+            resp = client.post(f"/admin/feedback/delete/{_fb_id}")
+            check("/admin/feedback/delete no auth → 401", resp.status_code == 401)
 
-        # T20: scholarship delete with auth → 302
-        resp = client.post(
-            f"/admin/scholarship/delete/{_sc_id}",
-            headers={"Authorization": f"Basic {_admin_creds}"},
-        )
-        check("/admin/scholarship/delete with auth → 302", resp.status_code == 302)
-except Exception as e:
-    check("admin CRUD routes", False, str(e))
+            # T19: with auth → 302  (deletes the test feedback row inserted above)
+            resp = client.post(
+                f"/admin/feedback/delete/{_fb_id}",
+                headers={"Authorization": f"Basic {_admin_creds}"},
+            )
+            check("/admin/feedback/delete with auth → 302", resp.status_code == 302)
+
+            # T20: delete the isolated test scholarship row (not a production row)
+            resp = client.post(
+                f"/admin/scholarship/delete/{_sc_id}",
+                headers={"Authorization": f"Basic {_admin_creds}"},
+            )
+            check("/admin/scholarship/delete with auth → 302", resp.status_code == 302)
+
+        # Verify the test row is actually gone from the DB
+        _verify_conn = sqlite3.connect(DB_PATH)
+        _gone = _verify_conn.execute(
+            "SELECT COUNT(*) FROM scholarships WHERE scholarship_id = ?", (_sc_id,)
+        ).fetchone()[0]
+        _verify_conn.close()
+        check("test scholarship row gone after delete", _gone == 0)
+
+    except Exception as e:
+        check("admin CRUD routes", False, str(e))
 
 # ── Summary ───────────────────────────────────────────────────────────────────
 passed = sum(results)

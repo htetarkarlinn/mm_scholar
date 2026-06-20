@@ -1,51 +1,51 @@
 {
   "knn_role": "production_ranker",
   "best_model_name": "Decision Tree",
-  "best_model_acc": 77.14,
+  "best_model_acc": 81.16,
   "models": [
     {
       "model": "k-NN",
       "params": "k=7, weights=distance",
-      "accuracy": 51.43,
-      "top3_accuracy": 78.1,
-      "precision": 51.43,
-      "recall": 51.43,
-      "f1": 50.38,
-      "cv_mean": 64.57,
-      "cv_std": 6.77
+      "accuracy": 54.35,
+      "top3_accuracy": 74.64,
+      "precision": 56.7,
+      "recall": 54.35,
+      "f1": 54.55,
+      "cv_mean": 68.11,
+      "cv_std": 6.88
     },
     {
       "model": "Decision Tree",
       "params": "depth=15",
-      "accuracy": 77.14,
-      "top3_accuracy": 80.95,
-      "precision": 73.81,
-      "recall": 77.14,
-      "f1": 74.98,
-      "cv_mean": 83.24,
-      "cv_std": 2.05
+      "accuracy": 81.16,
+      "top3_accuracy": 90.58,
+      "precision": 78.32,
+      "recall": 81.16,
+      "f1": 79.28,
+      "cv_mean": 84.72,
+      "cv_std": 3.02
     },
     {
       "model": "Random Forest",
-      "params": "n=100",
-      "accuracy": 76.19,
-      "top3_accuracy": 100.0,
-      "precision": 70.56,
-      "recall": 76.19,
-      "f1": 72.74,
-      "cv_mean": 80.76,
-      "cv_std": 1.4
+      "params": "n=200",
+      "accuracy": 79.71,
+      "top3_accuracy": 98.55,
+      "precision": 76.81,
+      "recall": 79.71,
+      "f1": 77.81,
+      "cv_mean": 82.97,
+      "cv_std": 1.95
     },
     {
       "model": "Gradient Boosting",
-      "params": "n=100, lr=0.1",
-      "accuracy": 77.14,
-      "top3_accuracy": 99.05,
-      "precision": 74.29,
-      "recall": 77.14,
-      "f1": 75.3,
-      "cv_mean": 82.48,
-      "cv_std": 2.05
+      "params": "n=50, lr=0.1",
+      "accuracy": 80.43,
+      "top3_accuracy": 97.83,
+      "precision": 77.96,
+      "recall": 80.43,
+      "f1": 78.79,
+      "cv_mean": 83.56,
+      "cv_std": 2.16
     }
   ]
 }
