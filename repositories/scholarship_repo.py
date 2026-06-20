@@ -91,14 +91,14 @@ class ScholarshipRepository:
             conn.close()
         return rows.to_dict("records"), total
 
-    def get_for_admin(self, limit: int = 500) -> list:
-        """Return scholarship rows for the admin dashboard table."""
+    def get_for_admin(self) -> list:
+        """Return all scholarship rows for the admin dashboard table."""
         conn = sqlite3.connect(DB_PATH)
         try:
             df = pd.read_sql(
                 "SELECT scholarship_id, scholarship_name, country_of_study, level, "
-                f"field_of_study, funding_type FROM scholarships "
-                f"ORDER BY scholarship_name, level LIMIT {int(limit)}",
+                "field_of_study, funding_type FROM scholarships "
+                "ORDER BY scholarship_name, level",
                 conn,
             )
         finally:
