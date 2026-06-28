@@ -210,9 +210,8 @@ mm_scholar/
     └── 500.html
 ```
 
-`mm_scholar.db` is the database used by the application. `models/best_model.pkl`,
-`models/scaler.pkl`, and the empty `scholarships.db` file are legacy artifacts and
-are not loaded by the current application or training pipeline.
+`mm_scholar.db` is the database used by the application. Each current model
+pipeline contains its own preprocessing steps, so no standalone scaler is needed.
 
 ---
 
