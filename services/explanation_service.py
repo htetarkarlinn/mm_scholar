@@ -9,8 +9,7 @@ logger = logging.getLogger(__name__)
 genai.configure(api_key=GEMINI_API_KEY)
 _gemini = genai.GenerativeModel(GEMINI_MODEL)
 
-# In-memory response cache keyed by (scholarship_name, country, level, funding, field, gpa, ielts).
-# Eliminates redundant API calls for repeated identical queries.
+# Keep repeated requests for the same student and scholarship off the API.
 _cache: dict = {}
 
 

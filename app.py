@@ -18,12 +18,12 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 app.secret_key = config.SECRET_KEY
 
-# ── Bootstrap repositories ────────────────────────────────────────────────────
+# Repositories
 scholarship_repo = ScholarshipRepository()
 feedback_repo    = FeedbackRepository()
 feedback_repo.initialise()
 
-# ── Startup data (dropdown options, region counts, metrics) ───────────────────
+# Data loaded once at startup
 _opts         = scholarship_repo.get_dropdown_options()
 countries     = _opts["countries"]
 levels        = _opts["levels"]
@@ -65,7 +65,7 @@ logger.info(
 )
 
 
-# ── Admin authentication ──────────────────────────────────────────────────────
+# Admin authentication
 
 def check_auth(username, password):
     return username == "admin" and password == os.environ.get("ADMIN_PASSWORD")
@@ -82,7 +82,7 @@ def require_auth(f):
     return decorated
 
 
-# ── Routes ────────────────────────────────────────────────────────────────────
+# Routes
 
 @app.route("/")
 def index():
@@ -283,7 +283,7 @@ def admin_scholarship_delete(scholarship_id):
     return redirect(url_for("admin"))
 
 
-# ── Error handlers ────────────────────────────────────────────────────────────
+# Error handlers
 
 @app.errorhandler(404)
 def not_found(exc):

@@ -65,7 +65,7 @@ def _rank(candidates: pd.DataFrame, student: dict) -> list:
             seen.add(name)
             record = {k: (None if isinstance(v, float) and pd.isna(v) else v)
                       for k, v in row.to_dict().items()}
-            record["match_pct"] = 0.0
+            record["match_pct"] = None
             results.append(record)
             if len(results) >= 3:
                 break
@@ -128,7 +128,7 @@ def get_recommendations(country, level, funding, field, gpa, ielts):
         pref_opt.insert(0, "field_of_study = ?")
         pref_p.insert(0, field)
 
-    # Level 1 — exact match
+    # Start with every requested preference.
     candidates = _repo.fetch_candidates(
         ["country_of_study = ?", "level = ?", "funding_type = ?"] + pref_opt,
         [country, level, funding] + pref_p,
@@ -139,7 +139,7 @@ def get_recommendations(country, level, funding, field, gpa, ielts):
             logger.info("Recommendation: exact match (%d candidates)", len(candidates))
             return results, "exact"
 
-    # Level 2 — relax funding type
+    # Retry without the funding preference.
     candidates = _repo.fetch_candidates(
         ["country_of_study = ?", "level = ?"] + pref_opt,
         [country, level] + pref_p,
@@ -150,7 +150,7 @@ def get_recommendations(country, level, funding, field, gpa, ielts):
             logger.info("Recommendation: relaxed funding (%d candidates)", len(candidates))
             return results, "relaxed_funding"
 
-    # Level 3 — country only
+    # Keep only the country and academic thresholds.
     candidates = _repo.fetch_candidates(
         ["country_of_study = ?"] + score_opt, [country] + score_p,
     )
@@ -160,7 +160,7 @@ def get_recommendations(country, level, funding, field, gpa, ielts):
             logger.info("Recommendation: country-only fallback (%d candidates)", len(candidates))
             return results, "country_only"
 
-    # Level 4 — popular fully-funded fallback
+    # Last resort: fully funded options at the requested level.
     candidates = _repo.fetch_candidates(
         ["funding_type = ?", "level = ?"] + score_opt,
         ["fully_funded", level] + score_p,

@@ -1,8 +1,4 @@
-"""
-convert_to_sqlite.py
-CRISP-ML(Q) Phase 2 — Data Engineering
-Converts scholarships_dataset.csv into mm_scholar.db (SQLite)
-"""
+"""Build mm_scholar.db from the scholarship CSV."""
 
 import pandas as pd
 import sqlite3

@@ -46,18 +46,17 @@ df = df[counts >= 2].reset_index(drop=True)
 for col in NUM_FEATURES:
     df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0)
 
-# ── Two data views to match each model's expected input ───────────────────────
-# k-NN pipeline: ColumnTransformer(OHE + MinMaxScaler) — needs raw DataFrame
+# k-NN expects the original categorical values.
 X_knn = df[FEATURES]
 y     = encoders[TARGET].transform(df[TARGET])
 
-# Tree pipelines: Pipeline(MinMaxScaler + clf) — need label-encoded array
+# The tree pipelines expect label-encoded arrays.
 df_le = df.copy()
 for col in CAT_FEATURES:
     df_le[col] = encoders[col].transform(df_le[col])
 X = df_le[FEATURES].values.astype(float)
 
-# Same deterministic split as training (random_state=42, stratify=y)
+# Recreate the split used during training.
 idx = np.arange(len(df))
 train_idx, test_idx = train_test_split(idx, test_size=0.2, random_state=42, stratify=y)
 
@@ -76,7 +75,7 @@ def _X_full(name):
     return X_knn if name == "k-NN" else X
 
 
-# --- 1. Accuracy comparison bar chart ---
+# Accuracy comparison chart
 models     = {"k-NN": knn, "Decision Tree": dt, "Random Forest": rf, "Gradient Boosting": gb}
 accuracies = {name: accuracy_score(y_test, m.predict(_X(name))) for name, m in models.items()}
 
@@ -97,7 +96,7 @@ plt.close()
 print("Saved: accuracy_comparison.png")
 
 
-# --- 2. Full metrics table ---
+# Full metrics table
 print("\n=== Model Evaluation Metrics ===")
 print(f"{'Model':<20} {'Top-1 Acc':>10} {'Top-3 Acc':>10} {'Precision':>10} {'Recall':>10} {'F1':>10}")
 print("-" * 72)
@@ -117,9 +116,7 @@ for name, m in models.items():
 print("-" * 72)
 
 
-# --- 3. Cross-validation scores ---
-# Each model is already a Pipeline with internal preprocessing — clone it
-# directly so each fold independently re-fits the scaler (or OHE).
+# Clone each pipeline so preprocessing is fitted again in every fold.
 print("\n=== 5-Fold Cross Validation ===")
 for name, m in models.items():
     scores = cross_val_score(clone(m), _X_full(name), y, cv=5, scoring="accuracy")
@@ -163,7 +160,7 @@ with open(os.path.join(MODELS_DIR, "metrics.json"), "w") as f:
 print("Saved: models/metrics.json")
 
 
-# --- 4. Confusion matrix for best classifier baseline ---
+# Confusion matrix for the best baseline
 _baseline_models = {"Decision Tree": dt, "Random Forest": rf, "Gradient Boosting": gb}
 _best_baseline   = max(_baseline_models, key=lambda n: eval_metrics[n]["accuracy"])
 y_pred_best = _baseline_models[_best_baseline].predict(X_test)
@@ -179,7 +176,7 @@ plt.close()
 print("\nSaved: confusion_matrix_dt.png")
 
 
-# --- 5. Decision Tree visualization (top 3 levels) ---
+# Top three levels of the decision tree
 fig, ax = plt.subplots(figsize=(20, 8))
 plot_tree(dt.named_steps["clf"], max_depth=3,
           feature_names=FEATURES,
@@ -192,7 +189,7 @@ plt.close()
 print("Saved: decision_tree_plot.png")
 
 
-# --- 6. Feature importance from Random Forest ---
+# Random Forest feature importance
 importances = rf.named_steps["clf"].feature_importances_
 fig, ax     = plt.subplots(figsize=(8, 4))
 colors      = [GREEN if v == max(importances) else BLUE2 for v in importances]
@@ -207,9 +204,7 @@ plt.close()
 print("Saved: feature_importance.png")
 
 
-# --- 7. Robustness check ---
-# Clone the full pipeline per seed so each seed gets independently fitted
-# preprocessing (OHE+scaler for k-NN, scaler for trees).
+# Refit the full pipeline for each random seed.
 print("\n=== Robustness Check (different random seeds) ===")
 for name, m in models.items():
     accs = []

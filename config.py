@@ -5,7 +5,7 @@ BASE_DIR   = os.path.dirname(os.path.abspath(__file__))
 DB_PATH    = os.path.join(BASE_DIR, "mm_scholar.db")
 MODELS_DIR = os.path.join(BASE_DIR, "models")
 
-# Feedback database — SQLite locally, PostgreSQL on Render via DATABASE_URL
+# Use PostgreSQL when DATABASE_URL is set; otherwise keep feedback in SQLite.
 _PG_URL = os.environ.get("DATABASE_URL", "")
 if _PG_URL.startswith("postgres://"):
     _PG_URL = _PG_URL.replace("postgres://", "postgresql://", 1)

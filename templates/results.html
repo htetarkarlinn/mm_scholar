@@ -104,7 +104,7 @@
             {% else %}
             <span class="badge-partial">Partial</span>
             {% endif %}
-            {% if r.match_pct is defined and r.match_pct > 0 %}
+            {% if r.match_pct is defined and r.match_pct is not none %}
             <span style="font-size:11px; font-weight:600; color:#1a6091; background:#e8f4fb; padding:2px 8px; border-radius:20px; white-space:nowrap;">
               {{ "%.1f"|format(r.match_pct) }}% match
             </span>
@@ -201,7 +201,7 @@
         Ranked by <strong>Recommendation Engine</strong> (similarity-based matching)
       </p>
 
-      <!-- share modal (single shared instance, populated by JS) -->
+      <!-- JavaScript fills this shared modal for the selected scholarship. -->
       <div class="modal fade" id="shareModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
@@ -380,7 +380,7 @@ async function toggleExplanation(btn) {
   const spinner = panel.querySelector('.spinner-container');
   const textDiv = panel.querySelector('.explanation-text');
 
-  // hide if already shown
+  // Show the hint only once per browser session.
   if (panel.style.display !== 'none' && textDiv.innerHTML) {
     panel.style.display = 'none';
     btn.textContent = 'Why this matches me? 💡';
@@ -422,7 +422,7 @@ async function toggleExplanation(btn) {
 }
 
 function formatExplanation(text) {
-  // Convert **HEADING** lines to bold headings and preserve bullet points
+  // Render the small Markdown subset used by Gemini responses.
   return text
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     .replace(/\n\n/g, '</p><p>')

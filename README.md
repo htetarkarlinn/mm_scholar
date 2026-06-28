@@ -8,7 +8,7 @@ A free, AI-assisted scholarship recommendation web application for Myanmar stude
 
 ## What it does
 
-* Recommends scholarships from a curated dataset of 87 verified scholarships across 30 countries
+* Provides a catalogue of 87 verified scholarships across 30 countries; the k-NN ranker covers the 84 scholarships with at least two dataset rows
 * Filters scholarships using hard eligibility constraints such as study country, level, funding type, GPA, and IELTS score
 * Uses a four-level SQL fallback chain to reduce empty results while preserving GPA and IELTS eligibility thresholds
 * Ranks eligible scholarships using a distance-weighted k-Nearest Neighbours (k-NN) model
@@ -62,14 +62,17 @@ pip install -r requirements.txt
 
 ### 3. Set environment variables
 
-Create a `.env` file in the project root:
+Export the variables in the shell before starting Flask. Configuration is read when
+the application modules are imported.
 
-```env
-GEMINI_API_KEY=your_api_key_here
-ADMIN_PASSWORD=your_admin_password_here
+```bash
+export GEMINI_API_KEY=your_api_key_here
+export ADMIN_PASSWORD=your_admin_password_here
 ```
 
-For local development, `DATABASE_URL` is optional. If it is not set, the application uses SQLite.
+On Windows PowerShell, use `$env:GEMINI_API_KEY="..."` and
+`$env:ADMIN_PASSWORD="..."` instead. For local development, `DATABASE_URL` is
+optional. If it is not set, the application uses SQLite for feedback.
 
 ### 4. Create the SQLite database
 
@@ -89,7 +92,8 @@ python train_models.py
 
 ### 6. Evaluate the models
 
-This generates `models/metrics.json`, which is displayed on the `/compare` route:
+This generates `models/metrics.json`, which is displayed on the `/compare` route,
+and regenerates the evaluation charts in `static/eda/`:
 
 ```bash
 python evaluate_models.py
@@ -166,6 +170,8 @@ mm_scholar/
 ├── train_models.py              # Trains k-NN and baseline models
 ├── evaluate_models.py           # Generates metrics.json and evaluation results
 ├── eda.py                       # Exploratory data analysis charts
+├── test_app.py                  # Regression test suite
+├── mm_scholar.db                # Scholarship catalogue and local feedback database
 ├── requirements.txt
 ├── Procfile                     # Gunicorn entry point for Render
 ├── data/
@@ -175,7 +181,7 @@ mm_scholar/
 │   ├── dt_model.pkl             # Decision Tree baseline
 │   ├── rf_model.pkl             # Random Forest baseline
 │   ├── gb_model.pkl             # Gradient Boosting baseline
-│   ├── encoders.pkl             # Target label encoder / model metadata
+│   ├── encoders.pkl             # Categorical-feature and target label encoders
 │   ├── best_model_info.json     # Best baseline model information
 │   └── metrics.json             # Evaluation results displayed by /compare
 ├── repositories/
@@ -204,22 +210,30 @@ mm_scholar/
     └── 500.html
 ```
 
+`mm_scholar.db` is the database used by the application. `models/best_model.pkl`,
+`models/scaler.pkl`, and the empty `scholarships.db` file are legacy artifacts and
+are not loaded by the current application or training pipeline.
+
 ---
 
 ## ML pipeline
 
 ### Features
 
-| Feature            | Type        | Processing    |
-| ------------------ | ----------- | ------------- |
-| `country_of_study` | Categorical | OneHotEncoder |
-| `level`            | Categorical | OneHotEncoder |
-| `field_of_study`   | Categorical | OneHotEncoder |
-| `funding_type`     | Categorical | OneHotEncoder |
-| `min_gpa`          | Numeric     | MinMaxScaler  |
-| `min_ielts`        | Numeric     | MinMaxScaler  |
+| Feature            | Type        | k-NN processing | Baseline processing |
+| ------------------ | ----------- | ---------------- | ------------------- |
+| `country_of_study` | Categorical | OneHotEncoder    | LabelEncoder        |
+| `level`            | Categorical | OneHotEncoder    | LabelEncoder        |
+| `field_of_study`   | Categorical | OneHotEncoder    | LabelEncoder        |
+| `funding_type`     | Categorical | OneHotEncoder    | LabelEncoder        |
+| `min_gpa`          | Numeric     | MinMaxScaler     | MinMaxScaler        |
+| `min_ielts`        | Numeric     | MinMaxScaler     | MinMaxScaler        |
 
-The target label is `scholarship_name`, encoded with `LabelEncoder`.
+The target label is `scholarship_name`, encoded with `LabelEncoder`. Training
+removes scholarship classes represented by only one row so stratified splitting
+and cross-validation are possible. Consequently, the current models cover 84 of
+the catalogue's 87 scholarships. Candidates outside those trained classes are not
+assigned a k-NN score and are skipped by the ranker.
 
 ### Recommendation logic
 
@@ -258,7 +272,9 @@ The target label is `scholarship_name`, encoded with `LabelEncoder`.
 | Random Forest     | Baseline          |     79.71% |     98.55% |  82.97% |
 | Gradient Boosting | Baseline          |     80.43% |     97.83% |  83.56% |
 
-Top-3 accuracy is the primary metric because MM Scholar returns up to three recommendations per query.
+Training, hyperparameter search, cross-validation, and best-baseline selection use
+Top-1 accuracy. Top-3 accuracy is also reported because MM Scholar returns up to
+three recommendations per query.
 
 Although the tree-based baselines achieve higher classification accuracy, k-NN is used as the production ranker because its distance-weighted probability provides a more interpretable similarity-based match score for students.
 

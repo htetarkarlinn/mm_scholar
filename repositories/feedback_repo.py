@@ -5,8 +5,7 @@ from config import DB_PATH, USE_PG, PG_URL
 
 logger = logging.getLogger(__name__)
 
-# Adapter pattern: select connection factory and SQL placeholder at import time
-# so all higher-level code is database-agnostic.
+# Pick the connection and placeholder style once when this module loads.
 if USE_PG:
     import psycopg2
     def _conn():
@@ -21,7 +20,7 @@ else:
 
 
 class FeedbackRepository:
-    """Data access layer for user feedback — adapter over SQLite (dev) / PostgreSQL (prod)."""
+    """Store feedback in SQLite or PostgreSQL."""
 
     def initialise(self):
         conn = _conn()

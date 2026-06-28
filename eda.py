@@ -7,7 +7,7 @@ import matplotlib.patches as mpatches
 import seaborn as sns
 from sklearn.preprocessing import LabelEncoder
 
-# Always resolve paths relative to this file's location
+# Resolve paths from the project directory, not the current shell directory.
 BASE_DIR   = os.path.dirname(os.path.abspath(__file__))
 DB_PATH    = os.path.join(BASE_DIR, "mm_scholar.db")
 OUTPUT_DIR = os.path.join(BASE_DIR, "static", "eda")
