@@ -35,7 +35,7 @@ print(f"After dropping singletons: {len(df)} rows, {df[TARGET].nunique()} classe
 for col in NUM_FEATURES:
     df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0)
 
-# Fit the label encoders shared by training and recommendation.
+# Shared target + CAT encoders (used by all models) 
 encoders = {}
 for col in CAT_FEATURES + [TARGET]:
     le = LabelEncoder()
@@ -44,7 +44,7 @@ for col in CAT_FEATURES + [TARGET]:
 
 y = encoders[TARGET].transform(df[TARGET])
 
-# Tree models use label-encoded categorical features.
+# Label-encode CAT features for tree baselines
 df_le = df.copy()
 for col in CAT_FEATURES:
     df_le[col] = encoders[col].transform(df_le[col])
@@ -52,7 +52,7 @@ for col in CAT_FEATURES:
 X     = df_le[FEATURES].values.astype(float)   # label-encoded, for DT/RF/GB
 X_knn = df[FEATURES]                            # raw strings + floats, for k-NN OHE pipeline
 
-# Use one split so every model is evaluated on the same rows.
+# Single deterministic split — same row indices used for both k-NN and tree models
 idx = np.arange(len(df))
 train_idx, test_idx = train_test_split(idx, test_size=0.2, random_state=42, stratify=y)
 
@@ -61,7 +61,8 @@ X_knn_train, X_knn_test = X_knn.iloc[train_idx],     X_knn.iloc[test_idx]
 y_train,     y_test     = y[train_idx],               y[test_idx]
 print(f"Train: {len(X_train)} rows  |  Test: {len(X_test)} rows")
 
-# k-NN uses one-hot categories, scaled numbers, and distance-weighted votes.
+#  FIX 1+2: k-NN — OHE for categoricals, MinMaxScaler for numerics,
+#    weights='distance' so predict_proba is continuous (not k-vote fractions) 
 knn_pre = ColumnTransformer([
     ("cat", OneHotEncoder(handle_unknown="ignore"), CAT_FEATURES),
     ("num", MinMaxScaler(), NUM_FEATURES),
@@ -85,7 +86,8 @@ knn_model = knn_grid.best_estimator_
 knn_acc   = accuracy_score(y_test, knn_model.predict(X_knn_test))
 print(f"  Best: {knn_grid.best_params_}  →  {knn_acc*100:.2f}%")
 
-# Keep scaling inside each tree pipeline to prevent cross-validation leakage.
+# FIX 3: Tree baselines — scaler inside pipeline so GridSearchCV folds
+# cannot leak a pre-fitted scaler into the test folds 
 
 print("\nDecision Tree (GridSearchCV 5-fold)")
 dt_grid = GridSearchCV(
@@ -124,7 +126,7 @@ gb_model = gb_grid.best_estimator_
 gb_acc   = accuracy_score(y_test, gb_model.predict(X_test))
 print(f"  Best: {gb_grid.best_params_}  →  {gb_acc*100:.2f}%")
 
-# Each saved pipeline includes its own scaler.
+# save models + encoders (no standalone scaler.pkl — every model carries its own)
 joblib.dump(knn_model, os.path.join(MODELS_DIR, "knn_model.pkl"))
 joblib.dump(dt_model,  os.path.join(MODELS_DIR, "dt_model.pkl"))
 joblib.dump(rf_model,  os.path.join(MODELS_DIR, "rf_model.pkl"))
