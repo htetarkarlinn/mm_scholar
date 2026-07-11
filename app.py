@@ -87,6 +87,20 @@ def require_auth(f):
 @app.route("/")
 def index():
     recent = feedback_repo.get_recent_with_comments(3)
+
+    browse_country = request.args.get("country", "")
+    browse_level   = request.args.get("level",   "")
+    browse_field   = request.args.get("field",   "")
+    browse_funding = request.args.get("funding", "")
+
+    featured_scholarships, _total = scholarship_repo.get_catalogue(
+        country=browse_country or None,
+        level=browse_level     or None,
+        field=browse_field     or None,
+        funding=browse_funding or None,
+        page=1, per_page=6,
+    )
+
     return render_template("index.html",
                            countries=countries, levels=levels,
                            fields=fields, funding_types=funding_types,
@@ -94,7 +108,16 @@ def index():
                            num_scholarships=num_scholarships,
                            num_countries=num_countries,
                            region_counts=region_counts,
-                           recent_feedback=recent.to_dict("records"))
+                           recent_feedback=recent.to_dict("records"),
+                           featured_scholarships=featured_scholarships,
+                           dropdown_countries=countries,
+                           dropdown_levels=levels,
+                           dropdown_fields=fields,
+                           dropdown_funding=funding_types,
+                           browse_country=browse_country,
+                           browse_level=browse_level,
+                           browse_field=browse_field,
+                           browse_funding=browse_funding)
 
 
 @app.route("/recommend", methods=["POST"])

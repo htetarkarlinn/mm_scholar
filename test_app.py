@@ -361,6 +361,26 @@ else:
     except Exception as e:
         check("admin CRUD routes", False, str(e))
 
+# T21: Homepage Browse All Scholarships section
+print("\nT21: Browse All Scholarships on homepage")
+try:
+    with flask_app.app.test_client() as client:
+        resp = client.get("/")
+        check("GET / returns 200",                       resp.status_code == 200)
+        body = resp.data.decode("utf-8")
+        check("/ contains 'Browse All Scholarships'",    "Browse All Scholarships" in body)
+        check("/ contains browse filter form",           "browse-filter-form" in body)
+        check("/ contains 'View All' link to /scholarships",
+              "/scholarships" in body and "View All" in body)
+
+        resp_jp = client.get("/?country=Japan")
+        check("GET /?country=Japan returns 200",         resp_jp.status_code == 200)
+        body_jp = resp_jp.data.decode("utf-8")
+        check("/?country=Japan shows Japan cards",       "Japan" in body_jp)
+        check("/?country=Japan keeps filter selected",   'value="Japan" selected' in body_jp)
+except Exception as e:
+    check("homepage browse section", False, str(e))
+
 # Summary
 passed = sum(results)
 total  = len(results)

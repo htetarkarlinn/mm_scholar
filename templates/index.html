@@ -140,6 +140,121 @@
   </div>
 </section>
 
+<!-- Browse All Scholarships -->
+<section class="section-white" id="browse-all">
+  <div class="container">
+    <div class="mb-4">
+      <h2 class="fw-bold">Browse All Scholarships</h2>
+      <p class="text-muted mb-0">
+        Explore all {{ num_scholarships }} verified scholarships — or use the search form above
+        for personalised AI recommendations.
+      </p>
+    </div>
+
+    <!-- Filter bar (GET so URLs are shareable and browser back works) -->
+    <form method="GET" action="/" class="row g-2 mb-4 align-items-center" id="browse-filter-form">
+      <div class="col-md-3 col-sm-6">
+        <select name="country" class="form-select form-select-sm">
+          <option value="">All Countries</option>
+          {% for c in dropdown_countries %}
+          <option value="{{ c }}" {% if browse_country == c %}selected{% endif %}>{{ c }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2 col-sm-6">
+        <select name="level" class="form-select form-select-sm">
+          <option value="">All Levels</option>
+          {% for l in dropdown_levels %}
+          <option value="{{ l }}" {% if browse_level == l %}selected{% endif %}>
+            {% if l == "phd" %}PhD
+            {% elif l == "short_course" %}Short Course
+            {% else %}{{ l | capitalize }}{% endif %}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2 col-sm-6">
+        <select name="field" class="form-select form-select-sm">
+          <option value="">All Fields</option>
+          {% for f in dropdown_fields %}
+          <option value="{{ f }}" {% if browse_field == f %}selected{% endif %}>{{ f }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2 col-sm-6">
+        <select name="funding" class="form-select form-select-sm">
+          <option value="">Any Funding</option>
+          {% for fu in dropdown_funding %}
+          <option value="{{ fu }}" {% if browse_funding == fu %}selected{% endif %}>
+            {{ fu | replace("_", " ") | title }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-1 col-sm-6">
+        <button type="submit" class="btn btn-primary btn-sm w-100">Filter</button>
+      </div>
+      {% if browse_country or browse_level or browse_field or browse_funding %}
+      <div class="col-md-2 col-sm-6">
+        <a href="/#browse-all" class="btn btn-outline-secondary btn-sm w-100">Clear</a>
+      </div>
+      {% endif %}
+    </form>
+
+    <!-- 6 scholarship cards -->
+    {% if featured_scholarships %}
+    <div class="row g-3">
+      {% for s in featured_scholarships %}
+      <div class="col-md-6 col-lg-4">
+        <div class="card scholarship-card h-100">
+          <div class="card-header d-flex justify-content-between align-items-start">
+            <div>
+              <h6 class="mb-1 fw-bold">{{ s.scholarship_name }}</h6>
+              <div class="provider">{{ s.provider }}</div>
+            </div>
+            {% if s.funding_type == "fully_funded" %}
+            <span class="badge-funded">Fully Funded</span>
+            {% else %}
+            <span class="badge-partial">{{ s.funding_type | replace("_", " ") | title }}</span>
+            {% endif %}
+          </div>
+          <div class="info-grid small">
+            <div class="info-item">
+              <label>🌏 Country</label>
+              <p>{{ s.country_of_study }}</p>
+            </div>
+            <div class="info-item">
+              <label>🎓 Level(s)</label>
+              <p>{{ s.levels_available | replace(",", ", ") | replace("phd", "PhD") | replace("short_course", "Short Course") }}</p>
+            </div>
+            <div class="info-item">
+              <label>📚 Field(s)</label>
+              <p>{{ s.fields_available | replace(",", ", ") }}</p>
+            </div>
+          </div>
+          <div class="card-footer bg-transparent d-flex justify-content-end">
+            <a href="{{ s.link }}" target="_blank" rel="noopener"
+               class="btn btn-accent btn-sm fw-bold">Apply Now →</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-warning">
+      No scholarships found for those filters.
+      <a href="/#browse-all">Clear filters</a> to see all scholarships.
+    </div>
+    {% endif %}
+
+    <div class="text-center mt-4">
+      <a href="/scholarships" class="btn btn-outline-primary">
+        View All {{ num_scholarships }} Scholarships →
+      </a>
+    </div>
+  </div>
+</section>
+
 <!-- How it works -->
 <section class="section-tinted">
   <div class="container">
