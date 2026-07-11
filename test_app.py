@@ -381,6 +381,72 @@ try:
 except Exception as e:
     check("homepage browse section", False, str(e))
 
+# T22: ExplanationService two-tier cache
+print("\nT22: ExplanationService two-tier hybrid cache")
+try:
+    from services.explanation_service import ExplanationService
+
+    _call_count = [0]
+    _orig_call_gemini = ExplanationService._call_gemini
+
+    def _mock_call_gemini(self, scholarship, student):
+        _call_count[0] += 1
+        return f"Explanation for {scholarship.get('scholarship_name', '')}"
+
+    ExplanationService._call_gemini = _mock_call_gemini
+    try:
+        svc = ExplanationService()
+
+        _scholarship = {
+            "scholarship_name": "MEXT",
+            "provider": "Japanese Govt",
+            "country_of_study": "Japan",
+            "level": "postgraduate",
+            "field_of_study": "STEM",
+            "funding_type": "fully_funded",
+            "min_gpa": 3.0,
+            "min_ielts": 6.0,
+            "deadline_month": 4,
+            "duration_years": 2,
+        }
+        _profile_1 = {"country": "Japan", "level": "postgraduate",
+                      "funding": "fully_funded", "field": "STEM",
+                      "gpa": "3.5", "ielts": "6.5"}
+        _profile_2 = {"country": "Japan", "level": "postgraduate",
+                      "funding": "fully_funded", "field": "Business",
+                      "gpa": "3.0", "ielts": "6.0"}
+
+        result1 = svc.generate_explanation(_scholarship, _profile_1)
+        check("First call invokes Gemini",                     _call_count[0] == 1)
+
+        result2 = svc.generate_explanation(_scholarship, _profile_2)
+        check("Different profile hits general cache (no new Gemini call)",
+              _call_count[0] == 1)
+        check("General cache returns same text",               result1 == result2)
+
+        result3 = svc.generate_explanation(_scholarship, _profile_1)
+        check("Same profile hits personalised cache",          _call_count[0] == 1)
+
+        stats = svc.get_cache_stats()
+        check("personalised_cache_size == 1",                  stats["personalised_cache_size"] == 1)
+        check("general_cache_size == 1",                       stats["general_cache_size"] == 1)
+        check("total_views == 3",                              stats["total_views"] == 3)
+        check("top_scholarships includes MEXT",                "MEXT" in svc.get_popular_scholarships())
+
+        # /health now exposes 'cache' key
+        with flask_app.app.test_client() as client:
+            health_resp = client.get("/health")
+            health_data = json.loads(health_resp.data)
+            check("/health includes 'cache' key",              "cache" in health_data)
+            check("/health cache has personalised_cache_size",
+                  "personalised_cache_size" in health_data.get("cache", {}))
+            check("/health cache has total_views",
+                  "total_views" in health_data.get("cache", {}))
+    finally:
+        ExplanationService._call_gemini = _orig_call_gemini
+except Exception as e:
+    check("ExplanationService two-tier cache", False, str(e))
+
 # Summary
 passed = sum(results)
 total  = len(results)

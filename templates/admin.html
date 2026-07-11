@@ -139,6 +139,15 @@
       <a href="/compare" class="btn btn-sm btn-outline-secondary">Model Comparison</a>
       <a href="/feedback-results" class="btn btn-sm btn-outline-secondary">Public Feedback Page</a>
     </div>
+    <div class="mt-3" style="font-size:13px; color:var(--text-muted);">
+      <span class="fw-semibold" style="color:var(--text);">Explanation Cache</span>
+      <span class="ms-3">Personalised: <strong>{{ cache.personalised_cache_size }}</strong></span>
+      <span class="ms-3">General: <strong>{{ cache.general_cache_size }}</strong></span>
+      <span class="ms-3">Total views: <strong>{{ cache.total_views }}</strong></span>
+      {% if cache.top_scholarships %}
+      <div class="mt-1">Popular: {{ cache.top_scholarships | join(', ') }}</div>
+      {% endif %}
+    </div>
   </div>
 
   <!-- Feedback table -->

@@ -10,7 +10,7 @@ from config import MODELS_DIR, PORT, DEBUG
 from repositories.scholarship_repo import ScholarshipRepository
 from repositories.feedback_repo import FeedbackRepository
 from services.recommendation_service import get_recommendations
-from services.explanation_service import generate_explanation
+from services.explanation_service import ExplanationService
 
 config.configure_logging()
 logger = logging.getLogger(__name__)
@@ -18,10 +18,11 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 app.secret_key = config.SECRET_KEY
 
-# Repositories
-scholarship_repo = ScholarshipRepository()
-feedback_repo    = FeedbackRepository()
+# Repositories and services
+scholarship_repo    = ScholarshipRepository()
+feedback_repo       = FeedbackRepository()
 feedback_repo.initialise()
+explanation_service = ExplanationService()
 
 # Data loaded once at startup
 _opts         = scholarship_repo.get_dropdown_options()
@@ -153,7 +154,7 @@ def explain():
     scholarship     = data.get("scholarship")
     student_profile = data.get("student_profile")
     try:
-        explanation = generate_explanation(scholarship, student_profile)
+        explanation = explanation_service.generate_explanation(scholarship, student_profile)
         return {"explanation": explanation}
     except Exception as exc:
         logger.error("/explain error: %s", exc)
@@ -253,6 +254,7 @@ def health():
         "scholarship_db":   "ok" if sc_ok else "error",
         "feedback_db":      "ok" if fb_ok else "error",
         "num_scholarships": num_scholarships,
+        "cache":            explanation_service.get_cache_stats(),
     }), code
 
 
@@ -272,7 +274,8 @@ def admin():
                            num_scholarships=num_scholarships,
                            num_countries=num_countries,
                            models=_METRICS_DATA["models"],
-                           scholarships_all=scholarship_repo.get_for_admin())
+                           scholarships_all=scholarship_repo.get_for_admin(),
+                           cache=explanation_service.get_cache_stats())
 
 
 @app.route("/admin/feedback/delete/<int:record_id>", methods=["POST"])
